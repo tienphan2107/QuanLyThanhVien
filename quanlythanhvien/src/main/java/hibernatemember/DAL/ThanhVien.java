@@ -1,0 +1,34 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package hibernatemember.DAL;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
+
+/**
+ *
+ * @author DELL
+ */
+@Data
+@Entity
+@Table(name = "thanhvien")
+public class ThanhVien {
+    @Id
+    private int MaTV;
+    
+    @Column
+    private String HoTen;
+    @Column
+    private String Khoa;
+    @Column
+    private String Nganh;
+    @Column
+    private int SDT; 
+}
