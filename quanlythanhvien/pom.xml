@@ -49,17 +49,13 @@
         </dependency>
         <dependency>
             <groupId>com.kitfox.svg</groupId>
-            <artifactId>svgSalamander</artifactId>
-            <version>1.1.4</version>
-            <scope>system</scope>
-            <systemPath>${jars}/svgSalamander-1.1.4.jar</systemPath>
+            <artifactId>svg-salamander</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.swinglabs</groupId>
+            <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-all</artifactId>
-            <version>1.6.4</version>
-            <scope>system</scope>
-            <systemPath>${jars}/swingx-all-1.6.4.jar</systemPath>
+            <version>1.6.5-1</version>
         </dependency>
     </dependencies>
     
@@ -68,6 +64,5 @@
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <exec.mainClass>com.mycompany.quanlythanhvien.Quanlythanhvien</exec.mainClass>
-        <jars>E:\PhanLop\project2\quanlythanhvien\src\main\resources\lib</jars>
     </properties>
 </project>

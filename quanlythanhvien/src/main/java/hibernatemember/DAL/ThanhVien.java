@@ -31,4 +31,14 @@ public class ThanhVien {
     private String Nganh;
     @Column
     private int SDT; 
+    
+    public ThanhVien() {}
+
+    public ThanhVien(int MaTV, String HoTen, String Khoa, String Nganh, int SDT) {
+        this.MaTV = MaTV;
+        this.HoTen = HoTen;
+        this.Khoa = Khoa;
+        this.Nganh = Nganh;
+        this.SDT = SDT;
+    }
 }

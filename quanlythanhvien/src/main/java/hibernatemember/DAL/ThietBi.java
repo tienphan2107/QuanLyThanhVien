@@ -26,4 +26,12 @@ public class ThietBi {
     private String TenTB;
     @Column
     private String MoTaTB;
+    
+    public ThietBi() {}
+
+    public ThietBi(int MaTB, String TenTB, String MoTaTB) {
+        this.MaTB = MaTB;
+        this.TenTB = TenTB;
+        this.MoTaTB = MoTaTB;
+    }
 }

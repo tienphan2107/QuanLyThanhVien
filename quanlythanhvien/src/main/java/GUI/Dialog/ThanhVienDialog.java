@@ -140,42 +140,28 @@ public class ThanhVienDialog extends JDialog {
             }
         });
 
-//        btnAdd.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    if (ValidationInput()) {
-//                        if(checkEmail(email.getText())){
-//                        try {
-//                            int txt_gender = -1;
-//                            if (male.isSelected()) {
-//                                System.out.println("Nam");
-//                                txt_gender = 1;
-//                            } else if (female.isSelected()) {
-//                                System.out.println("Nữ");
-//                                txt_gender = 0;
-//                            }
-//                            int manv = NhanVienDAO.getInstance().getAutoIncrement();
-//                            String txtName = name.getText();
-//                            String txtSdt = sdt.getText();
-//                            String txtEmail = email.getText();
-//                            Date birthDay = jcBd.getDate();
-//                            java.sql.Date sqlDate = new java.sql.Date(birthDay.getTime());
-//                            NhanVienDTO nV = new NhanVienDTO(manv, txtName, txt_gender, sqlDate, txtSdt, 1, txtEmail);
-//                            NhanVienDAO.getInstance().insert(nV);
-//                            nv.insertNv(nV);
-//                            nv.loadTable();
-//                            dispose();
-//                        } catch (ParseException ex) {
-//                            Logger.getLogger(NhanVienDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
-//                    }
-//                } catch (ParseException ex) {
-//                    Logger.getLogger(NhanVienDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (ValidationInput()) {
+
+                        int manv = tv.getAutoIncrement();
+                        String txtName = name.getText();
+                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtKhoa = (String) khoa.getSelectedItem();
+                        String txtNganh = (String) nganh.getSelectedItem();
+                        ThanhVien tV = new ThanhVien(manv, txtName, txtKhoa, txtNganh, txtSdt);
+                        tv.newThanhVien(tV);
+                        //                                nv.insertNv(nV);
+//                                nv.loadTable();
+                        dispose();
+                    }
+                } catch (ParseException ex) {
+                    Logger.getLogger(ThanhVienDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
 
 //        btnEdit.addActionListener(new ActionListener() {
 //            @Override
@@ -213,54 +199,49 @@ public class ThanhVienDialog extends JDialog {
 //            }
 //        });
         switch (type) {
-        case "create" ->
-            bottom.add(btnAdd);
-        case "update" ->
-            bottom.add(btnEdit);
-        case "detail" -> {
-            name.setDisable();
-            sdt.setDisable();
+            case "create" ->
+                bottom.add(btnAdd);
+            case "update" ->
+                bottom.add(btnEdit);
+            case "detail" -> {
+                name.setDisable();
+                sdt.setDisable();
 //                email.setDisable();
 //                Enumeration<AbstractButton> enumeration = gender.getElements();
 //                while (enumeration.hasMoreElements()) {
 //                    enumeration.nextElement().setEnabled(false);
 //                }
 //                jcBd.setDisable();
+            }
+            default ->
+                throw new AssertionError();
         }
-        default ->
-            throw new AssertionError();
-    } bottom
+        bottom
+                .add(btnExit);
 
-    .add(btnExit);
+        this.add(titlePage, BorderLayout.NORTH);
 
-     
+        this.add(main, BorderLayout.CENTER);
 
-    this.add(titlePage, BorderLayout.NORTH);
-     
+        this.add(bottom, BorderLayout.SOUTH);
 
-    this.add(main, BorderLayout.CENTER);
-     
+    }
 
-    this.add(bottom, BorderLayout.SOUTH);
-
-}
-
-boolean ValidationInput() throws ParseException {
+    boolean ValidationInput() throws ParseException {
         if (Validation.isEmpty(name.getText())) {
             JOptionPane.showMessageDialog(this, "Tên nhân viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-        } else if(name.getText().length()<6){
+        } else if (name.getText().length() < 6) {
             JOptionPane.showMessageDialog(this, "Tên nhân viên ít nhất 6 kí tự!");
             return false;
-        }
-//        else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
-//            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }
+        } //        else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
+        //            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        //            return false;
+        //        }
         else if (Validation.isEmpty(sdt.getText()) && !Validation.isNumber(sdt.getText()) && sdt.getText().length() != 10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-        } 
+        }
 //        else if(jcBd.getDate()==null){
 //            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh!");
 //            return false;
@@ -268,7 +249,7 @@ boolean ValidationInput() throws ParseException {
 //            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!");
 //            return false;
 //        }
-        
+
         return true;
     }
 }
