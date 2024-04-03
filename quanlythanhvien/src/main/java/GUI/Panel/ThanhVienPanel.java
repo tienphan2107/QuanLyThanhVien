@@ -8,6 +8,7 @@ import BLL.ThanhVienBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.ThanhVienDialog;
 import GUI.Main;
 import hibernatemember.DAL.ThanhVien;
 import java.awt.BorderLayout;
@@ -38,9 +39,10 @@ import javax.swing.table.DefaultTableModel;
  * @author DELL
  */
 public class ThanhVienPanel extends JPanel implements ActionListener {
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-    private ThanhVienBLL tvBLL = new ThanhVienBLL(this);
-    ArrayList<ThanhVien> listTV = new ArrayList<>(tvBLL.loadThanhVien());
+    private ThanhVienBLL tvBLL = new ThanhVienBLL();
+    ArrayList<ThanhVien> listTV = tvBLL.loadThanhVien();
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JTable tableThanhVien;
@@ -94,10 +96,10 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         String[] action = {"create", "update", "delete", "detail", "import", "export"};
         mainFunction = new MainFunction(action);
         for (String ac : action) {
-            mainFunction.btn.get(ac).addActionListener(tvBLL);
+            mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
-        search = new IntegratedSearch(new String[]{"Tất cả","Khoa", "Ngành"});
+        search = new IntegratedSearch(new String[]{"Tất cả", "Khoa", "Ngành"});
         functionBar.add(search);
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
@@ -138,10 +140,14 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
     }
 
     public int getRow() {
+        int index = tableThanhVien.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thành viên ");
+        }
         return tableThanhVien.getSelectedRow();
     }
 
-    public ThanhVien getNhanVien() {
+    public ThanhVien getThanhVien() {
         return listTV.get(tableThanhVien.getSelectedRow());
     }
 //    public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
@@ -153,52 +159,61 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 //            });
 //        }
 //    }
-    public void loadDataTable() {
-        ArrayList<ThanhVien> list = new ArrayList<>(tvBLL.loadThanhVien());
-        tblModel.setRowCount(0);
 
+    public void loadDataTable(ArrayList<ThanhVien> list) {
+//        ArrayList<ThanhVien> list = new ArrayList<>(tvBLL.loadThanhVien());
+        tblModel.setRowCount(0);
         for (ThanhVien thanhVien : list) {
-            System.out.print(thanhVien.getKhoa());
             // Thêm dữ liệu vào bảng tblModel
             tblModel.addRow(new Object[]{
                 thanhVien.getMaTV(), thanhVien.getHoTen(), thanhVien.getKhoa(), thanhVien.getNganh(), thanhVien.getSDT()
             });
         }
     }
-    
+
+    public void loadDataTable() {
+        ArrayList<ThanhVien> list = new ArrayList<>(tvBLL.loadThanhVien());
+        tblModel.setRowCount(0);
+        for (ThanhVien thanhVien : list) {
+            // Thêm dữ liệu vào bảng tblModel
+            tblModel.addRow(new Object[]{
+                thanhVien.getMaTV(), thanhVien.getHoTen(), thanhVien.getKhoa(), thanhVien.getNganh(), thanhVien.getSDT()
+            });
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == mainFunction.btn.get("create")) {
-//            ListNhanVien listNV = new ListNhanVien(this, owner, "Chọn tài khoản", true);
-//        } else if (e.getSource() == mainFunction.btn.get("update")) {
-//            int index = getRowSelected();
-//            if (index != -1) {
-//                TaiKhoanDialog add = new TaiKhoanDialog(this, owner, "Cập nhật tài khoản", true, "update", listTk.get(index));
-//            }
-//        } else if (e.getSource() == mainFunction.btn.get("delete")) {
-//            int index = getRowSelected();
-//            if (index != -1) {
-//                int input = JOptionPane.showConfirmDialog(null,
-//                        "Bạn có chắc chắn muốn xóa tài khoản :)!", "Xóa xóa tài khoản",
-//                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//                if (input == 0) {
-//                    TaiKhoanDAO.getInstance().delete(listTk.get(index).getManv() + "");
-//                    loadTable(taiKhoanBus.getTaiKhoanAll());
-//                }
-//            }
-//        } else if (e.getSource() == mainFunction.btn.get("detail")) {
-//            int index = getRowSelected();
-//            if (index != -1) {
-//                TaiKhoanDialog add = new TaiKhoanDialog(this, owner, "Thêm tài khoản", true, "view", listTk.get(index));
-//            }
-//        } else if (e.getSource() == mainFunction.btn.get("export")) {
-//            try {
-//                JTableExporter.exportJTableToExcel(tableTaiKhoan);
-//            } catch (IOException ex) {
-//                Logger.getLogger(TaiKhoan.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        } else if (e.getSource() == mainFunction.btn.get("import")) {
-//            importExcel();
-//        }
+        String btn = e.getActionCommand();
+        switch (btn) {
+            case "THÊM" -> {
+                ThanhVienDialog tvthem = new ThanhVienDialog(owner, true, "Thêm thành viên", "create");
+            }
+            case "SỬA" -> {
+                int index = getRow();
+                if (index != -1) {
+                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
+                }
+            }
+            case "XÓA" -> {
+                int index = getRow();
+                if (index != -1) {
+                    int input = JOptionPane.showConfirmDialog(null,
+                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
+                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    if (input == 0) {
+                        tvBLL.deleteThanhVien(getThanhVien());
+                    }
+                }
+            }
+            case "CHI TIẾT" -> {
+                int index = getRow();
+                if (index != -1) {
+                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
+                }
+            }
+        }
+
+        loadDataTable();
     }
 }
