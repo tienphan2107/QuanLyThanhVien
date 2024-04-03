@@ -17,29 +17,29 @@ import javax.swing.JOptionPane;
  *
  * @author DELL
  */
-public class ThanhVienBLL implements ActionListener{
+public class ThanhVienBLL{
 
-    public GUI.Panel.ThanhVienPanel tv;
+//    public GUI.Panel.ThanhVienPanel tv;
     private ThanhVienDAL thanhvienDAL;
 
     public ThanhVienBLL() {
         thanhvienDAL = new ThanhVienDAL();
     }
 
-    public ThanhVienBLL(GUI.Panel.ThanhVienPanel tv) {
-        this.tv = tv;
-        thanhvienDAL = new ThanhVienDAL();
-    }
+//    public ThanhVienBLL(GUI.Panel.ThanhVienPanel tv) {
+//        this.tv = tv;
+//        thanhvienDAL = new ThanhVienDAL();
+//    }
 
-    public List loadThanhVien() {
-        List list;
+    public ArrayList loadThanhVien() {
+        ArrayList list;
         list = thanhvienDAL.loadThanhVien();
 
         return list;
     }
 
     public String[] getArrTenKhoa() {
-        ArrayList<ThanhVien> listKhoa = new ArrayList<>(loadThanhVien());
+        ArrayList<ThanhVien> listKhoa = loadThanhVien();
         String[] result = new String[listKhoa.size()];
         for (int i = 0; i < listKhoa.size(); i++) {
             result[i] = listKhoa.get(i).getKhoa();
@@ -87,29 +87,29 @@ public class ThanhVienBLL implements ActionListener{
         return thanhvienDAL.getAutoIncrement();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String btn = e.getActionCommand();
-        switch (btn) {
-            case "THÊM" -> {
-                ThanhVienDialog tvthem = new ThanhVienDialog(this, tv.owner, true, "Thêm thành viên", "create");
-            }
-            case "SỬA" -> {
-                int index = tv.getRow();
-                if (index < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần sửa");
-                } else {
-                    ThanhVienDialog tvsua = new ThanhVienDialog(this, tv.owner, true, "Sửa thành viên", "update", tv.getNhanVien());
-                }
-            }
-            case "XÓA" -> {
-                if (tv.getRow() < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần xóa");
-                } else {
-                    deleteThanhVien(tv.getNhanVien());
-                }
-            }
-        }
-        tv.loadDataTable();
-    }
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        String btn = e.getActionCommand();
+//        switch (btn) {
+//            case "THÊM" -> {
+//                ThanhVienDialog tvthem = new ThanhVienDialog(this, tv.owner, true, "Thêm thành viên", "create");
+//            }
+//            case "SỬA" -> {
+//                int index = tv.getRow();
+//                if (index < 0) {
+//                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần sửa");
+//                } else {
+//                    ThanhVienDialog tvsua = new ThanhVienDialog(this, tv.owner, true, "Sửa thành viên", "update", tv.getNhanVien());
+//                }
+//            }
+//            case "XÓA" -> {
+//                if (tv.getRow() < 0) {
+//                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần xóa");
+//                } else {
+//                    deleteThanhVien(tv.getNhanVien());
+//                }
+//            }
+//        }
+//        tv.loadDataTable();
+//    }
 }

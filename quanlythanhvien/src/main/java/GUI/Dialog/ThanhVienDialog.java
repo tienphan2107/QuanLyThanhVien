@@ -38,10 +38,10 @@ import javax.swing.text.PlainDocument;
  * @author DELL
  */
 public class ThanhVienDialog extends JDialog {
-
-    private ThanhVienBLL tv;
-    private ThanhVienDAL tvDAL;
-    private ThanhVienPanel tvPn;
+    
+    private ThanhVienPanelCallback callback;
+    private ThanhVienBLL tvBLL = new ThanhVienBLL();
+    private ThanhVienPanel tvPanel;
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
@@ -49,22 +49,28 @@ public class ThanhVienDialog extends JDialog {
     SelectForm khoa, nganh;
     private InputForm sdt;
     private ThanhVien thanhVien;
-
+    
     String[] arrKhoa;
     String[] arrNganh;
-
-    public ThanhVienDialog(ThanhVienBLL tv, JFrame owner, boolean modal, String title, String type) {
+    
+    public ThanhVienDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
-        this.tv = tv;
         init(title, type);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
-    public ThanhVienDialog(ThanhVienBLL tv, JFrame owner, boolean modal, String title, String type, ThanhVien thanhVien) {
+//    public ThanhVienDialog(ThanhVienBLL tv, JFrame owner, boolean modal, String title, String type) {
+//        super(owner, title, modal);
+//        this.tv = tv;
+//        init(title, type);
+//        this.setLocationRelativeTo(null);
+//        this.setVisible(true);
+//    }
+    public ThanhVienDialog(JFrame owner, boolean modal, String title, String type, ThanhVien thanhVien) {
         super(owner, title, modal);
-        this.tv = tv;
         this.thanhVien = thanhVien;
+//        this.tvPanel = this.tvPanel;
         init(title, type);
         name.setText(thanhVien.getHoTen());
         sdt.setText(String.valueOf(thanhVien.getSDT()));
@@ -73,22 +79,31 @@ public class ThanhVienDialog extends JDialog {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
-
+    
+    public interface ThanhVienPanelCallback {
+        
+        void loadDataTableCallback();
+    }
+    
+    public void setCallback(ThanhVienPanelCallback callback) {
+        this.callback = callback;
+    }
+    
     public void init(String title, String type) {
         this.setSize(new Dimension(450, 590));
         this.setLayout(new BorderLayout(0, 0));
-
+        
         titlePage = new HeaderTitle(title.toUpperCase());
-
+        
         main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBackground(Color.white);
         name = new InputForm("Họ và tên");
-        arrKhoa = tv.getArrTenKhoa();
+        arrKhoa = tvBLL.getArrTenKhoa();
         khoa = new SelectForm("Khoa", arrKhoa);
-        arrNganh = tv.getArrTenNganh();
+        arrNganh = tvBLL.getArrTenNganh();
         nganh = new SelectForm("Ngành", arrNganh);
-
+        
         sdt = new InputForm("Số điện thoại");
         PlainDocument phonex = (PlainDocument) sdt.getTxtForm().getDocument();
         phonex.setDocumentFilter((new NumericDocumentFilter()));
@@ -139,20 +154,20 @@ public class ThanhVienDialog extends JDialog {
                 dispose();
             }
         });
-
+        
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (ValidationInput()) {
-
-                        int manv = tv.getAutoIncrement();
+                        
+                        int manv = tvBLL.getAutoIncrement();
                         String txtName = name.getText();
                         int txtSdt = Integer.parseInt(sdt.getText());
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(manv, txtName, txtKhoa, txtNganh, txtSdt);
-                        tv.newThanhVien(tV);
+                        tvBLL.newThanhVien(tV);
                         dispose();
                     }
                 } catch (ParseException ex) {
@@ -160,30 +175,19 @@ public class ThanhVienDialog extends JDialog {
                 }
             }
         });
-
+        
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (ValidationInput()) {
-                        //                            int txt_gender = -1;
-//                            if (male.isSelected()) {
-//                                System.out.println("Nam");
-//                                txt_gender = 1;
-//                            } else if (female.isSelected()) {
-//                                System.out.println("Nữ");
-//                                txt_gender = 0;
-//                            }
-                        int manv = tv.getAutoIncrement();
+                        int manv = tvBLL.getAutoIncrement();
                         String txtName = name.getText();
                         int txtSdt = Integer.parseInt(sdt.getText());
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(thanhVien.getMaTV(), txtName, txtKhoa, txtNganh, txtSdt);
-                        tv.updateThanhVien(tV);
-//                            System.out.println("Index:" + nv.getIndex());
-//                            nv.listNv.set(nv.getIndex(), nV);
-//                            nv.loadTable();
+                        tvBLL.updateThanhVien(tV);
                         dispose();
                     }
                 } catch (ParseException ex) {
@@ -199,6 +203,8 @@ public class ThanhVienDialog extends JDialog {
             case "detail" -> {
                 name.setDisable();
                 sdt.setDisable();
+                khoa.setDisable();
+                nganh.setDisable();
 //                email.setDisable();
 //                Enumeration<AbstractButton> enumeration = gender.getElements();
 //                while (enumeration.hasMoreElements()) {
@@ -211,15 +217,15 @@ public class ThanhVienDialog extends JDialog {
         }
         bottom
                 .add(btnExit);
-
+        
         this.add(titlePage, BorderLayout.NORTH);
-
+        
         this.add(main, BorderLayout.CENTER);
-
+        
         this.add(bottom, BorderLayout.SOUTH);
-
+        
     }
-
+    
     boolean ValidationInput() throws ParseException {
         if (Validation.isEmpty(name.getText())) {
             JOptionPane.showMessageDialog(this, "Tên thành viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);

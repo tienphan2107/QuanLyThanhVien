@@ -4,8 +4,10 @@
  */
 package hibernatemember.DAL;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -19,10 +21,10 @@ public class ThanhVienDAL {
         session = HibernateUtils.getSessionFactory().openSession();
     }
 
-    public List loadThanhVien() {
-        List<ThanhVien> thanhvien;
+    public ArrayList loadThanhVien() {
+        ArrayList<ThanhVien> thanhvien;
         session.beginTransaction();
-        thanhvien = session.createQuery("FROM ThanhVien", ThanhVien.class).list();
+        thanhvien = (ArrayList) session.createQuery("FROM ThanhVien", ThanhVien.class).list();
         session.getTransaction().commit();
         return thanhvien;
     }
@@ -33,20 +35,23 @@ public class ThanhVienDAL {
     }
 
     public void addThanhVien(ThanhVien c) {
-
+        Transaction tx = session.beginTransaction();
         session.save(c);
-
+        tx.commit();
     }
 
     public void updateThanhVien(ThanhVien c) {
+        Transaction tx = session.beginTransaction();
         session.merge(c);
-
+        tx.commit();
     }
 
     public void deleteThanhVien(ThanhVien c) {
+        Transaction tx = session.beginTransaction();
         session.delete(c);
+        tx.commit();
+
     }
-    
 
     public int getAutoIncrement() {
         Number maxIdResult = (Number) session.createQuery("SELECT MAX(id) FROM ThanhVien").uniqueResult();
