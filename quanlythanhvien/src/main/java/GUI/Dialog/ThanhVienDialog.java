@@ -10,8 +10,10 @@ import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
 import GUI.Component.NumericDocumentFilter;
 import GUI.Component.SelectForm;
+import GUI.Panel.ThanhVienPanel;
 import helper.Validation;
 import hibernatemember.DAL.ThanhVien;
+import hibernatemember.DAL.ThanhVienDAL;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,6 +40,8 @@ import javax.swing.text.PlainDocument;
 public class ThanhVienDialog extends JDialog {
 
     private ThanhVienBLL tv;
+    private ThanhVienDAL tvDAL;
+    private ThanhVienPanel tvPn;
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
@@ -57,23 +61,19 @@ public class ThanhVienDialog extends JDialog {
         this.setVisible(true);
     }
 
-//    public NhanVienDialog(NhanVienBUS nv, JFrame owner, boolean modal, String title, String type, DTO.NhanVienDTO nhanVien) {
-//        super(owner, title, modal);
-//        this.nv = nv;
-//        this.nhanVien = nhanVien;
-//        init(title, type);
-//        name.setText(nhanVien.getHoten());
-//        sdt.setText(nhanVien.getSdt());
-//        email.setText(nhanVien.getEmail());
-//        if (nhanVien.getGioitinh() == 1) {
-//            male.setSelected(true);
-//        } else {
-//            female.setSelected(true);
-//        }
-//        jcBd.setDate(nhanVien.getNgaysinh());
-//        this.setLocationRelativeTo(null);
-//        this.setVisible(true);
-//    }
+    public ThanhVienDialog(ThanhVienBLL tv, JFrame owner, boolean modal, String title, String type, ThanhVien thanhVien) {
+        super(owner, title, modal);
+        this.tv = tv;
+        this.thanhVien = thanhVien;
+        init(title, type);
+        name.setText(thanhVien.getHoTen());
+        sdt.setText(String.valueOf(thanhVien.getSDT()));
+        khoa.setValue(thanhVien.getKhoa());
+        nganh.setValue(thanhVien.getNganh());
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
     public void init(String title, String type) {
         this.setSize(new Dimension(450, 590));
         this.setLayout(new BorderLayout(0, 0));
@@ -153,8 +153,6 @@ public class ThanhVienDialog extends JDialog {
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(manv, txtName, txtKhoa, txtNganh, txtSdt);
                         tv.newThanhVien(tV);
-                        //                                nv.insertNv(nV);
-//                                nv.loadTable();
                         dispose();
                     }
                 } catch (ParseException ex) {
@@ -163,13 +161,12 @@ public class ThanhVienDialog extends JDialog {
             }
         });
 
-//        btnEdit.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    if (ValidationInput()) {
-//                        try {
-//                            int txt_gender = -1;
+        btnEdit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (ValidationInput()) {
+                        //                            int txt_gender = -1;
 //                            if (male.isSelected()) {
 //                                System.out.println("Nam");
 //                                txt_gender = 1;
@@ -177,27 +174,23 @@ public class ThanhVienDialog extends JDialog {
 //                                System.out.println("Nữ");
 //                                txt_gender = 0;
 //                            }
-//                            int manv = NhanVienDAO.getInstance().getAutoIncrement();
-//                            String txtName = name.getText();
-//                            String txtSdt = sdt.getText();
-//                            String txtEmail = email.getText();
-//                            Date birthDay = jcBd.getDate();
-//                            java.sql.Date sqlDate = new java.sql.Date(birthDay.getTime());
-//                            NhanVienDTO nV = new NhanVienDTO(nhanVien.getManv(), txtName, txt_gender, sqlDate, txtSdt, 1, txtEmail);
-//                            NhanVienDAO.getInstance().update(nV);
+                        int manv = tv.getAutoIncrement();
+                        String txtName = name.getText();
+                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtKhoa = (String) khoa.getSelectedItem();
+                        String txtNganh = (String) nganh.getSelectedItem();
+                        ThanhVien tV = new ThanhVien(thanhVien.getMaTV(), txtName, txtKhoa, txtNganh, txtSdt);
+                        tv.updateThanhVien(tV);
 //                            System.out.println("Index:" + nv.getIndex());
 //                            nv.listNv.set(nv.getIndex(), nV);
 //                            nv.loadTable();
-//                            dispose();
-//                        } catch (ParseException ex) {
-//                            Logger.getLogger(NhanVienDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
-//                } catch (ParseException ex) {
-//                    Logger.getLogger(NhanVienDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
+                        dispose();
+                    }
+                } catch (ParseException ex) {
+                    Logger.getLogger(ThanhVienDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
         switch (type) {
             case "create" ->
                 bottom.add(btnAdd);
@@ -229,10 +222,10 @@ public class ThanhVienDialog extends JDialog {
 
     boolean ValidationInput() throws ParseException {
         if (Validation.isEmpty(name.getText())) {
-            JOptionPane.showMessageDialog(this, "Tên nhân viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tên thành viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (name.getText().length() < 6) {
-            JOptionPane.showMessageDialog(this, "Tên nhân viên ít nhất 6 kí tự!");
+            JOptionPane.showMessageDialog(this, "Tên thành viên ít nhất 6 kí tự!");
             return false;
         } //        else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
         //            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);

@@ -14,10 +14,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,9 +37,10 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author DELL
  */
-public class ThanhVienPanel extends JPanel {
+public class ThanhVienPanel extends JPanel implements ActionListener {
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     private ThanhVienBLL tvBLL = new ThanhVienBLL(this);
+    ArrayList<ThanhVien> listTV = new ArrayList<>(tvBLL.loadThanhVien());
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JTable tableThanhVien;
@@ -133,9 +141,9 @@ public class ThanhVienPanel extends JPanel {
         return tableThanhVien.getSelectedRow();
     }
 
-//    public DTO.NhanVienDTO getNhanVien() {
-//        return listnv.get(tableNhanVien.getSelectedRow());
-//    }
+    public ThanhVien getNhanVien() {
+        return listTV.get(tableThanhVien.getSelectedRow());
+    }
 //    public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
 //        listnv = list;
 //        tblModel.setRowCount(0);
@@ -156,5 +164,41 @@ public class ThanhVienPanel extends JPanel {
                 thanhVien.getMaTV(), thanhVien.getHoTen(), thanhVien.getKhoa(), thanhVien.getNganh(), thanhVien.getSDT()
             });
         }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+//        if (e.getSource() == mainFunction.btn.get("create")) {
+//            ListNhanVien listNV = new ListNhanVien(this, owner, "Chọn tài khoản", true);
+//        } else if (e.getSource() == mainFunction.btn.get("update")) {
+//            int index = getRowSelected();
+//            if (index != -1) {
+//                TaiKhoanDialog add = new TaiKhoanDialog(this, owner, "Cập nhật tài khoản", true, "update", listTk.get(index));
+//            }
+//        } else if (e.getSource() == mainFunction.btn.get("delete")) {
+//            int index = getRowSelected();
+//            if (index != -1) {
+//                int input = JOptionPane.showConfirmDialog(null,
+//                        "Bạn có chắc chắn muốn xóa tài khoản :)!", "Xóa xóa tài khoản",
+//                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+//                if (input == 0) {
+//                    TaiKhoanDAO.getInstance().delete(listTk.get(index).getManv() + "");
+//                    loadTable(taiKhoanBus.getTaiKhoanAll());
+//                }
+//            }
+//        } else if (e.getSource() == mainFunction.btn.get("detail")) {
+//            int index = getRowSelected();
+//            if (index != -1) {
+//                TaiKhoanDialog add = new TaiKhoanDialog(this, owner, "Thêm tài khoản", true, "view", listTk.get(index));
+//            }
+//        } else if (e.getSource() == mainFunction.btn.get("export")) {
+//            try {
+//                JTableExporter.exportJTableToExcel(tableTaiKhoan);
+//            } catch (IOException ex) {
+//                Logger.getLogger(TaiKhoan.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        } else if (e.getSource() == mainFunction.btn.get("import")) {
+//            importExcel();
+//        }
     }
 }

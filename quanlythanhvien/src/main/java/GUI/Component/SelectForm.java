@@ -40,6 +40,10 @@ public class SelectForm extends JPanel {
         return (String) cbb.getSelectedItem();
     }
     
+    public void setValue(String a) {
+        cbb.setSelectedItem(a);
+    }
+    
     public Object getSelectedItem() {
         return cbb.getSelectedItem();
     }
