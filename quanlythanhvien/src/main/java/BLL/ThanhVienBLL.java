@@ -11,12 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author DELL
  */
-public class ThanhVienBLL implements ActionListener {
+public class ThanhVienBLL implements ActionListener{
+
     public GUI.Panel.ThanhVienPanel tv;
     private ThanhVienDAL thanhvienDAL;
 
@@ -35,7 +37,7 @@ public class ThanhVienBLL implements ActionListener {
 
         return list;
     }
-    
+
     public String[] getArrTenKhoa() {
         ArrayList<ThanhVien> listKhoa = new ArrayList<>(loadThanhVien());
         String[] result = new String[listKhoa.size()];
@@ -44,7 +46,7 @@ public class ThanhVienBLL implements ActionListener {
         }
         return result;
     }
-    
+
     public String[] getArrTenNganh() {
         ArrayList<ThanhVien> listNganh = new ArrayList<>(loadThanhVien());
         String[] result = new String[listNganh.size()];
@@ -68,6 +70,14 @@ public class ThanhVienBLL implements ActionListener {
         thanhvienDAL.addThanhVien(c);
     }
 
+    public void updateThanhVien(ThanhVien c) {
+        thanhvienDAL.updateThanhVien(c);
+    }
+
+    public void deleteThanhVien(ThanhVien c) {
+        thanhvienDAL.deleteThanhVien(c);
+    }
+
     public ThanhVien getThanhVien(int thanhvienID) {
         ThanhVien c = thanhvienDAL.getThanhVien(thanhvienID);
         return c;
@@ -83,6 +93,21 @@ public class ThanhVienBLL implements ActionListener {
         switch (btn) {
             case "THÊM" -> {
                 ThanhVienDialog tvthem = new ThanhVienDialog(this, tv.owner, true, "Thêm thành viên", "create");
+            }
+            case "SỬA" -> {
+                int index = tv.getRow();
+                if (index < 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần sửa");
+                } else {
+                    ThanhVienDialog tvsua = new ThanhVienDialog(this, tv.owner, true, "Sửa thành viên", "update", tv.getNhanVien());
+                }
+            }
+            case "XÓA" -> {
+                if (tv.getRow() < 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần xóa");
+                } else {
+                    deleteThanhVien(tv.getNhanVien());
+                }
             }
         }
         tv.loadDataTable();
