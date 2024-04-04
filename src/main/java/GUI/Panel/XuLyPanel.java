@@ -4,17 +4,27 @@
  */
 package GUI.Panel;
 
+import BLL.ThanhVienBLL;
+import BLL.XuLyBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.ThanhVienDialog;
+import GUI.Dialog.XuLyDialog;
 import GUI.Main;
+import hibernatemember.DAL.ThanhVien;
+import hibernatemember.DAL.XuLy;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,9 +37,13 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author DELL
  */
-public class ViPhamPanel extends JPanel {
+public class XuLyPanel extends JPanel implements ActionListener {
+
+    private XuLyBLL xuLyBLL;
+    private ThanhVienBLL thanhVienBLL;
+    private ArrayList<XuLy> listXuLy;
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    NhanVienBUS nvBus = new NhanVienBUS(this);
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JTable tableThongTinSuDung;
@@ -37,7 +51,6 @@ public class ViPhamPanel extends JPanel {
     MainFunction mainFunction;
     public IntegratedSearch search;
     Main m;
-//    ArrayList<DTO.NhanVienDTO> listnv = nvBus.getAll();
 
     Color BackgroundColor = new Color(240, 247, 250);
     private DefaultTableModel tblModel;
@@ -81,17 +94,12 @@ public class ViPhamPanel extends JPanel {
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
-        String[] action = {"create", "update", "delete", "detail", "import", "export"};
+        String[] action = {"create", "update", "delete"};
         mainFunction = new MainFunction(action);
-//        for (String ac : action) {
-//            mainFunction.btn.get(ac).addActionListener(nvBus);
-//        }
+        for (String ac : action) {
+            mainFunction.btn.get(ac).addActionListener(this);
+        }
         functionBar.add(mainFunction);
-//        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
-//        functionBar.add(search);
-//        search.btnReset.addActionListener(nvBus);
-//        search.cbxChoose.addActionListener(nvBus);
-//        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
 
         // main là phần ở dưới để thống kê bảng biểu
         main = new PanelBorderRadius();
@@ -104,7 +112,7 @@ public class ViPhamPanel extends JPanel {
         scrollTableThongTinSuDung = new JScrollPane();
         tableThongTinSuDung = new JTable();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"MaXL", "Ma TV", "Hình Thức XL", "Số Tiền", "Ngày XL", "Trạng Thái XL"};
+        String[] header = new String[]{"Mã Xử Lý", "Mã Thành Viên", "Tên Thành Viên", "Hình Thức Xử Lý", "Số Tiền", "Ngày Xử Lý", "Trạng Thái Xử Lý"};
 
         tblModel.setColumnIdentifiers(header);
         tableThongTinSuDung.setModel(tblModel);
@@ -122,27 +130,66 @@ public class ViPhamPanel extends JPanel {
         main.add(scrollTableThongTinSuDung);
     }
 
-    public ViPhamPanel(Main m) {
+    public XuLyPanel(Main m) {
+        xuLyBLL = new XuLyBLL();
+        listXuLy = xuLyBLL.LoadXuLy();
+        thanhVienBLL = new ThanhVienBLL();
+
         this.m = m;
         initComponent();
         tableThongTinSuDung.setDefaultEditor(Object.class, null);
-//        loadDataTalbe(listtv);
+
+        loadDataTable(listXuLy);
     }
 
     public int getRow() {
         return tableThongTinSuDung.getSelectedRow();
     }
 
-//    public DTO.NhanVienDTO getNhanVien() {
-//        return listnv.get(tableNhanVien.getSelectedRow());
-//    }
-//    public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
-//        listnv = list;
-//        tblModel.setRowCount(0);
-//        for (DTO.NhanVienDTO nhanVien : listnv) {
-//            tblModel.addRow(new Object[]{
-//                nhanVien.getManv(), nhanVien.getHoten(), nhanVien.getGioitinh() == 1 ? "Nam" : "Nữ", nhanVien.getNgaysinh(), nhanVien.getSdt(), nhanVien.getEmail()
-//            });
-//        }
-//    }
+    public void loadDataTable(ArrayList<XuLy> listXuLy) {
+        tblModel.setRowCount(0);
+        for (XuLy xuLy : listXuLy) {
+            ThanhVien thanhVien = thanhVienBLL.getThanhVien(xuLy.getMaTV());
+            String tenThanhVien = thanhVien.getHoTen();
+            String trangThaiXuLy = (xuLy.getTrangThaiXL() == 0) ? "Đã Xử Lý" : "Đang Xử Lý";
+            tblModel.addRow(new Object[]{
+                xuLy.getMaXL(), xuLy.getMaTV(), tenThanhVien, xuLy.getHinhThucXL(), xuLy.getSoTien(), xuLy.getNgayXL(), trangThaiXuLy
+            });
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String btn = e.getActionCommand();
+        switch (btn) {
+            case "THÊM" -> {
+                XuLyDialog xlthem = new XuLyDialog(owner, true, "Thêm xử lý", "create");
+            }
+            case "SỬA" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
+//                }
+            }
+            case "XÓA" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    int input = JOptionPane.showConfirmDialog(null,
+//                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
+//                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+//                    if (input == 0) {
+//                        tvBLL.deleteThanhVien(getThanhVien());
+//                    }
+//                }
+            }
+            case "CHI TIẾT" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
+//                }
+            }
+        }
+        listXuLy = xuLyBLL.LoadXuLy();
+        loadDataTable(listXuLy);
+    }
 }

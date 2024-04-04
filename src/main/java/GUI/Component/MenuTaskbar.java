@@ -9,6 +9,7 @@ import GUI.Panel.ThanhVienPanel;
 import GUI.Panel.ThietBiPanel;
 import GUI.Panel.ThongTinSuDungPanel;
 import GUI.Panel.TrangChu;
+import GUI.Panel.XuLyPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,16 +29,8 @@ public class MenuTaskbar extends JPanel {
     ThanhVienPanel thanhvien;
     ThietBiPanel thietbi;
     ThongTinSuDungPanel thongtinsudung;
-//    QuanLyThuocTinhSP quanLyThuocTinhSP;
-//    KhuVucKho quanLyKho;
-//    PhieuNhap phieuNhap;
-//    PhieuXuat phieuXuat;
-//    KhachHang khachHang;
-//    NhaCungCap nhacungcap;
-//    NhanVien nhanVien;
-//    TaiKhoan taiKhoan;
-//    PhanQuyen phanQuyen;
-//    ThongKe thongKe;
+    XuLyPanel pnXuLy;
+    
     String[][] getSt = {
         {"Trang chủ", "home.svg", "trangchu"},
         {"Thành viên", "product.svg", "thanhvien"},
@@ -68,12 +61,6 @@ public class MenuTaskbar extends JPanel {
         this.setOpaque(true);
         this.setBackground(DefaultColor);
         this.setLayout(new BorderLayout(0, 0));
-
-//        pnlTop = new JPanel();
-//        pnlTop.setPreferredSize(new Dimension(250, 80));
-//        pnlTop.setBackground(DefaultColor);
-//        pnlTop.setLayout(new BorderLayout(0, 0));
-//        this.add(pnlTop, BorderLayout.NORTH);
 
         pnlCenter = new JPanel();
         pnlCenter.setPreferredSize(new Dimension(230, 600));
@@ -119,7 +106,7 @@ public class MenuTaskbar extends JPanel {
             });
         }
 
-        listitem[0].addMouseListener(new MouseAdapter() {
+        listitem[0].addMouseListener(new MouseAdapter() { // nut trang chu
             @Override
             public void mousePressed(MouseEvent evt) {
                 trangChu = new TrangChu();
@@ -127,7 +114,7 @@ public class MenuTaskbar extends JPanel {
             }
         });
 
-        listitem[1].addMouseListener(new MouseAdapter() {
+        listitem[1].addMouseListener(new MouseAdapter() { // nut thanh vien
             @Override
             public void mousePressed(MouseEvent evt) {
                 thanhvien = new ThanhVienPanel(main);
@@ -135,7 +122,7 @@ public class MenuTaskbar extends JPanel {
             }
         });
 
-        listitem[2].addMouseListener(new MouseAdapter() {
+        listitem[2].addMouseListener(new MouseAdapter() { // nut thiet bi
             @Override
             public void mousePressed(MouseEvent evt) {
                 thietbi = new ThietBiPanel(main);
@@ -143,11 +130,19 @@ public class MenuTaskbar extends JPanel {
             }
         });
 
-        listitem[3].addMouseListener(new MouseAdapter() {
+        listitem[3].addMouseListener(new MouseAdapter() { // nut thong tin su dung
             @Override
             public void mousePressed(MouseEvent evt) {
                 thongtinsudung = new ThongTinSuDungPanel(main);
                 main.setPanel(thongtinsudung);
+            }
+        });
+        
+        listitem[4].addMouseListener(new MouseAdapter() { // nut vi pham
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                pnXuLy = new XuLyPanel(main);
+                main.setPanel(pnXuLy);
             }
         });
         pnlCenter.revalidate();

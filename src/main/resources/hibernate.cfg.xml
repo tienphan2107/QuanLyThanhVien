@@ -23,6 +23,8 @@
         <mapping class="hibernatemember.DAL.ThanhVien" />          
         <mapping class="hibernatemember.DAL.ThietBi" />        
         <mapping class="hibernatemember.DAL.ThongTinSuDung" />  
+        <mapping class="hibernatemember.DAL.XuLy" />  
+
         <!--<mapping resource = "Member.hbm.xml"/>  Ánh xạ file CSDL có thể dùng class cũng được-->
     </session-factory>
 </hibernate-configuration>

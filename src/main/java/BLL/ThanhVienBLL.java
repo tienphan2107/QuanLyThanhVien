@@ -4,14 +4,10 @@
  */
 package BLL;
 
-import GUI.Dialog.ThanhVienDialog;
 import hibernatemember.DAL.ThanhVien;
 import hibernatemember.DAL.ThanhVienDAL;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,17 +15,11 @@ import javax.swing.JOptionPane;
  */
 public class ThanhVienBLL{
 
-//    public GUI.Panel.ThanhVienPanel tv;
     private ThanhVienDAL thanhvienDAL;
 
     public ThanhVienBLL() {
         thanhvienDAL = new ThanhVienDAL();
     }
-
-//    public ThanhVienBLL(GUI.Panel.ThanhVienPanel tv) {
-//        this.tv = tv;
-//        thanhvienDAL = new ThanhVienDAL();
-//    }
 
     public ArrayList loadThanhVien() {
         ArrayList list;
