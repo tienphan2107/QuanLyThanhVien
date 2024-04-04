@@ -19,26 +19,26 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "xuly")
-public class ViPham {
+public class XuLy {
     @Id
     private int MaXL;
     @Column
     private int MaTV;
     @Column
     private String HinhThucXL;
-    @Column
-    private int  SoTien;
+    @Column(nullable = true)
+    private Integer SoTien;
     @Column
     private Date NgayXL;
     @Column
     private int TrangThaiXL;
 
-    public ViPham() {
+    public XuLy() {
     }
     
     
 
-    public ViPham(int MaXL, int MaTV, String HinhThucXL, int SoTien, Date NgayXL, int TrangThaiXL) {
+    public XuLy(int MaXL, int MaTV, String HinhThucXL, int SoTien, Date NgayXL, int TrangThaiXL) {
         this.MaXL = MaXL;
         this.MaTV = MaTV;
         this.HinhThucXL = HinhThucXL;
