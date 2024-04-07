@@ -4,8 +4,12 @@
  */
 package BLL;
 
+import POJO.DateRange;
+import POJO.ThongKeKhuHocTap;
 import hibernatemember.DAL.ThongTinSuDung;
 import hibernatemember.DAL.ThongTinSuDungDAL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,5 +41,13 @@ public class ThongTinSuDungBLL {
     {
         ThongTinSuDung c = thongtinsudungDAL.getThongTinSuDung(MaTT);
         return c;
+    }
+    
+    public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {
+        return thongtinsudungDAL.thongKeKhuHocTap(dateRange, groupBy, khoa, nganh);
+    }
+    
+    public Date getMinDate() {
+        return thongtinsudungDAL.getMinDate();
     }
 }
