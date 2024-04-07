@@ -86,6 +86,14 @@ public class ThanhVienBLL{
     public int getAutoIncrement() {
         return thanhvienDAL.getAutoIncrement();
     }
+    
+    public ArrayList<String> getListKhoa(String query) {
+        return thanhvienDAL.getListKhoa(query);
+    }
+    
+    public ArrayList<String> getListNganh(String query) {
+        return thanhvienDAL.getListNganh(query);
+    }
 
 //    @Override
 //    public void actionPerformed(ActionEvent e) {

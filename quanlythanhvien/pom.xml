@@ -5,12 +5,11 @@
     <artifactId>quanlythanhvien</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.10</version>
+            <version>1.18.32</version>
         </dependency>
  
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
@@ -56,6 +55,16 @@
             <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-all</artifactId>
             <version>1.6.5-1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE210</version>
         </dependency>
     </dependencies>
     
