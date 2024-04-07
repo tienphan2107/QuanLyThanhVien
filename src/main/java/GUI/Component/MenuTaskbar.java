@@ -7,6 +7,7 @@ package GUI.Component;
 import GUI.Main;
 import GUI.Panel.ThanhVienPanel;
 import GUI.Panel.ThietBiPanel;
+import GUI.Panel.ThongKePanel;
 import GUI.Panel.ThongTinSuDungPanel;
 import GUI.Panel.TrangChu;
 import GUI.Panel.XuLyPanel;
@@ -30,13 +31,15 @@ public class MenuTaskbar extends JPanel {
     ThietBiPanel thietbi;
     ThongTinSuDungPanel thongtinsudung;
     XuLyPanel pnXuLy;
+    ThongKePanel thongKe;
     
     String[][] getSt = {
         {"Trang chủ", "home.svg", "trangchu"},
         {"Thành viên", "product.svg", "thanhvien"},
         {"Thiết bị", "brand.svg", "thietbi"},
         {"Thông tin sử dụng", "area.svg", "thongtinsd"},
-        {"Xử lý vi phạm", "import.svg", "xuly"},};
+        {"Xử lý vi phạm", "import.svg", "xuly"},
+        {"Thống kê", "statistical.svg", "thongke"}};
 
     Main main;
     public itemTaskbar[] listitem;
@@ -145,6 +148,14 @@ public class MenuTaskbar extends JPanel {
                 main.setPanel(pnXuLy);
             }
         });
+        listitem[5].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                thongKe = new ThongKePanel(main);
+                main.setPanel(thongKe);
+            }
+        });
+        
         pnlCenter.revalidate();
         pnlCenter.repaint();
     }
