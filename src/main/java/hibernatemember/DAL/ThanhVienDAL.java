@@ -5,9 +5,9 @@
 package hibernatemember.DAL;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -86,6 +86,24 @@ public class ThanhVienDAL {
             }
             return newId;
         }
+    }
+
+    public ArrayList<String> getListKhoa(String query) {
+        session.beginTransaction();
+        Query q = session.createNativeQuery("SELECT DISTINCT Khoa FROM thanhvien WHERE Khoa LIKE :khoa");
+        q.setParameter("khoa", "%" + query + "%");
+        ArrayList<String> result = (ArrayList) q.list();
+        session.getTransaction().commit();
+        return result;
+    }
+
+    public ArrayList<String> getListNganh(String query) {
+        session.beginTransaction();
+        Query q = session.createNativeQuery("SELECT DISTINCT Nganh FROM thanhvien WHERE Nganh LIKE :nganh");
+        q.setParameter("nganh", "%" + query + "%");
+        ArrayList<String> result = (ArrayList) q.list();
+        session.getTransaction().commit();
+        return result;
     }
 
 //    public static void main(String args[])
