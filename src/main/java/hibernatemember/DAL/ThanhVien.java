@@ -22,7 +22,6 @@ import lombok.Data;
 public class ThanhVien {
     @Id
     private int MaTV;
-    
     @Column
     private String HoTen;
     @Column

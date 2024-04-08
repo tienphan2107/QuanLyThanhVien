@@ -10,6 +10,7 @@ import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Dialog.ThanhVienDialog;
 import GUI.Main;
+import helper.Validation;
 import hibernatemember.DAL.ThanhVien;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,11 +19,17 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -212,8 +219,71 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                     ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
                 }
             }
+            case "NHẬP EXCEL" -> {
+                importExcel();
+            }
         }
 
         loadDataTable();
+    }
+    
+    public void importExcel() {
+        File excelFile;
+        FileInputStream excelFIS = null;
+        BufferedInputStream excelBIS = null;
+        XSSFWorkbook excelJTableImport = null;
+        JFileChooser jf = new JFileChooser();
+        int result = jf.showOpenDialog(null);
+        jf.setDialogTitle("Open file");
+        Workbook workbook = null;
+        int k = 0;
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                excelFile = jf.getSelectedFile();
+                excelFIS = new FileInputStream(excelFile);
+                excelBIS = new BufferedInputStream(excelFIS);
+                excelJTableImport = new XSSFWorkbook(excelBIS);
+                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+
+                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
+                    int check = 1;
+                    int gt;
+                    XSSFRow excelRow = excelSheet.getRow(row);
+                    int id = NhanVienDAO.getInstance().getAutoIncrement();
+                    String tennv = excelRow.getCell(0).getStringCellValue();
+                    String gioitinh = excelRow.getCell(1).getStringCellValue();
+                    if (gioitinh.equals("Nam") || gioitinh.equals("nam")) {
+                        gt = 1;
+                    } else {
+                        gt = 0;
+                    }
+                    String sdt = excelRow.getCell(3).getStringCellValue();
+                    Date ngaysinh = (Date) excelRow.getCell(2).getDateCellValue();
+                    java.sql.Date birth = new java.sql.Date(ngaysinh.getTime());
+                    String email = excelRow.getCell(4).getStringCellValue();
+                    if (Validation.isEmpty(tennv) || Validation.isEmpty(email)
+                            || !Validation.isEmail(email) || Validation.isEmpty(sdt)
+                            || Validation.isEmpty(sdt) || !isPhoneNumber(sdt)
+                            || sdt.length() != 10 || Validation.isEmpty(gioitinh)) {
+                        check = 0;
+                    }
+                    if (check == 0) {
+                        k += 1;
+                    } else {
+                        NhanVienDTO nvdto = new NhanVienDTO(id, tennv, gt, birth, sdt, 1, email);
+                        NhanVienDAO.getInstance().insert(nvdto);
+                    }
+                    JOptionPane.showMessageDialog(null, "Nhập thành công");
+                }
+
+            } catch (FileNotFoundException ex) {
+                System.out.println("Lỗi đọc file");
+            } catch (IOException ex) {
+                System.out.println("Lỗi đọc file");
+            }
+        }
+        if (k != 0) {
+            JOptionPane.showMessageDialog(null, "Những dữ liệu không chuẩn không được thêm vào");
+        }
     }
 }
