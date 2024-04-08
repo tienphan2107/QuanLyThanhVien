@@ -146,7 +146,7 @@ public class ThongTinSuDungPanel extends JPanel {
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getMaTV(), ttsd.getMaTB(), ttsd.getTGVao(), ttsd.getTGMuon(), ttsd.getTGTra()
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), ttsd.getThietBi().getMaTB(), ttsd.getTGVao(), ttsd.getTGMuon(), ttsd.getTGTra()
             });
         }
     }

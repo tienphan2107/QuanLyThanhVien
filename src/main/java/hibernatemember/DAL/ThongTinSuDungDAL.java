@@ -124,4 +124,28 @@ public class ThongTinSuDungDAL {
         session.getTransaction().commit();
         return minDate;
     }
+    
+    public ArrayList<ThongTinSuDung> getStatTTSD(DateRange dateRange, String device, boolean isTGTraNull) {
+        ArrayList<ThongTinSuDung> list = new ArrayList<>();
+        String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        String toDate = dateRange.getToDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("""
+                            SELECT t 
+                            FROM ThongTinSuDung t 
+                            	JOIN t.thietBi tb
+                            WHERE t.TGMuon BETWEEN DATE(:fromDate) AND DATE(:toDate)
+                            	AND t.TGTra
+                            """);
+        queryBuilder.append(isTGTraNull ? " IS NULL " : " BETWEEN DATE(:fromDate) AND DATE(:toDate) ");
+        queryBuilder.append("AND tb.TenTB LIKE :device ORDER BY t.TGMuon DESC");
+        session.beginTransaction();
+        Query query = session.createQuery(queryBuilder.toString(), ThongTinSuDung.class);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+        query.setParameter("device", "%" + device + "%");
+        list = (ArrayList<ThongTinSuDung>) query.list();
+        session.getTransaction().commit();
+        return list;
+    }
 }
