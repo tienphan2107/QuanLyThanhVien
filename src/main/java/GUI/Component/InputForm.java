@@ -139,7 +139,9 @@ public class InputForm extends JPanel {
     public void setDisable() {
         txtForm.setEnabled(false);
     }
-
+    public void setEnable(){
+        txtForm.setEnabled(true);
+    }
     public void setEditable(boolean value) {
         txtForm.setEditable(value);
     }

@@ -5,6 +5,7 @@
 package GUI.Dialog;
 
 import BLL.ThanhVienBLL;
+import BLL.XuLyBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
@@ -23,7 +24,12 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,15 +48,16 @@ import javax.swing.text.PlainDocument;
  */
 public class XuLyDialog extends JDialog {
 
-    private ThanhVienBLL tvBLL = new ThanhVienBLL();
+    private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
+    private XuLyBLL xuLyBLL = new XuLyBLL();
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
-    private InputForm MaTV, tenTV, soTien;
-    SelectForm hinhthucXL, trangthaiXL;
+    private InputForm txtMaTV, txtTenTV, txtSoTien;
+    SelectForm cbbHinhThucXL, cbbTrangthaiXL;
     private InputDate ipDate;
-
-    String[] arrHinhThucXL = {"Khóa thẻ 1 tháng", "Khóa thẻ 2 tháng", "Bồi thường mất tài sản", "Bồi thường hỏng tài sản"};
+    private XuLy xuLy;
+    private ThanhVien thanhVien;
 
     public XuLyDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
@@ -59,18 +66,23 @@ public class XuLyDialog extends JDialog {
         this.setVisible(true);
     }
 
-//    public XuLyDialog(JFrame owner, boolean modal, String title, String type, ThanhVien thanhVien) {
-//        super(owner, title, modal);
-//        this.thanhVien = thanhVien;
-////        this.tvPanel = this.tvPanel;
-//        init(title, type);
-//        MaTV.setText(thanhVien.getHoTen());
-//        tenTV.setText(String.valueOf(thanhVien.getSDT()));
-//        khoa.setValue(thanhVien.getKhoa());
-//        nganh.setValue(thanhVien.getNganh());
-//        this.setLocationRelativeTo(null);
-//        this.setVisible(true);
-//    }
+    public XuLyDialog(JFrame owner, boolean modal, String title, String type, XuLy xuLy) {
+        super(owner, title, modal);
+        this.xuLy = xuLy;
+        this.thanhVien = thanhVienBLL.getThanhVien(xuLy.getMaTV());
+//        this.tvPanel = this.tvPanel;
+        init(title, type);
+        txtMaTV.setText(xuLy.getMaTV() + "");
+        ipDate.setDate(xuLy.getNgayXL());
+        txtTenTV.setText(thanhVien.getHoTen());
+        cbbTrangthaiXL.setValue(xuLy.getTrangThaiXL() == 0 ? "Đã xử lý" : "Đang xử lý");
+        cbbHinhThucXL.setValue(xuLy.getHinhThucXL());
+        txtSoTien.setText(xuLy.getSoTien() + "");
+
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
     public interface ThanhVienPanelCallback {
 
         void loadDataTableCallback();
@@ -85,33 +97,22 @@ public class XuLyDialog extends JDialog {
         main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBackground(Color.white);
-        MaTV = new InputForm("Mã thành viên");
-        tenTV = new InputForm("Tên thành viên");
-        soTien = new InputForm("Số tiền");
+        txtMaTV = new InputForm("Mã thành viên");
+        txtTenTV = new InputForm("Tên thành viên");
+        txtSoTien = new InputForm("Số tiền");
+        txtSoTien.setText("0");
 
-//        arrHinhThucXL = tvBLL.getArrTenKhoa();
-        hinhthucXL = new SelectForm("Hình thức xử lý", arrHinhThucXL);
+        ArrayList<String> ListHinhThucXL = xuLyBLL.getHinhThucXuLy();
+        String[] arrHinhThucXL = ListHinhThucXL.toArray(new String[ListHinhThucXL.size()]);
+        cbbHinhThucXL = new SelectForm("Hình thức xử lý", arrHinhThucXL);
 
-//        sdt = new InputForm("Số điện thoại");
-//        PlainDocument phonex = (PlainDocument) sdt.getTxtForm().getDocument();
-//        phonex.setDocumentFilter((new NumericDocumentFilter()));
-//        email = new InputForm("Email");
-//        male = new JRadioButton("Nam");
-//        female = new JRadioButton("Nữ");
-//        gender = new ButtonGroup();
-//        gender.add(male);
-//        gender.add(female);
+        String[] arrTrangThaiXuLy = {"Đã xử lý", "Đang xử lý"};
+        cbbTrangthaiXL = new SelectForm("Trạng thái xử lý", arrTrangThaiXuLy);
+
         JPanel jpanelG = new JPanel(new GridLayout(2, 1, 0, 2));
         jpanelG.setBackground(Color.white);
         jpanelG.setBorder(new EmptyBorder(10, 10, 10, 10));
-//        JPanel jgender = new JPanel(new GridLayout(1, 2));
-//        jgender.setSize(new Dimension(500, 80));
-//        jgender.setBackground(Color.white);
-//        jgender.add(male);
-//        jgender.add(female);
-//        JLabel labelGender = new JLabel("Giới tính");
-//        jpanelG.add(labelGender);
-//        jpanelG.add(jgender);
+
         JPanel jpaneljd = new JPanel();
         jpaneljd.setBorder(new EmptyBorder(10, 10, 10, 10));
         JLabel lbBd = new JLabel("Ngày xử lý");
@@ -119,20 +120,25 @@ public class XuLyDialog extends JDialog {
         jpaneljd.setSize(new Dimension(500, 100));
         jpaneljd.setLayout(new FlowLayout(FlowLayout.LEFT));
         jpaneljd.setBackground(Color.white);
+
         ipDate = new InputDate("Ngày Xử Lý");
         ipDate.setSize(new Dimension(100, 100));
+        Date currentDate = new Date(System.currentTimeMillis());
+        ipDate.setDate(currentDate);
         jpaneljd.add(lbBd);
         jpaneljd.add(ipDate);
-        main.add(MaTV);
-        main.add(tenTV);
-        main.add(hinhthucXL);
-        main.add(soTien);
+
+        main.add(txtMaTV);
+        main.add(txtTenTV);
+        main.add(cbbHinhThucXL);
+        main.add(txtSoTien);
         main.add(ipDate);
+        main.add(cbbTrangthaiXL);
 
         bottom = new JPanel(new FlowLayout());
         bottom.setBorder(new EmptyBorder(10, 0, 10, 0));
         bottom.setBackground(Color.white);
-        btnAdd = new ButtonCustom("Thêm thành viên", "success", 14);
+        btnAdd = new ButtonCustom("Thêm", "success", 14);
         btnEdit = new ButtonCustom("Lưu thông tin", "success", 14);
         btnExit = new ButtonCustom("Hủy bỏ", "danger", 14);
         btnExit.addActionListener(new ActionListener() {
@@ -142,65 +148,117 @@ public class XuLyDialog extends JDialog {
             }
         });
 
-//        btnAdd.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    if (ValidationInput()) {
-//
-//                        int manv = tvBLL.getAutoIncrement();
-//                        String txtName = name.getText();
-//                        int txtSdt = Integer.parseInt(sdt.getText());
-//                        String txtKhoa = (String) khoa.getSelectedItem();
-//                        String txtNganh = (String) nganh.getSelectedItem();
-//                        XuLy xL = new XuLy(manv, txtName, txtKhoa, txtNganh, txtSdt);
-//                        tvBLL.newThanhVien(xL);
-//                        dispose();
-//                    }
-//                } catch (ParseException ex) {
-//                    Logger.getLogger(XuLyDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int maXuLy = xuLyBLL.getMaXuLyAutoIncreasement();
+                    String strMaThanhVien = txtMaTV.getText().trim();
+                    String strSoTien = txtSoTien.getText().trim();
+                    Date ngay = ipDate.getDate();
+                    String hinhThucXuLy = cbbHinhThucXL.getValue();
+                    int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // dang xu ly
+                    String checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    if (!checkMessage.isEmpty()) {
+                        JOptionPane.showConfirmDialog(rootPane, checkMessage);
+                        return;
+                    }
 
-//        btnEdit.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    if (ValidationInput()) {
-//                        int manv = tvBLL.getAutoIncrement();
-//                        String txtName = name.getText();
-//                        int txtSdt = Integer.parseInt(sdt.getText());
-//                        String txtKhoa = (String) khoa.getSelectedItem();
-//                        String txtNganh = (String) nganh.getSelectedItem();
-//                        ThanhVien tV = new ThanhVien(thanhVien.getMaTV(), txtName, txtKhoa, txtNganh, txtSdt);
-//                        tvBLL.updateThanhVien(tV);
-//                        dispose();
-//                    }
-//                } catch (ParseException ex) {
-//                    Logger.getLogger(XuLyDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
+                    int maThanhVien = Integer.parseInt(strMaThanhVien);
+                    int soTien = Integer.parseInt(strSoTien);
+
+                    XuLy xuLy = new XuLy(maXuLy, maThanhVien, hinhThucXuLy, soTien, new java.sql.Date(ngay.getTime()), trangThaiXuLy);
+
+                    if (xuLyBLL.AddXuLy(xuLy)) {
+                        JOptionPane.showConfirmDialog(rootPane, "Thành công !");
+                    } else {
+                        JOptionPane.showConfirmDialog(rootPane, "Thất bại !");
+                    }
+                    dispose();
+                } catch (ParseException ex) {
+                    Logger.getLogger(XuLyDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        cbbHinhThucXL.getCbb().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (!cbbHinhThucXL.getValue().contains("ồi thường")) {
+                        txtSoTien.setDisable();
+                    } else {
+                        txtSoTien.setEnable();
+                        txtSoTien.setText("0");
+                    }
+                }
+            }
+        });
+
+        txtMaTV.getTxtForm().addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                return;
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                try {
+                    int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
+                    ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
+                    if (thanhVien != null) {
+                        txtTenTV.setText(thanhVien.getHoTen());
+                    } else {
+                        txtTenTV.setText("Không tìm thấy thành viên có mã này !");
+                    }
+                } catch (Exception ex) {
+                    txtTenTV.setText("Không tìm thấy thành viên có mã này !");
+                }
+            }
+        });
+
+        btnEdit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int maXuLy = xuLy.getMaXL();
+                    String strMaThanhVien = txtMaTV.getText().trim();
+                    String strSoTien = txtSoTien.getText().trim();
+                    Date ngay = ipDate.getDate();
+                    String hinhThucXuLy = cbbHinhThucXL.getValue();
+                    int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // dang xu ly
+                    String checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    if (!checkMessage.isEmpty()) {
+                        JOptionPane.showConfirmDialog(rootPane, checkMessage);
+                        return;
+                    }
+
+                    int maThanhVien = Integer.parseInt(strMaThanhVien);
+                    int soTien = Integer.parseInt(strSoTien);
+
+                    XuLy xuLy = new XuLy(maXuLy, maThanhVien, hinhThucXuLy, soTien, new java.sql.Date(ngay.getTime()), trangThaiXuLy);
+
+                    if (xuLyBLL.UpdateXuLy(xuLy)) {
+                        JOptionPane.showConfirmDialog(rootPane, "Thành công !");
+                    } else {
+                        JOptionPane.showConfirmDialog(rootPane, "Thất bại !");
+                    }
+                    dispose();
+                } catch (ParseException ex) {
+                    Logger.getLogger(XuLyDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
         switch (type) {
             case "create" -> {
-                tenTV.setDisable();
+                txtTenTV.setDisable();
                 ipDate.setDisable();
                 bottom.add(btnAdd);
-            }    
-            case "update" ->
+            }
+            case "update" -> {
                 bottom.add(btnEdit);
-            case "detail" -> {
-//                name.setDisable();
-//                sdt.setDisable();
-//                khoa.setDisable();
-//                nganh.setDisable();
-//                email.setDisable();
-//                Enumeration<AbstractButton> enumeration = gender.getElements();
-//                while (enumeration.hasMoreElements()) {
-//                    enumeration.nextElement().setEnabled(false);
-//                }
-//                jcBd.setDisable();
+                txtTenTV.setDisable();
+                ipDate.setDisable();
             }
             default ->
                 throw new AssertionError();
@@ -215,30 +273,4 @@ public class XuLyDialog extends JDialog {
         this.add(bottom, BorderLayout.SOUTH);
 
     }
-
-//    boolean ValidationInput() throws ParseException {
-//        if (Validation.isEmpty(name.getText())) {
-//            JOptionPane.showMessageDialog(this, "Tên thành viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        } else if (name.getText().length() < 6) {
-//            JOptionPane.showMessageDialog(this, "Tên thành viên ít nhất 6 kí tự!");
-//            return false;
-//        } //        else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
-//        //            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-//        //            return false;
-//        //        }
-//        else if (Validation.isEmpty(sdt.getText()) && !Validation.isNumber(sdt.getText()) && sdt.getText().length() != 10) {
-//            JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }
-////        else if(jcBd.getDate()==null){
-////            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh!");
-////            return false;
-////        } else if(!male.isSelected() && !female.isSelected()){
-////            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!");
-////            return false;
-////        }
-//
-//        return true;
-//    }
 }

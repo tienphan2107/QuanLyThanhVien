@@ -6,6 +6,8 @@ package GUI.Component;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -16,7 +18,7 @@ import javax.swing.border.EmptyBorder;
  *
  * @author DELL
  */
-public class SelectForm extends JPanel {
+public class SelectForm extends JPanel implements ActionListener{
     private JLabel lblTitle;
     public JComboBox cbb;
     
@@ -78,5 +80,9 @@ public class SelectForm extends JPanel {
     
     public void setDisable(){
         cbb.setEnabled(false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
     }
 }
