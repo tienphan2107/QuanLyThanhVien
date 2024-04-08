@@ -4,6 +4,7 @@
  */
 package GUI.Component;
 
+import com.formdev.flatlaf.extras.components.FlatRadioButton;
 import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -19,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 public class SelectForm extends JPanel {
     private JLabel lblTitle;
     public JComboBox cbb;
+    private FlatRadioButton frb;
     
     public SelectForm(String title, String[] obj) {
         this.setLayout(new GridLayout(2, 1));
@@ -29,6 +31,18 @@ public class SelectForm extends JPanel {
         cbb = new JComboBox(obj);
         
         this.add(lblTitle);
+        this.add(cbb);
+    }
+    
+    public SelectForm(FlatRadioButton frb, String[] obj) {
+        this.setLayout(new GridLayout(2, 1));
+        this.setBackground(Color.white);
+        this.setBorder(new EmptyBorder(0, 10, 5, 10));
+
+        this.frb = frb;
+        cbb = new JComboBox(obj);
+
+        this.add(this.frb);
         this.add(cbb);
     }
     
@@ -78,5 +92,9 @@ public class SelectForm extends JPanel {
     
     public void setDisable(){
         cbb.setEnabled(false);
+    }
+    
+    public void setEnable(){
+        cbb.setEnabled(true);
     }
 }
