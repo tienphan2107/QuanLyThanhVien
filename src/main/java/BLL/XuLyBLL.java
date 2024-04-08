@@ -6,6 +6,7 @@ package BLL;
 
 import hibernatemember.DAL.XuLy;
 import hibernatemember.DAL.XuLyDAL;
+import java.util.Date;
 import java.util.ArrayList;
 
 /**
@@ -13,29 +14,61 @@ import java.util.ArrayList;
  * @author Acer
  */
 public class XuLyBLL {
+
     XuLyDAL xuLyDAL;
-    
-    public XuLyBLL(){
+    ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
+
+    public XuLyBLL() {
         xuLyDAL = new XuLyDAL();
     }
     
-    public ArrayList<XuLy> LoadXuLy(){
+    public int getMaXuLyAutoIncreasement(){
+        return xuLyDAL.loadXuLy().size() + 1;
+    }
+    
+    public ArrayList<String> getHinhThucXuLy() {
+        return xuLyDAL.getHinhThucXuLy();
+    }
+
+    public ArrayList<XuLy> LoadXuLy() {
         return xuLyDAL.loadXuLy();
     }
-    
-    public XuLy GetXuLy(int xuLyID){
+
+    public XuLy GetXuLy(int xuLyID) {
         return xuLyDAL.getXuLy(xuLyID);
     }
-    
-    public boolean AddXuLy(XuLy xuLy){
+
+    public boolean AddXuLy(XuLy xuLy) {
         return xuLyDAL.addXuLy(xuLy);
     }
-    
-    public boolean UpdateXuLy(XuLy xuLy){
+
+    public boolean UpdateXuLy(XuLy xuLy) {
         return xuLyDAL.updateXuLy(xuLy);
     }
-    
-    public boolean DeleteXuLy(XuLy xuLy){
+
+    public boolean DeleteXuLy(XuLy xuLy) {
         return xuLyDAL.deleteXuLy(xuLy);
+    }
+
+    public String CheckValue(String strMaThanhVien, String strSoTien) {
+        int maThanhVien = 0;
+        int soTien = 0;
+        String result = "";
+        java.util.Date currentDate = new java.util.Date(System.currentTimeMillis());
+
+        try {
+            maThanhVien = Integer.parseInt(strMaThanhVien);
+            soTien = Integer.parseInt(strSoTien);
+        } catch (Exception e) {
+            return "Mã thành viên và số tiền là số ! Vui lòng nhập lại";
+        }
+        if (thanhVienBLL.getThanhVien(maThanhVien) == null) {
+            result += "\nKhông tìm thấy thành viên";
+        }
+        if (soTien < 500 || soTien > 100000000) {
+            result += "\n Số tiền không hợp lệ (phải từ 500 VND đến 100 000 000 VND (100 triệu))";
+        }
+
+        return result;
     }
 }

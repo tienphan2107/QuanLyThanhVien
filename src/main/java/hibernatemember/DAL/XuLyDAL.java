@@ -5,6 +5,7 @@
 package hibernatemember.DAL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -21,14 +22,25 @@ public class XuLyDAL {
         session = HibernateUtils.getSessionFactory().openSession();
     }
 
+    public ArrayList getHinhThucXuLy() {
+        ArrayList<String> arrHinhThucXL = new ArrayList<>(Arrays.asList(
+                "Khóa thẻ 1 tháng",
+                "Khóa thẻ 2 tháng",
+                "Khóa thẻ vĩnh viễn",
+                "Bồi thường",
+                "Khóa thẻ 3 tháng và bồi thường"
+        ));
+        return arrHinhThucXL;
+    }
+
     public ArrayList loadXuLy() {
         ArrayList<XuLy> listXuLy = new ArrayList<>();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
             listXuLy = (ArrayList<XuLy>) session.createQuery("FROM XuLy").list();
-            for (XuLy xuLy : listXuLy){
-                if(xuLy.getSoTien() == null){
+            for (XuLy xuLy : listXuLy) {
+                if (xuLy.getSoTien() == null) {
                     xuLy.setSoTien(0);
                 }
             }
