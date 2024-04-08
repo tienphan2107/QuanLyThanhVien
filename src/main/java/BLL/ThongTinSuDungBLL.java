@@ -50,4 +50,8 @@ public class ThongTinSuDungBLL {
     public Date getMinDate() {
         return thongtinsudungDAL.getMinDate();
     }
+    
+    public ArrayList<ThongTinSuDung> getStatTTSD(DateRange dateRange, String device, boolean isTGTraNull) {
+        return thongtinsudungDAL.getStatTTSD(dateRange, device, isTGTraNull);
+    }
 }

@@ -16,7 +16,7 @@ public class ThongKePanel extends JPanel {
     private final ThanhVienBLL tvBLL = new ThanhVienBLL();
     private final ThongTinSuDungBLL ttsdBLL = new ThongTinSuDungBLL();
     private JTabbedPane tabbedPane;
-    private JPanel tkKhuHocTap;
+    private JPanel tkKhuHocTap, tkThietBi;
     private String[] comboboxDateValues;
 
     public ThongKePanel(Main main) {
@@ -30,10 +30,12 @@ public class ThongKePanel extends JPanel {
         this.setBackground(backgroundColor);
 
         this.tkKhuHocTap = new ThongKeKhuHocTapPanel(this.tvBLL, this.ttsdBLL, this.comboboxDateValues);
+        this.tkThietBi = new ThongKeThietBiPanel(this.ttsdBLL, this.comboboxDateValues);
 
         this.tabbedPane = new JTabbedPane();
         this.tabbedPane.setOpaque(false);
         this.tabbedPane.addTab("Khu học tập", this.tkKhuHocTap);
+        this.tabbedPane.addTab("Thiết bị", this.tkThietBi);
 
         this.add(tabbedPane);
     }
