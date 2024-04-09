@@ -4,6 +4,7 @@
  */
 package BLL;
 
+import POJO.DateRange;
 import hibernatemember.DAL.XuLy;
 import hibernatemember.DAL.XuLyDAL;
 import java.util.Date;
@@ -69,6 +70,18 @@ public class XuLyBLL {
             result += "\n Số tiền không hợp lệ (phải từ 500 VND đến 100 000 000 VND (100 triệu))";
         }
 
+        return result;
+    }
+    
+    public ArrayList<XuLy> getStatXuLy(int state, DateRange dateRange, String memberName) {
+        return xuLyDAL.getStatXuLy(state, dateRange, memberName);
+    }
+    
+    public Long tongTienBoiThuong(ArrayList<XuLy> list) {
+        Long result = 0l;
+        for (XuLy i : list) {
+            result += Long.parseLong(i.getSoTien().toString());
+        }
         return result;
     }
 }

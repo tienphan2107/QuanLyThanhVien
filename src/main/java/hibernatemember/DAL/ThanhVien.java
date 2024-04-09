@@ -37,6 +37,8 @@ public class ThanhVien {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
     private List<ThongTinSuDung> thongTinSuDung;
     
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
+    private List<XuLy> xuLy;
     
     public ThanhVien() {}
 

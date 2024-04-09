@@ -119,7 +119,7 @@ public class ThongTinSuDungDAL {
 
     public Date getMinDate() {
         session.beginTransaction();
-        Query query = session.createNativeQuery("SELECT DATE(LEAST(MIN(TGVao), MIN(TGMuon))) AS min_date FROM thongtinsd");
+        Query query = session.createNativeQuery("SELECT DATE(LEAST(MIN(TGVao), MIN(TGMuon), MIN(NgayXL))) AS min_date FROM thongtinsd, xuly");
         Date minDate = (Date) query.uniqueResult();
         session.getTransaction().commit();
         return minDate;

@@ -153,11 +153,11 @@ public class XuLyPanel extends JPanel implements ActionListener {
     public void loadDataTable(ArrayList<XuLy> listXuLy) {
         tblModel.setRowCount(0);
         for (XuLy xuLy : listXuLy) {
-            ThanhVien thanhVien = thanhVienBLL.getThanhVien(xuLy.getMaTV());
+            ThanhVien thanhVien = thanhVienBLL.getThanhVien(xuLy.getThanhVien().getMaTV());
             String tenThanhVien = thanhVien.getHoTen();
             String trangThaiXuLy = (xuLy.getTrangThaiXL() == 0) ? "Đã Xử Lý" : "Đang Xử Lý";
             tblModel.addRow(new Object[]{
-                xuLy.getMaXL(), xuLy.getMaTV(), tenThanhVien, xuLy.getHinhThucXL(), xuLy.getSoTien(), xuLy.getNgayXL(), trangThaiXuLy
+                xuLy.getMaXL(), xuLy.getThanhVien().getMaTV(), tenThanhVien, xuLy.getHinhThucXL(), xuLy.getSoTien(), xuLy.getNgayXL(), trangThaiXuLy
             });
         }
     }

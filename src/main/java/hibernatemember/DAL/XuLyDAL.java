@@ -4,11 +4,14 @@
  */
 package hibernatemember.DAL;
 
+import POJO.DateRange;
+import helper.DateHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -19,7 +22,7 @@ public class XuLyDAL {
     Session session;
 
     public XuLyDAL() {
-//        session = HibernateUtils.getSessionFactory().openSession();
+        session = HibernateUtils.getSessionFactory().openSession();
     }
 
     public ArrayList getHinhThucXuLy() {
@@ -126,5 +129,28 @@ public class XuLyDAL {
         }finally{
             session.close();
         }
+    }
+    
+    public ArrayList<XuLy> getStatXuLy(int state, DateRange dateRange, String memberName) {
+        ArrayList<XuLy> list = new ArrayList<>();
+        String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        String toDate = dateRange.getToDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("""
+                            SELECT x
+                            FROM XuLy x
+                                JOIN x.thanhVien tv
+                            WHERE TrangThaiXL = :state AND NgayXL BETWEEN DATE(:fromDate) AND DATE(:toDate) AND HoTen LIKE :memberName
+                            ORDER BY NgayXL DESC
+                            """);
+        session.beginTransaction();
+        Query query = session.createQuery(queryBuilder.toString(), XuLy.class);
+        query.setParameter("state", state);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+        query.setParameter("memberName", "%" + memberName + "%");
+        list = (ArrayList<XuLy>) query.list();
+        session.getTransaction().commit();
+        return list;
     }
 }

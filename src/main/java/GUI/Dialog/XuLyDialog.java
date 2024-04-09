@@ -69,10 +69,10 @@ public class XuLyDialog extends JDialog {
     public XuLyDialog(JFrame owner, boolean modal, String title, String type, XuLy xuLy) {
         super(owner, title, modal);
         this.xuLy = xuLy;
-        this.thanhVien = thanhVienBLL.getThanhVien(xuLy.getMaTV());
+        this.thanhVien = thanhVienBLL.getThanhVien(xuLy.getThanhVien().getMaTV());
 //        this.tvPanel = this.tvPanel;
         init(title, type);
-        txtMaTV.setText(xuLy.getMaTV() + "");
+        txtMaTV.setText(xuLy.getThanhVien().getMaTV() + "");
         ipDate.setDate(xuLy.getNgayXL());
         txtTenTV.setText(thanhVien.getHoTen());
         cbbTrangthaiXL.setValue(xuLy.getTrangThaiXL() == 0 ? "Đã xử lý" : "Đang xử lý");
