@@ -78,6 +78,10 @@ public class XuLyDialog extends JDialog {
         cbbTrangthaiXL.setValue(xuLy.getTrangThaiXL() == 0 ? "Đã xử lý" : "Đang xử lý");
         cbbHinhThucXL.setValue(xuLy.getHinhThucXL());
         txtSoTien.setText(xuLy.getSoTien() + "");
+        
+        if(!xuLy.getHinhThucXL().contains("ồi thường")){
+            txtSoTien.setDisable();
+        }
 
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -157,8 +161,13 @@ public class XuLyDialog extends JDialog {
                     String strSoTien = txtSoTien.getText().trim();
                     Date ngay = ipDate.getDate();
                     String hinhThucXuLy = cbbHinhThucXL.getValue();
-                    int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // dang xu ly
-                    String checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // da xu ly
+                    String checkMessage;
+                    if (hinhThucXuLy.contains("ồi thường")) {
+                        checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    } else {
+                        checkMessage = xuLyBLL.CheckValue(strMaThanhVien, "1000");
+                    }
                     if (!checkMessage.isEmpty()) {
                         JOptionPane.showConfirmDialog(rootPane, checkMessage);
                         return;
@@ -271,6 +280,7 @@ public class XuLyDialog extends JDialog {
         this.add(main, BorderLayout.CENTER);
 
         this.add(bottom, BorderLayout.SOUTH);
+        cbbHinhThucXL.actionPerformed(null);
 
     }
 }

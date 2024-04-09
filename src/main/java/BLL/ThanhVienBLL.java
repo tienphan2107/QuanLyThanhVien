@@ -73,8 +73,8 @@ public class ThanhVienBLL{
         return c;
     }
 
-    public int getAutoIncrement() {
-        return thanhvienDAL.getAutoIncrement();
+    public String createMaTV() {
+        return thanhvienDAL.createMaTV();
     }
     
     public ArrayList<String> getListKhoa(String query) {

@@ -19,7 +19,7 @@ public class XuLyDAL {
     Session session;
 
     public XuLyDAL() {
-        session = HibernateUtils.getSessionFactory().openSession();
+//        session = HibernateUtils.getSessionFactory().openSession();
     }
 
     public ArrayList getHinhThucXuLy() {
@@ -34,6 +34,7 @@ public class XuLyDAL {
     }
 
     public ArrayList loadXuLy() {
+        session = HibernateUtils.getSessionFactory().openSession();
         ArrayList<XuLy> listXuLy = new ArrayList<>();
         Transaction tx = null;
         try {
@@ -51,18 +52,25 @@ public class XuLyDAL {
             }
             System.out.print("Lỗi khi tải dữ liệu vi phạm: ");
             e.printStackTrace();
+        } finally {
+            session.close();
         }
         return listXuLy;
     }
 
     public XuLy getXuLy(int xuLyID) {
+        session.beginTransaction();
         XuLy xuLy = session.get(XuLy.class, xuLyID);
+        session.close();
         return xuLy;
+
     }
 
     public boolean addXuLy(XuLy xuLy) {
         Transaction tx = null;
         try {
+            session = HibernateUtils.getSessionFactory().openSession();
+
             tx = session.beginTransaction();
             session.save(xuLy);
             tx.commit();
@@ -74,12 +82,16 @@ public class XuLyDAL {
             System.out.print("Lỗi khi thêm vi phạm: ");
             e.printStackTrace();
             return false;
+        } finally {
+            session.close();
         }
     }
 
     public boolean updateXuLy(XuLy xuLy) {
         Transaction tx = null;
         try {
+            session = HibernateUtils.getSessionFactory().openSession();
+
             tx = session.beginTransaction();
             session.merge(xuLy);
             tx.commit();
@@ -91,12 +103,15 @@ public class XuLyDAL {
             System.out.print("Lỗi khi cập nhật vi phạm: ");
             e.printStackTrace();
             return false;
+        } finally {
+            session.close();
         }
     }
 
     public boolean deleteXuLy(XuLy xuLy) {
         Transaction tx = null;
         try {
+            session = HibernateUtils.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.delete(xuLy);
             tx.commit();
@@ -108,6 +123,8 @@ public class XuLyDAL {
             System.out.print("Lỗi khi xóa vi phạm: ");
             e.printStackTrace();
             return false;
+        }finally{
+            session.close();
         }
     }
 }

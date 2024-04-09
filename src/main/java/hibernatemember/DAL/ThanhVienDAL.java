@@ -5,6 +5,9 @@
 package hibernatemember.DAL;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
+import static org.apache.commons.math3.geometry.VectorFormat.DEFAULT_PREFIX;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -22,6 +25,7 @@ public class ThanhVienDAL {
     }
 
     public ArrayList loadThanhVien() {
+        session = HibernateUtils.getSessionFactory().openSession();
         ArrayList<ThanhVien> thanhvien;
         session.beginTransaction();
         thanhvien = (ArrayList) session.createQuery("FROM ThanhVien", ThanhVien.class).list();
@@ -85,6 +89,51 @@ public class ThanhVienDAL {
                 newId++;
             }
             return newId;
+        }
+    }
+
+    public String createMaTV() {
+        // Lấy số cuối của năm hiện tại
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR) % 100;
+
+        // Tạo random từ 1 đến 55
+        Random random = new Random();
+        int randomNum = random.nextInt(55) + 1;
+
+        // Lấy số lớn nhất có 6 số đầu từ cơ sở dữ liệu
+        String soDau = "11" + currentYear + randomNum;
+        int maxSequenceNumber = getMaxSequenceNumber(soDau);
+
+        // Tạo mã thành viên
+        String maTV;
+        if (maxSequenceNumber != 0) {
+            // Tăng dần 4 số cuối lên
+            int nextSequenceNumber = maxSequenceNumber + 1;
+            maTV = nextSequenceNumber + "";
+        } else {
+            // Tạo 6 số đầu theo quy chuẩn và bắt đầu 4 số cuối là 0001
+            maTV = String.format("%02d%02d%02d%04d", 11, currentYear, randomNum, 0001);
+        }
+
+        return maTV;
+    }
+
+    private int getMaxSequenceNumber(String sauSoDau) {
+        Session session = HibernateUtils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            Query query = session.createQuery(
+                    "SELECT MAX(MaTV) FROM ThanhVien "
+                    + "WHERE MaTV LIKE :pattern"
+            );
+            int pattern = Integer.parseInt(sauSoDau);
+            query.setParameter("pattern", pattern);
+            Integer maxMaTV = (Integer) query.uniqueResult();
+            session.getTransaction().commit();
+            return maxMaTV != null ? maxMaTV : 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 

@@ -17,41 +17,44 @@ import org.hibernate.service.ServiceRegistry;
  * @author DELL
  */
 public class HibernateUtils {
+
     private static final SessionFactory sessionFactory = buildSessionFactory();
-    
+
     private static SessionFactory buildSessionFactory() {
-        
+
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder() //
                 .configure() // Load hibernate.cfg.xml from resource folder by default
                 .build();
         Metadata metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
         return metadata.getSessionFactoryBuilder().build();
-    
+
     }
-   
+
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
- 
+
+    public static void open() {
+        getSessionFactory().openSession();
+    }
+
     public static void close() {
         getSessionFactory().close();
     }
-    
+
     public static void main(String[] args) {
         // TODO code application logic here
         try (Session session = HibernateUtils.getSessionFactory().openSession();) {
             // Begin a unit of work
             session.beginTransaction();
             List<ThanhVien> thanhvien = session.createQuery("FROM ThanhVien", ThanhVien.class).list();
-            
+
             //xem danh sách
             thanhvien.forEach(System.out::println);
-            
+
             //thêm mới
-            
             session.getTransaction().commit();
         }
-        
-        
+
     }
 }

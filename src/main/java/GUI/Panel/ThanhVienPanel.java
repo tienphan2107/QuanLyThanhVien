@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -112,6 +113,12 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Khoa", "Ngành"});
         functionBar.add(search);
+        search.getBtnReset().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDataTable();
+            }
+        });
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));

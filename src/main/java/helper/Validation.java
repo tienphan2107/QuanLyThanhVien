@@ -40,4 +40,35 @@ public class Validation {
         }
         return result;
     }
+    
+    public static boolean checkPhone(String num) {
+        // Kiểm tra xem chuỗi num có đúng định dạng số điện thoại Việt Nam hay không
+    // Mẫu số điện thoại Việt Nam có thể được biểu diễn bằng một biểu thức chính quy
+    // Ví dụ: 0987654321, +84987654321, 84-987654321, 0084987654321
+    // Bạn có thể điều chỉnh biểu thức chính quy tùy theo yêu cầu cụ thể
+
+    // Loại bỏ các ký tự không phải là chữ số trong chuỗi số điện thoại
+    String digitsOnly = num.replaceAll("[^0-9]", "");
+
+    // Kiểm tra xem chuỗi số điện thoại đã chỉ chứa chữ số hay chưa
+    if (!digitsOnly.equals(num)) {
+        return false;
+    }
+
+    // Kiểm tra độ dài của chuỗi số điện thoại
+    if (digitsOnly.length() != 10) {
+        return false;
+    }
+
+    // Kiểm tra xem chuỗi số điện thoại có bắt đầu bằng 0 hoặc +84 không
+    if (!digitsOnly.startsWith("0")) {
+        return false;
+    }
+
+    // Kiểm tra xem chuỗi số điện thoại có đúng định dạng hay không
+    // Sử dụng biểu thức chính quy để so khớp với mẫu số điện thoại
+    // Ví dụ: ^0\d{9}$ hoặc ^84\d{9}$
+    String regex = "^0\\d{9}$";
+    return digitsOnly.matches(regex);
+    }
 }
