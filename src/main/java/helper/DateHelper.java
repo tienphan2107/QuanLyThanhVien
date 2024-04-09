@@ -24,6 +24,10 @@ public class DateHelper {
     public static final String SQL_QUERY_YEAR_FORMAT = "%Y";
 
     public static LocalDateTime convertDateObjToLDT(Date date) {
+        if (date == null) {
+            return null;
+        }
+
         if (date instanceof java.sql.Date) {
             return ((java.sql.Date) date).toLocalDate().atStartOfDay();
         } else {

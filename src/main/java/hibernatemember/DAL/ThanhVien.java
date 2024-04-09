@@ -4,11 +4,14 @@
  */
 package hibernatemember.DAL;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -30,6 +33,10 @@ public class ThanhVien {
     private String Nganh;
     @Column
     private int SDT; 
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
+    private List<ThongTinSuDung> thongTinSuDung;
+    
     
     public ThanhVien() {}
 
