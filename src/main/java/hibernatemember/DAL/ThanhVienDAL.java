@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 import static org.apache.commons.math3.geometry.VectorFormat.DEFAULT_PREFIX;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -26,11 +27,22 @@ public class ThanhVienDAL {
 
     public ArrayList loadThanhVien() {
         session = HibernateUtils.getSessionFactory().openSession();
-        ArrayList<ThanhVien> thanhvien;
-        session.beginTransaction();
-        thanhvien = (ArrayList) session.createQuery("FROM ThanhVien", ThanhVien.class).list();
-        session.getTransaction().commit();
-        return thanhvien;
+        ArrayList<ThanhVien> listThanhvien = new ArrayList<>();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            listThanhvien = (ArrayList) session.createQuery("FROM ThanhVien", ThanhVien.class).list();
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi tải danh sách thành viên: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return listThanhvien;
     }
 
     public ThanhVien getThanhVien(int thanhvienID) {
@@ -38,57 +50,65 @@ public class ThanhVienDAL {
         return c;
     }
 
-    public void addThanhVien(ThanhVien c) {
-        Transaction tx = session.beginTransaction();
-        session.save(c);
-        tx.commit();
-    }
+    public boolean addThanhVien(ThanhVien c) {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
 
-    public void updateThanhVien(ThanhVien c) {
-        Transaction tx = session.beginTransaction();
-        session.merge(c);
-        tx.commit();
-    }
-
-    public void deleteThanhVien(ThanhVien c) {
-        Transaction tx = session.beginTransaction();
-        session.delete(c);
-        tx.commit();
-
-    }
-
-    public int getAutoIncrement() {
-        Number maxIdResult = (Number) session.createQuery("SELECT MAX(id) FROM ThanhVien").uniqueResult();
-        int maxId = (maxIdResult != null) ? maxIdResult.intValue() : 0;
-
-        // Kiểm tra xem mã thành viên lớn nhất đã vượt quá giới hạn int hay không
-        if (maxId >= Integer.MAX_VALUE) {
-            // Nếu đã vượt quá, quay lại kiểm tra từ mã 1 đến khi không còn trùng lặp
-            int newId = 1;
-            while (true) {
-                Number countResult = (Number) session.createQuery("SELECT COUNT(*) FROM ThanhVien WHERE id = :newId")
-                        .setParameter("newId", newId)
-                        .uniqueResult();
-                if (countResult != null && countResult.intValue() == 0) {
-                    break; // Không còn trùng lặp, thoát vòng lặp
-                }
-                newId++;
+            tx = session.beginTransaction();
+            session.save(c);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
             }
-            return newId;
-        } else {
-            // Nếu chưa vượt quá, tiếp tục tăng mã thành viên lên 1
-            int newId = maxId + 1;
-            // Kiểm tra xem mã mới đã tồn tại chưa, nếu có thì tăng giá trị lên 1 cho đến khi không còn trùng lặp
-            while (true) {
-                Number countResult = (Number) session.createQuery("SELECT COUNT(*) FROM ThanhVien WHERE id = :newId")
-                        .setParameter("newId", newId)
-                        .uniqueResult();
-                if (countResult != null && countResult.intValue() == 0) {
-                    break; // Không còn trùng lặp, thoát vòng lặp
-                }
-                newId++;
+            System.out.print("Lỗi khi thêm vi phạm: ");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+    }
+
+    public boolean updateThanhVien(ThanhVien c) {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+
+            tx = session.beginTransaction();
+            session.merge(c);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
             }
-            return newId;
+            System.out.print("Lỗi khi cập nhật vi phạm: ");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+    }
+
+    public boolean deleteThanhVien(ThanhVien c) {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            session.delete(c);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi xóa vi phạm: ");
+            e.printStackTrace();
+            return false;
+        }finally{
+            session.close();
         }
     }
 
