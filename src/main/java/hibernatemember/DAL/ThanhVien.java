@@ -32,7 +32,7 @@ public class ThanhVien {
     @Column
     private String Nganh;
     @Column
-    private int SDT; 
+    private String SDT; 
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
     private List<ThongTinSuDung> thongTinSuDung;
@@ -42,7 +42,7 @@ public class ThanhVien {
     
     public ThanhVien() {}
 
-    public ThanhVien(int MaTV, String HoTen, String Khoa, String Nganh, int SDT) {
+    public ThanhVien(int MaTV, String HoTen, String Khoa, String Nganh, String SDT) {
         this.MaTV = MaTV;
         this.HoTen = HoTen;
         this.Khoa = Khoa;

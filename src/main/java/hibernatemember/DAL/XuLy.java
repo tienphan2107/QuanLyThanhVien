@@ -46,6 +46,7 @@ public class XuLy {
 
     public XuLy(int MaXL, int MaTV, String HinhThucXL, int SoTien, Date NgayXL, int TrangThaiXL) {
         this.MaXL = MaXL;
+        this.thanhVien = new ThanhVien();
         this.thanhVien.setMaTV(MaTV);
         this.HinhThucXL = HinhThucXL;
         this.SoTien = SoTien;

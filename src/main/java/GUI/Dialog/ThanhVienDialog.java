@@ -153,7 +153,7 @@ public class ThanhVienDialog extends JDialog {
                         
                         int manv =Integer.parseInt(tvBLL.createMaTV());
                         String txtName = name.getText();
-                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtSdt = sdt.getText();
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(manv, txtName, txtKhoa, txtNganh, txtSdt);
@@ -172,7 +172,7 @@ public class ThanhVienDialog extends JDialog {
                 try {
                     if (ValidationInput()) {
                         String txtName = name.getText();
-                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtSdt = sdt.getText();
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(thanhVien.getMaTV(), txtName, txtKhoa, txtNganh, txtSdt);

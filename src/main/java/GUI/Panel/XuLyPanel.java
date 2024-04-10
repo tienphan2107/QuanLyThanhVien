@@ -147,7 +147,8 @@ public class XuLyPanel extends JPanel implements ActionListener {
     }
     
     public XuLy getXuLy(){
-        return listXuLy.get(tableXuLy.getSelectedRow());
+        int maXuLy = Integer.parseInt(tableXuLy.getValueAt(tableXuLy.getSelectedRow(), 0).toString());
+        return xuLyBLL.GetXuLy(maXuLy);
     }
 
     public void loadDataTable(ArrayList<XuLy> listXuLy) {
