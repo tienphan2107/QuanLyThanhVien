@@ -62,7 +62,7 @@ public class XuLyDAL {
     }
 
     public XuLy getXuLy(int xuLyID) {
-        session.beginTransaction();
+        session = HibernateUtils.getSessionFactory().openSession();
         XuLy xuLy = session.get(XuLy.class, xuLyID);
         session.close();
         return xuLy;

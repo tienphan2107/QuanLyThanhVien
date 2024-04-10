@@ -166,7 +166,8 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
     }
 
     public ThanhVien getThanhVien() {
-        return listTV.get(tableThanhVien.getSelectedRow());
+        int MaTV = Integer.parseInt(tableThanhVien.getValueAt(tableThanhVien.getSelectedRow(), 0).toString());
+        return tvBLL.getThanhVien(MaTV);
     }
 //    public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
 //        listnv = list;
@@ -237,7 +238,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 
         loadDataTable();
     }
-    
+
 //    public void importExcel() {
 //        File excelFile;
 //        FileInputStream excelFIS = null;

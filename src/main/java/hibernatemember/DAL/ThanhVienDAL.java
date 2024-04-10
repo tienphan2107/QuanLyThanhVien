@@ -46,7 +46,9 @@ public class ThanhVienDAL {
     }
 
     public ThanhVien getThanhVien(int thanhvienID) {
+        session = HibernateUtils.getSessionFactory().openSession();
         ThanhVien c = session.get(ThanhVien.class, thanhvienID);
+        session.close();
         return c;
     }
 
