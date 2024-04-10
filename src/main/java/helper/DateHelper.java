@@ -31,7 +31,7 @@ public class DateHelper {
         if (date instanceof java.sql.Date) {
             return ((java.sql.Date) date).toLocalDate().atStartOfDay();
         } else {
-            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            return date.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
         }
     }
 
