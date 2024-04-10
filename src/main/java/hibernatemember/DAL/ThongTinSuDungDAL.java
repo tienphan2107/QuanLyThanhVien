@@ -7,6 +7,10 @@ package hibernatemember.DAL;
 import POJO.DateRange;
 import POJO.ThongKeKhuHocTap;
 import helper.DateHelper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -145,6 +149,63 @@ public class ThongTinSuDungDAL {
         query.setParameter("toDate", toDate);
         query.setParameter("device", "%" + device + "%");
         list = (ArrayList<ThongTinSuDung>) query.list();
+        session.getTransaction().commit();
+        return list;
+    }
+    
+    public ArrayList<ThongKeKhuHocTap> getStatKhuHocTapUpToHour(DateRange dateRange, String khoa, String nganh) {
+        ArrayList<ThongKeKhuHocTap> list = new ArrayList<>();
+        String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        
+        LocalDateTime newToDate = null;
+        LocalDate today = LocalDate.now();
+        LocalDate datePart = dateRange.getToDate().toLocalDate();
+        
+        if (datePart.equals(today)) {
+            LocalTime now = LocalTime.now();
+            newToDate = LocalDateTime.of(datePart, LocalTime.of(now.getHour(), 0, 0));
+        } else {
+            newToDate = LocalDateTime.of(datePart, LocalTime.of(23, 0, 0));
+        }
+        String toDate = newToDate.format(DateHelper.SQL_ROW_DATE_FORMATTER);
+        String toDateHour = newToDate.format(DateHelper.SQL_ROW_DATE_TIME_FORMATTER);
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("""
+                            WITH RECURSIVE date_range AS (
+                              SELECT DATE(:fromDate) + INTERVAL 0 HOUR AS date_hour
+                              UNION ALL
+                              SELECT DATE_ADD(date_hour, INTERVAL 1 HOUR)  
+                              FROM date_range
+                              WHERE DATE_ADD(date_hour, INTERVAL 1 HOUR) <= :toDateHour
+                            ),
+                            temp_table AS (
+                              SELECT TTSD.*, Khoa, Nganh, CONCAT(DATE_FORMAT(TGVao, '%Y-%m-%d %H'), ':00') AS date_hour
+                              FROM thongtinsd TTSD
+                              JOIN thanhvien TV
+                                ON TTSD.MaTV = TV.MaTV
+                              WHERE DATE(TGVao) BETWEEN :fromDate AND :toDate AND Khoa LIKE :khoa AND Nganh LIKE :nganh
+                            ),
+                            result AS (
+                              SELECT DR.date_hour AS timeline, COALESCE(COUNT(T.date_hour), 0) AS amount
+                              FROM date_range DR
+                              LEFT JOIN temp_table T
+                                ON DR.date_hour = T.date_hour
+                              GROUP BY DR.date_hour
+                              ORDER BY DR.date_hour DESC
+                            )
+                            SELECT * FROM result
+                            """);
+        session.beginTransaction();
+        Query query = session.createSQLQuery(queryBuilder.toString())
+                .addScalar("timeline", StandardBasicTypes.TIMESTAMP)
+                .addScalar("amount", StandardBasicTypes.INTEGER);
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDateHour", toDateHour);
+        query.setParameter("toDate", toDate);
+        query.setParameter("khoa", "%" + khoa + "%");
+        query.setParameter("nganh", "%" + nganh + "%");
+        query.setResultTransformer(Transformers.aliasToBean(ThongKeKhuHocTap.class));
+        list = (ArrayList<ThongKeKhuHocTap>) query.list();
         session.getTransaction().commit();
         return list;
     }
