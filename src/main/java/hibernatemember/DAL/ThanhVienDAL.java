@@ -159,7 +159,7 @@ public class ThanhVienDAL {
 
     public ArrayList<String> getListKhoa(String query) {
         session.beginTransaction();
-        Query q = session.createNativeQuery("SELECT DISTINCT Khoa FROM thanhvien WHERE Khoa LIKE :khoa");
+        Query q = session.createNativeQuery("SELECT DISTINCT Khoa FROM thanhvien WHERE Khoa LIKE :khoa ORDER BY Khoa");
         q.setParameter("khoa", "%" + query + "%");
         ArrayList<String> result = (ArrayList) q.list();
         session.getTransaction().commit();
@@ -168,7 +168,7 @@ public class ThanhVienDAL {
 
     public ArrayList<String> getListNganh(String query) {
         session.beginTransaction();
-        Query q = session.createNativeQuery("SELECT DISTINCT Nganh FROM thanhvien WHERE Nganh LIKE :nganh");
+        Query q = session.createNativeQuery("SELECT DISTINCT Nganh FROM thanhvien WHERE Nganh LIKE :nganh ORDER BY Nganh");
         q.setParameter("nganh", "%" + query + "%");
         ArrayList<String> result = (ArrayList) q.list();
         session.getTransaction().commit();
