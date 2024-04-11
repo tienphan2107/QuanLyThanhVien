@@ -9,6 +9,7 @@ import hibernatemember.DAL.XuLy;
 import hibernatemember.DAL.XuLyDAL;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  *
@@ -22,11 +23,13 @@ public class XuLyBLL {
     public XuLyBLL() {
         xuLyDAL = new XuLyDAL();
     }
-    
-    public int getMaXuLyAutoIncreasement(){
-        return xuLyDAL.loadXuLy().size() + 1;
+
+    public int getMaXuLyAutoIncreasement() {
+        ArrayList<XuLy> listXuLy = LoadXuLy();
+        int lastIndex = LoadXuLy().size() - 1;
+        return listXuLy.get(lastIndex).getMaXL() + 1;
     }
-    
+
     public ArrayList<String> getHinhThucXuLy() {
         return xuLyDAL.getHinhThucXuLy();
     }
@@ -72,11 +75,11 @@ public class XuLyBLL {
 
         return result;
     }
-    
+
     public ArrayList<XuLy> getStatXuLy(int state, DateRange dateRange, String memberName) {
         return xuLyDAL.getStatXuLy(state, dateRange, memberName);
     }
-    
+
     public Long tongTienBoiThuong(ArrayList<XuLy> list) {
         Long result = 0l;
         for (XuLy i : list) {
@@ -84,4 +87,31 @@ public class XuLyBLL {
         }
         return result;
     }
+
+    public void updateTrangThaiXuLy() { // hàm này quét qua tất cả các xử lý xem cái nào hết thời gian xử lý thì cập nhật lại
+        Date today = new Date(System.currentTimeMillis());
+        ArrayList<XuLy> listXuLy = LoadXuLy();
+        for (XuLy xuLy : listXuLy) {
+            if (xuLy.getHinhThucXL().contains("thẻ")
+                    && (xuLy.getHinhThucXL().contains("1") || xuLy.getHinhThucXL().contains("2") || xuLy.getHinhThucXL().contains("3"))) {
+                // Tính toán ngày kết thúc của thời gian khóa thẻ
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(xuLy.getNgayXL());
+                int soThangKhoaThe = 1;
+                if (xuLy.getHinhThucXL().contains("2")) {
+                    soThangKhoaThe = 2;
+                } else if (xuLy.getHinhThucXL().contains("3")) {
+                    soThangKhoaThe = 3;
+                }
+                calendar.add(Calendar.MONTH, soThangKhoaThe);
+                Date ngayKetThuc = calendar.getTime();
+                // Kiểm tra xem ngày hiện tại có vượt quá ngày kết thúc của thời gian khóa thẻ không
+                if (today.after(ngayKetThuc)) {
+                    xuLy.setTrangThaiXL(0);
+                    xuLyDAL.updateXuLy(xuLy);
+                }
+            }
+        }
+    }
+
 }

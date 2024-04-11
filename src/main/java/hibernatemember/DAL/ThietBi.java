@@ -5,6 +5,7 @@
 package hibernatemember.DAL;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +31,7 @@ public class ThietBi {
     @Column
     private String MoTaTB;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thietBi")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thietBi", cascade = CascadeType.ALL) // cascade sẽ xóa luôn các khóa ngoại liên quan bên bảng thông tin sử dụng
     private List<ThongTinSuDung> thongTinSuDung;
     
     public ThietBi() {}
