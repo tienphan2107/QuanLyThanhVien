@@ -236,7 +236,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
                 handleOpenDialogChonNganh();
             }
         });
-        
+
         this.btnViewChart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -254,7 +254,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
         DialogChoose dialog = new DialogChoose((Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true, "Chọn ngành:", this.chonNganhCallback);
         dialog.setVisible(true);
     }
-    
+
     private void handleOpenChart() {
         KhuHocTapChart chart = new KhuHocTapChart(this.ttsdBLL, this.list, this.dateRange, this.groupBy, this.khoaQuery, this.nganhQuery);
         chart.setVisible(true);
@@ -310,7 +310,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
         ArrayList<ThongKeKhuHocTap> list = ttsdBLL.thongKeKhuHocTap(dateRange, groupBy, khoa, nganh);
         this.tableModel.setRowCount(0);
         for (ThongKeKhuHocTap i : list) {
-            LocalDateTime localDateTime = DateHelper.convertDateObjToLDT(i.getTimeline());
+            LocalDateTime localDateTime = DateHelper.convertDateObjToLDT(i.getTimeline(), DateHelper.SYSTEM_DEFAULT_TIME_ZONE);
             String timeline = "";
             switch (groupBy) {
                 case "date":

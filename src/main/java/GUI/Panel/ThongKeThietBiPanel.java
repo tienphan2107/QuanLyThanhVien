@@ -152,9 +152,9 @@ public class ThongKeThietBiPanel extends JPanel implements SelectDateCallback {
         ArrayList<ThongTinSuDung> list = ttsdBLL.getStatTTSD(dateRange, query, isTGTraNull);
         this.tableModel.setRowCount(0);
         for (ThongTinSuDung i : list) {
-            LocalDateTime ldtTGMuon = DateHelper.convertDateObjToLDT(i.getTGMuon());
+            LocalDateTime ldtTGMuon = DateHelper.convertDateObjToLDT(i.getTGMuon(), DateHelper.UTC_TIME_ZONE);
             String strTGMuon = ldtTGMuon.format(DateHelper.DATE_TIME_FORMATTER);
-            LocalDateTime ldtTGTra = DateHelper.convertDateObjToLDT(i.getTGTra());
+            LocalDateTime ldtTGTra = DateHelper.convertDateObjToLDT(i.getTGTra(), DateHelper.UTC_TIME_ZONE);
             String strTGTra = ldtTGTra == null ? "" : ldtTGTra.format(DateHelper.DATE_TIME_FORMATTER);
             Object[] row = {i.getThietBi().getMaTB(), i.getThietBi().getTenTB(), i.getThanhVien().getHoTen(), strTGMuon, strTGTra};
             this.tableModel.addRow(row);

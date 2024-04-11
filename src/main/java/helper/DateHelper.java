@@ -24,8 +24,10 @@ public class DateHelper {
     public static final DateTimeFormatter SQL_ROW_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     public static final String SQL_QUERY_MONTH_FORMAT = "%Y-%m";
     public static final String SQL_QUERY_YEAR_FORMAT = "%Y";
+    public static final ZoneId SYSTEM_DEFAULT_TIME_ZONE = ZoneId.systemDefault();
+    public static final ZoneId UTC_TIME_ZONE = ZoneId.of("UTC");
 
-    public static LocalDateTime convertDateObjToLDT(Date date) {
+    public static LocalDateTime convertDateObjToLDT(Date date, ZoneId zoneId) {
         if (date == null) {
             return null;
         }
@@ -33,7 +35,7 @@ public class DateHelper {
         if (date instanceof java.sql.Date) {
             return ((java.sql.Date) date).toLocalDate().atStartOfDay();
         } else {
-            return date.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime();
+            return date.toInstant().atZone(zoneId).toLocalDateTime();
         }
     }
 

@@ -160,7 +160,7 @@ public class ThongKeViPhamPanel extends JPanel implements SelectDateCallback {
         }
         for (XuLy i : list) {
             String strAmount = NumberHelper.appendVND(NumberHelper.commafy(Long.valueOf(i.getSoTien().toString())));
-            LocalDateTime ldtNgayXL = DateHelper.convertDateObjToLDT(i.getNgayXL());
+            LocalDateTime ldtNgayXL = DateHelper.convertDateObjToLDT(i.getNgayXL(), DateHelper.UTC_TIME_ZONE);
             String strNgayXL = ldtNgayXL.format(DateHelper.DATE_TIME_FORMATTER);
             String strState = i.getTrangThaiXL() == 0 ? "Đã xử lý" : "Đang xử lý";
             Object[] row = {i.getThanhVien().getMaTV(), i.getThanhVien().getHoTen(), i.getHinhThucXL(), strAmount, strNgayXL, strState};
