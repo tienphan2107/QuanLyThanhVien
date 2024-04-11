@@ -62,6 +62,9 @@ public class XuLyDialog extends JDialog {
     public XuLyDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
         init(title, type);
+        if (!cbbHinhThucXL.getValue().contains("ồi thường")) {
+            txtSoTien.setDisable();
+        }
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -78,8 +81,8 @@ public class XuLyDialog extends JDialog {
         cbbTrangthaiXL.setValue(xuLy.getTrangThaiXL() == 0 ? "Đã xử lý" : "Đang xử lý");
         cbbHinhThucXL.setValue(xuLy.getHinhThucXL());
         txtSoTien.setText(xuLy.getSoTien() + "");
-        
-        if(!xuLy.getHinhThucXL().contains("ồi thường")){
+
+        if (!xuLy.getHinhThucXL().contains("ồi thường")) {
             txtSoTien.setDisable();
         }
 
@@ -169,7 +172,7 @@ public class XuLyDialog extends JDialog {
                         checkMessage = xuLyBLL.CheckValue(strMaThanhVien, "1000");
                     }
                     if (!checkMessage.isEmpty()) {
-                        JOptionPane.showConfirmDialog(rootPane, checkMessage);
+                        JOptionPane.showMessageDialog(rootPane, checkMessage);
                         return;
                     }
 
@@ -179,9 +182,9 @@ public class XuLyDialog extends JDialog {
                     XuLy xuLy = new XuLy(maXuLy, maThanhVien, hinhThucXuLy, soTien, new java.sql.Date(ngay.getTime()), trangThaiXuLy);
 
                     if (xuLyBLL.AddXuLy(xuLy)) {
-                        JOptionPane.showConfirmDialog(rootPane, "Thành công !");
+                        JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {
-                        JOptionPane.showConfirmDialog(rootPane, "Thất bại !");
+                        JOptionPane.showMessageDialog(rootPane, "Thất bại !");
                     }
                     dispose();
                 } catch (ParseException ex) {
@@ -238,7 +241,7 @@ public class XuLyDialog extends JDialog {
                     int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // dang xu ly
                     String checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
                     if (!checkMessage.isEmpty()) {
-                        JOptionPane.showConfirmDialog(rootPane, checkMessage);
+                        JOptionPane.showMessageDialog(rootPane, checkMessage);
                         return;
                     }
 
@@ -248,9 +251,9 @@ public class XuLyDialog extends JDialog {
                     XuLy xuLy = new XuLy(maXuLy, maThanhVien, hinhThucXuLy, soTien, new java.sql.Date(ngay.getTime()), trangThaiXuLy);
 
                     if (xuLyBLL.UpdateXuLy(xuLy)) {
-                        JOptionPane.showConfirmDialog(rootPane, "Thành công !");
+                        JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {
-                        JOptionPane.showConfirmDialog(rootPane, "Thất bại !");
+                        JOptionPane.showMessageDialog(rootPane, "Thất bại !");
                     }
                     dispose();
                 } catch (ParseException ex) {

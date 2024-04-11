@@ -5,6 +5,7 @@
 package hibernatemember.DAL;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,10 +35,10 @@ public class ThanhVien {
     @Column
     private String SDT; 
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien", cascade = CascadeType.ALL)
     private List<ThongTinSuDung> thongTinSuDung;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thanhVien", cascade = CascadeType.ALL)
     private List<XuLy> xuLy;
     
     public ThanhVien() {}
