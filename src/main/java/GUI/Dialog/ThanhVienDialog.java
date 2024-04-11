@@ -160,7 +160,6 @@ public class ThanhVienDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (ValidationInput()) {
-                        
                         int manv = tvBLL.getAutoIncrement();
                         String txtName = name.getText();
                         int txtSdt = Integer.parseInt(sdt.getText());

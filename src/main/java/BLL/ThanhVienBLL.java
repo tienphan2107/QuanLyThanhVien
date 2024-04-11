@@ -55,6 +55,13 @@ public class ThanhVienBLL{
         }
         return newList;
     }
+    public boolean checkExist(int id){
+        ArrayList<ThanhVien> list = thanhvienDAL.loadThanhVien();
+        for(ThanhVien tv : list){
+            if(tv.getMaTV() == id) return true;
+        }
+        return false;
+    }
 
     public void newThanhVien(ThanhVien c) {
         thanhvienDAL.addThanhVien(c);
@@ -85,29 +92,5 @@ public class ThanhVienBLL{
         return thanhvienDAL.getListNganh(query);
     }
 
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        String btn = e.getActionCommand();
-//        switch (btn) {
-//            case "THÊM" -> {
-//                ThanhVienDialog tvthem = new ThanhVienDialog(this, tv.owner, true, "Thêm thành viên", "create");
-//            }
-//            case "SỬA" -> {
-//                int index = tv.getRow();
-//                if (index < 0) {
-//                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần sửa");
-//                } else {
-//                    ThanhVienDialog tvsua = new ThanhVienDialog(this, tv.owner, true, "Sửa thành viên", "update", tv.getNhanVien());
-//                }
-//            }
-//            case "XÓA" -> {
-//                if (tv.getRow() < 0) {
-//                    JOptionPane.showMessageDialog(null, "Vui lòng chọn thành viên cần xóa");
-//                } else {
-//                    deleteThanhVien(tv.getNhanVien());
-//                }
-//            }
-//        }
-//        tv.loadDataTable();
-//    }
+
 }
