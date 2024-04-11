@@ -1,9 +1,12 @@
 package POJO;
 
-import java.sql.Date;
+import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 public class ThongKeKhuHocTap {
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date timeline;
     private int amount;
 

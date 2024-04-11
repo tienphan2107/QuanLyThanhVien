@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateHelper {
@@ -20,10 +21,13 @@ public class DateHelper {
     public static final SimpleDateFormat SQL_ROW_MONTH_FORMATTER = new SimpleDateFormat("yyyy-MM");
     public static final SimpleDateFormat SQL_ROW_YEAR_FORMATTER = new SimpleDateFormat("yyyy");
     public static final DateTimeFormatter SQL_ROW_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final DateTimeFormatter SQL_ROW_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     public static final String SQL_QUERY_MONTH_FORMAT = "%Y-%m";
     public static final String SQL_QUERY_YEAR_FORMAT = "%Y";
+    public static final ZoneId SYSTEM_DEFAULT_TIME_ZONE = ZoneId.systemDefault();
+    public static final ZoneId UTC_TIME_ZONE = ZoneId.of("UTC");
 
-    public static LocalDateTime convertDateObjToLDT(Date date) {
+    public static LocalDateTime convertDateObjToLDT(Date date, ZoneId zoneId) {
         if (date == null) {
             return null;
         }
@@ -31,7 +35,7 @@ public class DateHelper {
         if (date instanceof java.sql.Date) {
             return ((java.sql.Date) date).toLocalDate().atStartOfDay();
         } else {
-            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            return date.toInstant().atZone(zoneId).toLocalDateTime();
         }
     }
 
@@ -41,5 +45,12 @@ public class DateHelper {
 
     public static String dateRangeToString(DateRange dateRange, DateTimeFormatter formatter, String separator) {
         return dateRange.getFromDate().format(formatter) + separator + dateRange.getToDate().format(formatter);
+    }
+
+    public static Date subtractHours(Date date, int hours) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, -hours);
+        return calendar.getTime();
     }
 }

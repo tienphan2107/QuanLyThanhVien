@@ -4,6 +4,7 @@ import BLL.ThanhVienBLL;
 import BLL.ThongTinSuDungBLL;
 import GUI.Component.PanelBorderRadius;
 import GUI.Dialog.DialogChoose;
+import GUI.KhuHocTapChart;
 import POJO.DateRange;
 import POJO.ThongKeKhuHocTap;
 import helper.ComboBoxDateValues;
@@ -55,6 +56,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
     private String groupBy;
     private final ChonKhoaCallback chonKhoaCallback;
     private final ChonNganhCallback chonNganhCallback;
+    private ArrayList<ThongKeKhuHocTap> list = new ArrayList<>();
 
     public ThongKeKhuHocTapPanel(ThanhVienBLL tvBLL, ThongTinSuDungBLL ttsdBLL, String[] comboboxDateValues) {
         this.tvBLL = tvBLL;
@@ -234,6 +236,13 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
                 handleOpenDialogChonNganh();
             }
         });
+
+        this.btnViewChart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                handleOpenChart();
+            }
+        });
     }
 
     private void handleOpenDialogChonKhoa() {
@@ -244,6 +253,11 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
     private void handleOpenDialogChonNganh() {
         DialogChoose dialog = new DialogChoose((Frame) javax.swing.SwingUtilities.getWindowAncestor(this), true, "Chọn ngành:", this.chonNganhCallback);
         dialog.setVisible(true);
+    }
+
+    private void handleOpenChart() {
+        KhuHocTapChart chart = new KhuHocTapChart(this.ttsdBLL, this.list, this.dateRange, this.groupBy, this.khoaQuery, this.nganhQuery);
+        chart.setVisible(true);
     }
 
     private void handleComboBoxOptionChanged() {
@@ -296,7 +310,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
         ArrayList<ThongKeKhuHocTap> list = ttsdBLL.thongKeKhuHocTap(dateRange, groupBy, khoa, nganh);
         this.tableModel.setRowCount(0);
         for (ThongKeKhuHocTap i : list) {
-            LocalDateTime localDateTime = DateHelper.convertDateObjToLDT(i.getTimeline());
+            LocalDateTime localDateTime = DateHelper.convertDateObjToLDT(i.getTimeline(), DateHelper.SYSTEM_DEFAULT_TIME_ZONE);
             String timeline = "";
             switch (groupBy) {
                 case "date":
@@ -312,6 +326,7 @@ public class ThongKeKhuHocTapPanel extends JPanel implements SelectDateCallback 
             Object[] row = {timeline, i.getAmount()};
             this.tableModel.addRow(row);
         }
+        this.list = list;
     }
 
     private class ChonKhoaCallback extends DialogChoose.Callback {

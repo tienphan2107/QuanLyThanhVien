@@ -6,6 +6,7 @@ package BLL;
 
 import POJO.DateRange;
 import POJO.ThongKeKhuHocTap;
+import helper.DateHelper;
 import hibernatemember.DAL.ThongTinSuDung;
 import hibernatemember.DAL.ThongTinSuDungDAL;
 import java.util.ArrayList;
@@ -53,5 +54,13 @@ public class ThongTinSuDungBLL {
     
     public ArrayList<ThongTinSuDung> getStatTTSD(DateRange dateRange, String device, boolean isTGTraNull) {
         return thongtinsudungDAL.getStatTTSD(dateRange, device, isTGTraNull);
+    }
+    
+    public ArrayList<ThongKeKhuHocTap> getStatKhuHocTapUpToHour(DateRange dateRange, String khoa, String nganh) {
+        ArrayList<ThongKeKhuHocTap> result = thongtinsudungDAL.getStatKhuHocTapUpToHour(dateRange, khoa, nganh);
+        for (ThongKeKhuHocTap i : result) {
+            i.setTimeline(DateHelper.subtractHours(i.getTimeline(), 7));
+        }
+        return result;
     }
 }
