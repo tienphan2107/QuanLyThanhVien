@@ -3,6 +3,7 @@ package GUI;
 import BLL.ThongTinSuDungBLL;
 import POJO.DateRange;
 import POJO.ThongKeKhuHocTap;
+import helper.DateHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -28,6 +29,7 @@ public class KhuHocTapChart extends javax.swing.JFrame {
     private String khoa;
     private String nganh;
     private ThongTinSuDungBLL ttsdBLL;
+    private String chartTitle;
 
     public KhuHocTapChart() {
         initComponents();
@@ -44,6 +46,7 @@ public class KhuHocTapChart extends javax.swing.JFrame {
         this.list = this.groupBy.equalsIgnoreCase("date") ? ttsdBLL.getStatKhuHocTapUpToHour(dateRange, khoa, nganh) : list;
         setDatePattern(this.groupBy);
         separateData();
+        this.chartTitle = getChartTitle(this.dateRange, this.groupBy, this.khoa, this.nganh);
         this.chart = getChart();
         displayChart(this.chart);
         addComponentListener(new ComponentAdapter() {
@@ -80,7 +83,7 @@ public class KhuHocTapChart extends javax.swing.JFrame {
     }
 
     private XYChart getChart() {
-        XYChart chart = new XYChartBuilder().xAxisTitle(this.xAxisChartTitle).yAxisTitle("Số lượng").width(1280).height(960).build();
+        XYChart chart = new XYChartBuilder().xAxisTitle(this.xAxisChartTitle).yAxisTitle("Số lượng").width(1280).height(960).title(this.chartTitle).build();
         chart.getStyler().setDatePattern(this.datePattern);
         chart.addSeries("Số lượng", this.timestamps, this.values).setMarker(SeriesMarkers.NONE);
         chart.getStyler().setCursorEnabled(true);
@@ -93,6 +96,14 @@ public class KhuHocTapChart extends javax.swing.JFrame {
         pChartContainer.add(chartPanel, BorderLayout.CENTER);
         pChartContainer.repaint();
         pChartContainer.validate();
+    }
+
+    private String getChartTitle(DateRange dateRange, String groupBy, String khoa, String nganh) {
+        return String.format(
+                "%sKhoa: %s - Ngành: %s",
+                this.groupBy.equalsIgnoreCase("date") ? "(" + DateHelper.dateRangeToString(this.dateRange, DateHelper.DATE_FORMATTER, " - ") + ") - " : "",
+                this.khoa.equals("") ? "Tất cả" : this.khoa,
+                this.nganh.equals("") ? "Tất cả" : this.nganh);
     }
 
     /**
