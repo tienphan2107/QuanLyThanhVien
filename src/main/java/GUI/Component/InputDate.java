@@ -7,7 +7,7 @@ package GUI.Component;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.sql.Date;
+import java.util.Date;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,5 +77,6 @@ public class InputDate extends JPanel{
     public void setDisable() {
         JTextFieldDateEditor editor = (JTextFieldDateEditor) date.getDateEditor();
         editor.setEditable(false);
+        date.setEnabled(false);
     }
 }

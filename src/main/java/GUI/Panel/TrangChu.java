@@ -4,6 +4,8 @@
  */
 package GUI.Panel;
 
+import BLL.XuLyBLL;
+
 /**
  *
  * @author DELL
@@ -15,6 +17,7 @@ public class TrangChu extends javax.swing.JPanel {
      */
     public TrangChu() {
         initComponents();
+        new XuLyBLL().updateTrangThaiXuLy();
     }
 
     /**

@@ -167,9 +167,8 @@ public class SelectDateDialog extends javax.swing.JDialog {
             return;
         }
 
-//        LocalDateTime localFromDate = dcFrom.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        LocalDateTime localFromDate = DateHelper.convertDateObjToLDT(fromDate);
-        LocalDateTime localToDate = DateHelper.convertDateObjToLDT(toDate);
+        LocalDateTime localFromDate = DateHelper.convertDateObjToLDT(fromDate, DateHelper.SYSTEM_DEFAULT_TIME_ZONE);
+        LocalDateTime localToDate = DateHelper.convertDateObjToLDT(toDate, DateHelper.SYSTEM_DEFAULT_TIME_ZONE);
 
         if (initialDateRange.getFromDate() != null && initialDateRange.getToDate() != null && (localFromDate.toLocalDate().isEqual(initialDateRange.getFromDate().toLocalDate())) && (localToDate.toLocalDate().isEqual(initialDateRange.getToDate().toLocalDate()))) {
             this.dispose();

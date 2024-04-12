@@ -13,7 +13,7 @@ public class ComboBoxDateValues {
     private static final LocalDateTime minDate;
 
     static {
-        LocalDateTime tempMinDate = DateHelper.convertDateObjToLDT(new ThongTinSuDungBLL().getMinDate());
+        LocalDateTime tempMinDate = DateHelper.convertDateObjToLDT(new ThongTinSuDungBLL().getMinDate(), DateHelper.SYSTEM_DEFAULT_TIME_ZONE);
         minDate = tempMinDate == null ? defaultMinDate : tempMinDate;
     }
     private static final LocalDateTime nowDateTime = LocalDateTime.now();

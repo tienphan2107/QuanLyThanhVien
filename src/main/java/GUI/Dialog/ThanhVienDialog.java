@@ -39,7 +39,6 @@ import javax.swing.text.PlainDocument;
  */
 public class ThanhVienDialog extends JDialog {
     
-    private ThanhVienPanelCallback callback;
     private ThanhVienBLL tvBLL = new ThanhVienBLL();
     private ThanhVienPanel tvPanel;
     private HeaderTitle titlePage;
@@ -78,15 +77,6 @@ public class ThanhVienDialog extends JDialog {
         nganh.setValue(thanhVien.getNganh());
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-    }
-    
-    public interface ThanhVienPanelCallback {
-        
-        void loadDataTableCallback();
-    }
-    
-    public void setCallback(ThanhVienPanelCallback callback) {
-        this.callback = callback;
     }
     
     public void init(String title, String type) {
@@ -161,8 +151,10 @@ public class ThanhVienDialog extends JDialog {
                 try {
                     if (ValidationInput()) {
                         int manv = tvBLL.getAutoIncrement();
+                        
+                        int manv =Integer.parseInt(tvBLL.createMaTV());
                         String txtName = name.getText();
-                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtSdt = sdt.getText();
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(manv, txtName, txtKhoa, txtNganh, txtSdt);
@@ -180,9 +172,8 @@ public class ThanhVienDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (ValidationInput()) {
-                        int manv = tvBLL.getAutoIncrement();
                         String txtName = name.getText();
-                        int txtSdt = Integer.parseInt(sdt.getText());
+                        String txtSdt = sdt.getText();
                         String txtKhoa = (String) khoa.getSelectedItem();
                         String txtNganh = (String) nganh.getSelectedItem();
                         ThanhVien tV = new ThanhVien(thanhVien.getMaTV(), txtName, txtKhoa, txtNganh, txtSdt);
@@ -236,8 +227,8 @@ public class ThanhVienDialog extends JDialog {
         //            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
         //            return false;
         //        }
-        else if (Validation.isEmpty(sdt.getText()) && !Validation.isNumber(sdt.getText()) && sdt.getText().length() != 10) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        else if (Validation.isEmpty(sdt.getText()) || !Validation.isNumber(sdt.getText()) || sdt.getText().length() != 10 || !Validation.checkPhone(sdt.getText())) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng, phải là 10 ký tự số và bắt đầu = 0", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 //        else if(jcBd.getDate()==null){

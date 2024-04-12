@@ -1,20 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package hibernatemember.DAL;
 
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Data;
 
-/**
- *
- * @author DELL
- */
 @Data
 @Entity
 @Table(name = "thongtinsd")
@@ -23,13 +19,20 @@ public class ThongTinSuDung {
     @Id
     private int MaTT;
     @Column
-    private int MaTV;
-    @Column
-    private int MaTB;
-    @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date TGVao;
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date TGMuon;
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date TGTra;
+
+    @ManyToOne
+    @JoinColumn(name = "MaTV")
+    private ThanhVien thanhVien;
+
+    @ManyToOne
+    @JoinColumn(name = "MaTB")
+    private ThietBi thietBi;
 }

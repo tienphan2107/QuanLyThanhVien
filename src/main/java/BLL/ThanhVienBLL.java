@@ -63,16 +63,16 @@ public class ThanhVienBLL{
         return false;
     }
 
-    public void newThanhVien(ThanhVien c) {
-        thanhvienDAL.addThanhVien(c);
+    public boolean newThanhVien(ThanhVien c) {
+        return thanhvienDAL.addThanhVien(c);
     }
 
-    public void updateThanhVien(ThanhVien c) {
-        thanhvienDAL.updateThanhVien(c);
+    public boolean updateThanhVien(ThanhVien c) {
+        return thanhvienDAL.updateThanhVien(c);
     }
 
-    public void deleteThanhVien(ThanhVien c) {
-        thanhvienDAL.deleteThanhVien(c);
+    public boolean deleteThanhVien(ThanhVien c) {
+        return thanhvienDAL.deleteThanhVien(c);
     }
 
     public ThanhVien getThanhVien(int thanhvienID) {
@@ -80,8 +80,8 @@ public class ThanhVienBLL{
         return c;
     }
 
-    public int getAutoIncrement() {
-        return thanhvienDAL.getAutoIncrement();
+    public String createMaTV() {
+        return thanhvienDAL.createMaTV();
     }
     
     public ArrayList<String> getListKhoa(String query) {

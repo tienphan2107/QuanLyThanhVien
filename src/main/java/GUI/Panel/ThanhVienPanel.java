@@ -10,6 +10,7 @@ import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Dialog.ThanhVienDialog;
 import GUI.Main;
+import helper.Validation;
 import hibernatemember.DAL.ThanhVien;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,13 +20,19 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,7 +50,8 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.util.regex.Matcher;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  *
@@ -119,6 +127,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(functionBar, "Refreshed !");
             }
         });
+
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
 
@@ -165,7 +174,8 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
     }
 
     public ThanhVien getThanhVien() {
-        return listTV.get(tableThanhVien.getSelectedRow());
+        int MaTV = Integer.parseInt(tableThanhVien.getValueAt(tableThanhVien.getSelectedRow(), 0).toString());
+        return tvBLL.getThanhVien(MaTV);
     }
 //    public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
 //        listnv = list;
@@ -332,11 +342,13 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
             }
             case "XUẤT EXCEL" -> {
                 exportToExcel(listTV);
+
             }
         }
 
         loadDataTable();
     }
+
     public boolean InputValidation(ThanhVien tv){
         String regex = "^\\d{10}$";
         Pattern pattern = Pattern.compile(regex);
@@ -346,4 +358,64 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         if(matcher.matches() == false) return false;
         return true;
     }
+
+//    public void importExcel() {
+//        File excelFile;
+//        FileInputStream excelFIS = null;
+//        BufferedInputStream excelBIS = null;
+//        XSSFWorkbook excelJTableImport = null;
+//        JFileChooser jf = new JFileChooser();
+//        int result = jf.showOpenDialog(null);
+//        jf.setDialogTitle("Open file");
+//        Workbook workbook = null;
+//        int k = 0;
+//        if (result == JFileChooser.APPROVE_OPTION) {
+//            try {
+//                excelFile = jf.getSelectedFile();
+//                excelFIS = new FileInputStream(excelFile);
+//                excelBIS = new BufferedInputStream(excelFIS);
+//                excelJTableImport = new XSSFWorkbook(excelBIS);
+//                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+//
+//                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
+//                    int check = 1;
+//                    int gt;
+//                    XSSFRow excelRow = excelSheet.getRow(row);
+//                    int id = NhanVienDAO.getInstance().getAutoIncrement();
+//                    String tennv = excelRow.getCell(0).getStringCellValue();
+//                    String gioitinh = excelRow.getCell(1).getStringCellValue();
+//                    if (gioitinh.equals("Nam") || gioitinh.equals("nam")) {
+//                        gt = 1;
+//                    } else {
+//                        gt = 0;
+//                    }
+//                    String sdt = excelRow.getCell(3).getStringCellValue();
+//                    Date ngaysinh = (Date) excelRow.getCell(2).getDateCellValue();
+//                    java.sql.Date birth = new java.sql.Date(ngaysinh.getTime());
+//                    String email = excelRow.getCell(4).getStringCellValue();
+//                    if (Validation.isEmpty(tennv) || Validation.isEmpty(email)
+//                            || !Validation.isEmail(email) || Validation.isEmpty(sdt)
+//                            || Validation.isEmpty(sdt) || !isPhoneNumber(sdt)
+//                            || sdt.length() != 10 || Validation.isEmpty(gioitinh)) {
+//                        check = 0;
+//                    }
+//                    if (check == 0) {
+//                        k += 1;
+//                    } else {
+//                        NhanVienDTO nvdto = new NhanVienDTO(id, tennv, gt, birth, sdt, 1, email);
+//                        NhanVienDAO.getInstance().insert(nvdto);
+//                    }
+//                    JOptionPane.showMessageDialog(null, "Nhập thành công");
+//                }
+//
+//            } catch (FileNotFoundException ex) {
+//                System.out.println("Lỗi đọc file");
+//            } catch (IOException ex) {
+//                System.out.println("Lỗi đọc file");
+//            }
+//        }
+//        if (k != 0) {
+//            JOptionPane.showMessageDialog(null, "Những dữ liệu không chuẩn không được thêm vào");
+//        }
+//    }
 }

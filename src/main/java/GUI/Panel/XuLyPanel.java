@@ -46,7 +46,7 @@ public class XuLyPanel extends JPanel implements ActionListener {
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
-    JTable tableThongTinSuDung;
+    JTable tableXuLy;
     JScrollPane scrollTableThongTinSuDung;
     MainFunction mainFunction;
     public IntegratedSearch search;
@@ -108,25 +108,25 @@ public class XuLyPanel extends JPanel implements ActionListener {
 //        main.setBorder(new EmptyBorder(20, 20, 20, 20));
         contentCenter.add(main, BorderLayout.CENTER);
 
-        tableThongTinSuDung = new JTable();
+        tableXuLy = new JTable();
         scrollTableThongTinSuDung = new JScrollPane();
-        tableThongTinSuDung = new JTable();
+        tableXuLy = new JTable();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Mã Xử Lý", "Mã Thành Viên", "Tên Thành Viên", "Hình Thức Xử Lý", "Số Tiền", "Ngày Xử Lý", "Trạng Thái Xử Lý"};
 
         tblModel.setColumnIdentifiers(header);
-        tableThongTinSuDung.setModel(tblModel);
-        tableThongTinSuDung.setFocusable(false);
+        tableXuLy.setModel(tblModel);
+        tableXuLy.setFocusable(false);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        tableThongTinSuDung.setDefaultRenderer(Object.class, centerRenderer);
+        tableXuLy.setDefaultRenderer(Object.class, centerRenderer);
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        tableThongTinSuDung.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        tableThongTinSuDung.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        tableThongTinSuDung.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-        tableThongTinSuDung.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        tableThongTinSuDung.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        tableThongTinSuDung.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
-        scrollTableThongTinSuDung.setViewportView(tableThongTinSuDung);
+        tableXuLy.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tableXuLy.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        tableXuLy.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        tableXuLy.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        tableXuLy.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        tableXuLy.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        scrollTableThongTinSuDung.setViewportView(tableXuLy);
         main.add(scrollTableThongTinSuDung);
     }
 
@@ -137,23 +137,28 @@ public class XuLyPanel extends JPanel implements ActionListener {
 
         this.m = m;
         initComponent();
-        tableThongTinSuDung.setDefaultEditor(Object.class, null);
+        tableXuLy.setDefaultEditor(Object.class, null);
 
         loadDataTable(listXuLy);
     }
 
     public int getRow() {
-        return tableThongTinSuDung.getSelectedRow();
+        return tableXuLy.getSelectedRow();
+    }
+    
+    public XuLy getXuLy(){
+        int maXuLy = Integer.parseInt(tableXuLy.getValueAt(tableXuLy.getSelectedRow(), 0).toString());
+        return xuLyBLL.GetXuLy(maXuLy);
     }
 
     public void loadDataTable(ArrayList<XuLy> listXuLy) {
         tblModel.setRowCount(0);
         for (XuLy xuLy : listXuLy) {
-            ThanhVien thanhVien = thanhVienBLL.getThanhVien(xuLy.getMaTV());
+            ThanhVien thanhVien = thanhVienBLL.getThanhVien(xuLy.getThanhVien().getMaTV());
             String tenThanhVien = thanhVien.getHoTen();
             String trangThaiXuLy = (xuLy.getTrangThaiXL() == 0) ? "Đã Xử Lý" : "Đang Xử Lý";
             tblModel.addRow(new Object[]{
-                xuLy.getMaXL(), xuLy.getMaTV(), tenThanhVien, xuLy.getHinhThucXL(), xuLy.getSoTien(), xuLy.getNgayXL(), trangThaiXuLy
+                xuLy.getMaXL(), xuLy.getThanhVien().getMaTV(), tenThanhVien, xuLy.getHinhThucXL(), xuLy.getSoTien(), xuLy.getNgayXL(), trangThaiXuLy
             });
         }
     }
@@ -166,27 +171,21 @@ public class XuLyPanel extends JPanel implements ActionListener {
                 XuLyDialog xlthem = new XuLyDialog(owner, true, "Thêm xử lý", "create");
             }
             case "SỬA" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
-//                }
+                int index = getRow();
+                if (index != -1) {
+                    XuLyDialog xuLyDialog = new XuLyDialog(owner, true, "Sửa xử lý", "update", getXuLy());
+                }
             }
             case "XÓA" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    int input = JOptionPane.showConfirmDialog(null,
-//                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
-//                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//                    if (input == 0) {
-//                        tvBLL.deleteThanhVien(getThanhVien());
-//                    }
-//                }
-            }
-            case "CHI TIẾT" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
-//                }
+                int index = getRow();
+                if (index != -1) {
+                    int input = JOptionPane.showConfirmDialog(null,
+                            "Bạn có chắc chắn muốn xóa xử lý!", "Xóa xử lý",
+                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    if (input == 0) {
+                        xuLyBLL.DeleteXuLy(getXuLy());
+                    }
+                }
             }
         }
         listXuLy = xuLyBLL.LoadXuLy();

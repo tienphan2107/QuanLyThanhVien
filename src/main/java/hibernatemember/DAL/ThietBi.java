@@ -4,11 +4,15 @@
  */
 package hibernatemember.DAL;
 
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -26,6 +30,9 @@ public class ThietBi {
     private String TenTB;
     @Column
     private String MoTaTB;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "thietBi", cascade = CascadeType.ALL) // cascade sẽ xóa luôn các khóa ngoại liên quan bên bảng thông tin sử dụng
+    private List<ThongTinSuDung> thongTinSuDung;
     
     public ThietBi() {}
 

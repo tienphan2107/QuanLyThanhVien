@@ -23,6 +23,7 @@ import javax.swing.border.EmptyBorder;
  * @author DELL
  */
 public class IntegratedSearch extends JPanel {
+    private GUI.Panel.ThanhVienPanel tvPanel;
     public JComboBox<String> cbxChoose;
     public JButton btnReset;
     public JTextField txtSearchForm;
@@ -61,9 +62,14 @@ public class IntegratedSearch extends JPanel {
     public IntegratedSearch(String str[]) {
         initComponent(str);
     }
+    
+    public JButton getBtnReset() {
+        return btnReset;
+    }
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent e) {
         txtSearchForm.setText("");
         cbxChoose.setSelectedIndex(0);
+        
     }
 }
