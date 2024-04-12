@@ -39,10 +39,12 @@ public class ThongTinSuDung {
     @Column
     private Date TGTra;
     
+    // getThanhVien().getMaTV
     @ManyToOne
     @JoinColumn(name = "MaTV")
     private ThanhVien thanhVien;
 
+    // getThietBi().getMaTB
     @ManyToOne
     @JoinColumn(name = "MaTB")
     private ThietBi thietBi;

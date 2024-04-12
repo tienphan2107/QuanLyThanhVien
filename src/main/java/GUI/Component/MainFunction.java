@@ -33,6 +33,11 @@ public class MainFunction extends JToolBar {
         btn.put("import", new ButtonToolBar("NHẬP EXCEL", "import_excel.svg", "create"));
         btn.put("export", new ButtonToolBar("XUẤT EXCEL", "export_excel.svg", "view"));
         btn.put("phone", new ButtonToolBar("XEM DS", "phone.svg", "view"));
+        btn.put("vaokhutuhoc", new ButtonToolBar("VÀO KHU HỌC TẬP", "phone.svg", "create"));
+        btn.put("muon", new ButtonToolBar("MƯỢN", "phone.svg", "create"));
+        btn.put("tra", new ButtonToolBar("TRẢ", "phone.svg", "create"));
+        btn.put("datcho", new ButtonToolBar("ĐẶT CHỖ", "phone.svg", "create"));
+
     }
 
     private void initComponent(String[] listBtn) {
