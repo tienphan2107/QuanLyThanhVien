@@ -102,6 +102,16 @@
             <version>RELEASE210</version>
         </dependency>
         <dependency>
+
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.4</version> <!-- Thay phiên bản tùy theo yêu cầu của bạn -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.4</version> 
+
             <groupId>org.knowm.xchart</groupId>
             <artifactId>xchart</artifactId>
             <version>3.8.7</version>
@@ -113,4 +123,5 @@
         <maven.compiler.target>19</maven.compiler.target>
         <exec.mainClass>com.mycompany.quanlythanhvien.Quanlythanhvien</exec.mainClass>
     </properties>
+    
 </project>
