@@ -14,11 +14,13 @@ import helper.Validation;
 import hibernatemember.DAL.ThanhVien;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,14 +43,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.io.FileOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
- * @author DELL
+ * @author MSI
  */
 public class ThanhVienPanel extends JPanel implements ActionListener {
 
@@ -113,13 +120,14 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Khoa", "Ngành"});
         functionBar.add(search);
-        search.getBtnReset().addActionListener(new ActionListener() {
+        search.btnReset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadDataTable();
+                JOptionPane.showMessageDialog(functionBar, "Refreshed !");
             }
         });
-//        search.btnReset.addActionListener(nvBus);
+
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
 
@@ -179,11 +187,9 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 //        }
 //    }
 
-    public void loadDataTable(ArrayList<ThanhVien> list) {
-//        ArrayList<ThanhVien> list = new ArrayList<>(tvBLL.loadThanhVien());
+    public void loadDataTableFormList(ArrayList<ThanhVien> list) {
         tblModel.setRowCount(0);
         for (ThanhVien thanhVien : list) {
-            // Thêm dữ liệu vào bảng tblModel
             tblModel.addRow(new Object[]{
                 thanhVien.getMaTV(), thanhVien.getHoTen(), thanhVien.getKhoa(), thanhVien.getNganh(), thanhVien.getSDT()
             });
@@ -201,6 +207,84 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         }
     }
 
+    public void exportToExcel(ArrayList<ThanhVien> list) {
+        try {
+            Workbook workbook = new XSSFWorkbook();
+
+            Sheet sheet = workbook.createSheet("DanhSachThanhVien");
+
+            String[] columnHeader = {"MaTV", "HoTen", "Khoa", "Nganh", "SĐT"};
+            int rowNum = 0;
+            Row headerRow = sheet.createRow(rowNum);
+
+            for (int i = 0; i < columnHeader.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columnHeader[i]);
+            }
+
+            rowNum += 1;
+            for (ThanhVien tv : list) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(tv.getMaTV());
+                row.createCell(1).setCellValue(tv.getHoTen());
+                row.createCell(2).setCellValue(tv.getKhoa());
+                row.createCell(3).setCellValue(tv.getNganh());
+                row.createCell(4).setCellValue(tv.getSDT());
+            }
+
+            String filePath = "list.xlsx";
+
+            try (FileOutputStream os = new FileOutputStream(filePath)) {
+                workbook.write(os);
+            }
+            workbook.close();
+
+            try {
+                File file = new File(filePath);
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(file);
+            } catch (Exception e) {
+                System.out.println("File not exist");
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in exportToExcel function");
+            ex.printStackTrace();
+        }
+
+    }
+
+    public ArrayList<ThanhVien> importFormExcel(String fileName) {
+        ArrayList<ThanhVien> list = new ArrayList<ThanhVien>();
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+
+            Workbook workbook = new XSSFWorkbook(fis);
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+                if (row != null) {
+                    ThanhVien tv = new ThanhVien();
+                    tv.setMaTV((int) row.getCell(0).getNumericCellValue());
+                    tv.setHoTen(row.getCell(1).getStringCellValue());
+                    tv.setKhoa(row.getCell(2).getStringCellValue());
+                    tv.setNganh(row.getCell(3).getStringCellValue());
+                    tv.setSDT((int) row.getCell(4).getNumericCellValue());
+                    list.add(tv);
+                }
+            }
+            workbook.close();
+            fis.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String btn = e.getActionCommand();
@@ -216,13 +300,17 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
             }
             case "XÓA" -> {
                 int index = getRow();
-                if (index != -1) {
-                    int input = JOptionPane.showConfirmDialog(null,
-                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
-                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-                    if (input == 0) {
-                        tvBLL.deleteThanhVien(getThanhVien());
+                try {
+                    if (index != -1) {
+                        int input = JOptionPane.showConfirmDialog(null,
+                                "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
+                                JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                        if (input == 0) {
+                            tvBLL.deleteThanhVien(getThanhVien());
+                        }
                     }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(functionBar, "Xảy ra lỗi khi cố xóa đối tượng");
                 }
             }
             case "CHI TIẾT" -> {
@@ -232,11 +320,43 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                 }
             }
             case "NHẬP EXCEL" -> {
-                //importExcel();
+                ArrayList<ThanhVien> importedList = importFormExcel("list.xlsx");
+                if (importedList != null) {
+                    int n = 0;
+                    for (ThanhVien tv : importedList) {
+                        if (tvBLL.checkExist(tv.getMaTV()) == false) {
+                            n++;
+                            if(InputValidation(tv) == true){
+                                System.out.println("1");
+                                int matv = tvBLL.getAutoIncrement();
+                                tv.setMaTV(matv);
+                                tvBLL.newThanhVien(tv);
+                            }
+                        }
+                    }
+                    if(n == 0){
+                        JOptionPane.showMessageDialog(functionBar, "Các thành viên trong file nhập vào đã tồn tại");
+                    }
+                    listTV = tvBLL.loadThanhVien();
+                }
+            }
+            case "XUẤT EXCEL" -> {
+                exportToExcel(listTV);
+
             }
         }
 
         loadDataTable();
+    }
+
+    public boolean InputValidation(ThanhVien tv){
+        String regex = "^\\d{10}$";
+        Pattern pattern = Pattern.compile(regex);
+        if(tv.getHoTen() == "" || tv.getHoTen().length() <= 6) return false;
+        String phone = tv.getSDT() + "";
+        Matcher matcher = pattern.matcher(phone);
+        if(matcher.matches() == false) return false;
+        return true;
     }
 
 //    public void importExcel() {
