@@ -18,7 +18,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
  * @author DELL
  */
 public class ThongTinSuDungPanel extends JPanel implements ActionListener {
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
 //    NhanVienBUS nvBus = new NhanVienBUS(this);
     private ThongTinSuDungBLL thongtinsudungBLL;
@@ -90,11 +94,11 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
-        String[] action = {"create", "muon", "tra", "datcho"};
-        mainFunction = new MainFunction( action);
-//        for (String ac : action) {
-//            mainFunction.btn.get(ac).addActionListener(nvBus);
-//        }
+        String[] action = {"vaokhutuhoc", "muon", "tra", "datcho"};
+        mainFunction = new MainFunction(action);
+        for (String ac : action) {
+            mainFunction.btn.get(ac).addActionListener(this);
+        }
         functionBar.add(mainFunction);
 //        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
 //        functionBar.add(search);
@@ -131,7 +135,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         main.add(scrollTableThongTinSuDung);
     }
 
-    public ThongTinSuDungPanel(Main m) {
+    public ThongTinSuDungPanel(Main m) throws ParseException {
         this.m = m;
         initComponent();
         thongtinsudungBLL = new ThongTinSuDungBLL();
@@ -146,8 +150,8 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //    public DTO.NhanVienDTO getNhanVien() {
 //        return listnv.get(tableNhanVien.getSelectedRow());
 //    }
-    public void loadDataTable() {
-        ArrayList<ThongTinSuDung> list = new ArrayList<>(thongtinsudungBLL.loadThongTinSuDung());
+    public void loadDataTable() throws ParseException {
+        ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadThongTinSuDung();
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
             tblModel.addRow(new Object[]{
@@ -155,13 +159,14 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             });
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String btn = e.getActionCommand();
         switch (btn) {
-            case "THÊM" -> {
+            case "VÀO KHU HỌC TẬP" -> {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
+//                System.out.print("Hello word");
             }
 //            case "SỬA" -> {
 //                int index = getRow();
@@ -191,6 +196,10 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //            }
         }
 
-        loadDataTable();
+        try {
+            loadDataTable();
+        } catch (ParseException ex) {
+            Logger.getLogger(ThongTinSuDungPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

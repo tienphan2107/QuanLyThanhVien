@@ -7,6 +7,8 @@ package hibernatemember.DAL;
 import POJO.DateRange;
 import POJO.ThongKeKhuHocTap;
 import helper.DateHelper;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,7 +16,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -24,18 +28,48 @@ import org.hibernate.type.StandardBasicTypes;
  * @author DELL
  */
 public class ThongTinSuDungDAL {
+
+    private ThietBi thietBi = new ThietBi();
     Session session;
 
     public ThongTinSuDungDAL() {
         session = HibernateUtils.getSessionFactory().openSession();
     }
 
-    public List loadThongTinSuDung() {
-        List<ThongTinSuDung> thongtinsudung;
-        session.beginTransaction();
-        thongtinsudung = session.createQuery("FROM ThongTinSuDung", ThongTinSuDung.class).list();
-        session.getTransaction().commit();
-        return thongtinsudung;
+    public ArrayList loadThongTinSuDung() throws ParseException {
+        session = HibernateUtils.getSessionFactory().openSession();
+        ArrayList<ThongTinSuDung> listThongTin = new ArrayList<>();
+        Transaction tx = null;
+        String dateString = "0000-00-00 00:00:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = dateFormat.parse(dateString);
+
+        try {
+            tx = session.beginTransaction();
+            listThongTin = (ArrayList<ThongTinSuDung>) session.createQuery("FROM ThongTinSuDung", ThongTinSuDung.class).list();
+            for (ThongTinSuDung thongTin : listThongTin) {
+//                if (thongTin.getThietBi() == null) {
+//                    thongTin.setThietBi(new ThietBi()); // Tạo một đối tượng ThietBi mới nếu giá trị trả về là null
+//                    thongTin.getThietBi().setMaTB(0);
+//                }
+                if (thongTin.getTGMuon() == null) {
+                    thongTin.setTGMuon(date);
+                }
+                if (thongTin.getTGTra() == null) {
+                    thongTin.setTGTra(date);
+                }
+            }
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi tải dữ liệu tham gia: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return listThongTin;
     }
 
     public ThongTinSuDung getThongTinSuDung(int MaTT) {
@@ -43,8 +77,25 @@ public class ThongTinSuDungDAL {
         return c;
     }
 
-    public void addThongTinSuDung(ThongTinSuDung c) {
-        session.save(c);
+    public boolean addThongTinSuDung(ThongTinSuDung c) {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+
+            tx = session.beginTransaction();
+            session.save(c);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi tham gia khu học tập: ");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
 
     }
 
@@ -57,12 +108,38 @@ public class ThongTinSuDungDAL {
         session.delete(c);
     }
 
+    public String[] getListMaTB() {
+        String[] maTBArray = new String[0];
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            String queryString = "SELECT DISTINCT tb.maTB FROM ThongTinSuDung ttd JOIN ttd.thietBi tb";
+            Query<Integer> query = session.createQuery(queryString, Integer.class);
+            List<Integer> maTBList = query.list();
+            maTBArray = new String[maTBList.size()];
+            for (int i = 0; i < maTBList.size(); i++) {
+                maTBArray[i] = String.valueOf(maTBList.get(i));
+            }
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi lấy danh sách mã maTB: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return maTBArray;
+    }
+
     public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {
         ArrayList<ThongKeKhuHocTap> list = new ArrayList<>();
         String queryTimeline = "";
         String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
         String toDate = dateRange.getToDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
-        
+
         switch (groupBy) {
             case "date":
                 queryTimeline = "DR.date";
@@ -75,7 +152,7 @@ public class ThongTinSuDungDAL {
                 break;
             default:
         }
-        
+
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("""
                             WITH RECURSIVE date_range AS (
@@ -128,7 +205,7 @@ public class ThongTinSuDungDAL {
         session.getTransaction().commit();
         return minDate;
     }
-    
+
     public ArrayList<ThongTinSuDung> getStatTTSD(DateRange dateRange, String device, boolean isTGTraNull) {
         ArrayList<ThongTinSuDung> list = new ArrayList<>();
         String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
@@ -152,15 +229,15 @@ public class ThongTinSuDungDAL {
         session.getTransaction().commit();
         return list;
     }
-    
+
     public ArrayList<ThongKeKhuHocTap> getStatKhuHocTapUpToHour(DateRange dateRange, String khoa, String nganh) {
         ArrayList<ThongKeKhuHocTap> list = new ArrayList<>();
         String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
-        
+
         LocalDateTime newToDate = null;
         LocalDate today = LocalDate.now();
         LocalDate datePart = dateRange.getToDate().toLocalDate();
-        
+
         if (datePart.equals(today)) {
             LocalTime now = LocalTime.now();
             newToDate = LocalDateTime.of(datePart, LocalTime.of(now.getHour(), 0, 0));
