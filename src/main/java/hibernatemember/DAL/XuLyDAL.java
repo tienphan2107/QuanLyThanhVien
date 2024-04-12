@@ -8,6 +8,7 @@ import POJO.DateRange;
 import helper.DateHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -66,7 +67,6 @@ public class XuLyDAL {
         XuLy xuLy = session.get(XuLy.class, xuLyID);
         session.close();
         return xuLy;
-
     }
 
     public boolean addXuLy(XuLy xuLy) {
@@ -126,11 +126,11 @@ public class XuLyDAL {
             System.out.print("Lỗi khi xóa vi phạm: ");
             e.printStackTrace();
             return false;
-        }finally{
+        } finally {
             session.close();
         }
     }
-    
+
     public ArrayList<XuLy> getStatXuLy(int state, DateRange dateRange, String memberName) {
         ArrayList<XuLy> list = new ArrayList<>();
         String fromDate = dateRange.getFromDate().format(DateHelper.SQL_ROW_DATE_FORMATTER);
