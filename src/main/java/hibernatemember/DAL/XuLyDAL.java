@@ -43,7 +43,7 @@ public class XuLyDAL {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            listXuLy = (ArrayList<XuLy>) session.createQuery("FROM XuLy").list();
+            listXuLy = (ArrayList<XuLy>) session.createQuery("FROM XuLy", XuLy.class).list();
             for (XuLy xuLy : listXuLy) {
                 if (xuLy.getSoTien() == null) {
                     xuLy.setSoTien(0);
