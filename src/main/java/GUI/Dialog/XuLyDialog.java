@@ -82,7 +82,7 @@ public class XuLyDialog extends JDialog {
         cbbHinhThucXL.setValue(xuLy.getHinhThucXL());
         txtSoTien.setText(xuLy.getSoTien() + "");
 
-        if (!xuLy.getHinhThucXL().contains("ồi thường")) {
+        if (!xuLy.getHinhThucXL().contains("Bồi thường")) {
             txtSoTien.setDisable();
         }
 

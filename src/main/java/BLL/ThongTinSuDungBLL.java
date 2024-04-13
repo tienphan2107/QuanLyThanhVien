@@ -9,6 +9,8 @@ import POJO.ThongKeKhuHocTap;
 import helper.DateHelper;
 import hibernatemember.DAL.ThongTinSuDung;
 import hibernatemember.DAL.ThongTinSuDungDAL;
+import hibernatemember.DAL.XuLy;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,23 +27,29 @@ public class ThongTinSuDungBLL {
         thongtinsudungDAL = new ThongTinSuDungDAL();
     }
     
-    public List loadThongTinSuDung()
+    public boolean newThongTinSuDung(ThongTinSuDung c)
     {
-        List list;
-        list = thongtinsudungDAL.loadThongTinSuDung();
-        
-        return list;
-    }
-    
-    public void newThongTinSuDung(ThongTinSuDung c)
-    {
-        thongtinsudungDAL.addThongTinSuDung(c);
+        return thongtinsudungDAL.addThongTinSuDung(c);
     }
     
     public ThongTinSuDung getThongTinSuDung(int MaTT)
     {
         ThongTinSuDung c = thongtinsudungDAL.getThongTinSuDung(MaTT);
         return c;
+    }
+    
+    public ArrayList<ThongTinSuDung> LoadThongTinSuDung() throws ParseException {
+        return  thongtinsudungDAL.loadThongTinSuDung();
+    }
+    
+    public int getMaTTAutoIncreasement() throws ParseException {
+        ArrayList<ThongTinSuDung> listXuLy = LoadThongTinSuDung();
+        int lastIndex = LoadThongTinSuDung().size() - 1;
+        return listXuLy.get(lastIndex).getMaTT()+ 1;
+    }
+    
+    public String[] getListMaTB() {
+        return thongtinsudungDAL.getListMaTB();
     }
     
     public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {

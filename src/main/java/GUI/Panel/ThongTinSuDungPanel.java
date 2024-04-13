@@ -8,16 +8,24 @@ import BLL.ThongTinSuDungBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.KhuTuHocDialog;
+import GUI.Dialog.ThanhVienDialog;
 import GUI.Main;
 import hibernatemember.DAL.ThongTinSuDung;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,7 +38,8 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author DELL
  */
-public class ThongTinSuDungPanel extends JPanel {
+public class ThongTinSuDungPanel extends JPanel implements ActionListener {
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
 //    NhanVienBUS nvBus = new NhanVienBUS(this);
     private ThongTinSuDungBLL thongtinsudungBLL;
@@ -85,14 +94,14 @@ public class ThongTinSuDungPanel extends JPanel {
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
-        String[] action = {"create", "update", "delete", "detail", "import", "export"};
-        mainFunction = new MainFunction( action);
-//        for (String ac : action) {
-//            mainFunction.btn.get(ac).addActionListener(nvBus);
-//        }
+        String[] action = {"vaokhutuhoc", "muon", "tra", "datcho"};
+        mainFunction = new MainFunction(action);
+        for (String ac : action) {
+            mainFunction.btn.get(ac).addActionListener(this);
+        }
         functionBar.add(mainFunction);
-        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
-        functionBar.add(search);
+//        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
+//        functionBar.add(search);
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
@@ -126,7 +135,7 @@ public class ThongTinSuDungPanel extends JPanel {
         main.add(scrollTableThongTinSuDung);
     }
 
-    public ThongTinSuDungPanel(Main m) {
+    public ThongTinSuDungPanel(Main m) throws ParseException {
         this.m = m;
         initComponent();
         thongtinsudungBLL = new ThongTinSuDungBLL();
@@ -141,13 +150,56 @@ public class ThongTinSuDungPanel extends JPanel {
 //    public DTO.NhanVienDTO getNhanVien() {
 //        return listnv.get(tableNhanVien.getSelectedRow());
 //    }
-    public void loadDataTable() {
-        ArrayList<ThongTinSuDung> list = new ArrayList<>(thongtinsudungBLL.loadThongTinSuDung());
+    public void loadDataTable() throws ParseException {
+        ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadThongTinSuDung();
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
             tblModel.addRow(new Object[]{
                 ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), ttsd.getThietBi().getMaTB(), ttsd.getTGVao(), ttsd.getTGMuon(), ttsd.getTGTra()
             });
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String btn = e.getActionCommand();
+        switch (btn) {
+            case "VÀO KHU HỌC TẬP" -> {
+                KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
+//                System.out.print("Hello word");
+            }
+//            case "SỬA" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
+//                }
+//            }
+//            case "XÓA" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    int input = JOptionPane.showConfirmDialog(null,
+//                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
+//                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+//                    if (input == 0) {
+//                        tvBLL.deleteThanhVien(getThanhVien());
+//                    }
+//                }
+//            }
+//            case "CHI TIẾT" -> {
+//                int index = getRow();
+//                if (index != -1) {
+//                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
+//                }
+//            }
+//            case "NHẬP EXCEL" -> {
+//                //importExcel();
+//            }
+        }
+
+        try {
+            loadDataTable();
+        } catch (ParseException ex) {
+            Logger.getLogger(ThongTinSuDungPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
