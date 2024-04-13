@@ -152,7 +152,7 @@ public class ThanhVienDialog extends JDialog {
                     if (ValidationInput()) {
                         int manv = tvBLL.getAutoIncrement();
                         
-                        int manv =Integer.parseInt(tvBLL.createMaTV());
+                        manv += Integer.parseInt(tvBLL.createMaTV());
                         String txtName = name.getText();
                         String txtSdt = sdt.getText();
                         String txtKhoa = (String) khoa.getSelectedItem();

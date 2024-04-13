@@ -109,7 +109,7 @@ public class ThanhVienDAL {
             System.out.print("Lỗi khi xóa vi phạm: ");
             e.printStackTrace();
             return false;
-        }finally{
+        } finally {
             session.close();
         }
     }
@@ -157,6 +157,50 @@ public class ThanhVienDAL {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public int getAutoIncrement() {
+        session = HibernateUtils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            Number maxIdResult = (Number) session.createQuery("SELECT MAX(id) FROM ThanhVien").uniqueResult();
+            int maxId = (maxIdResult != null) ? maxIdResult.intValue() : 0;
+
+            // Kiểm tra xem mã thành viên lớn nhất đã vượt quá giới hạn int hay không
+            if (maxId >= Integer.MAX_VALUE) {
+                // Nếu đã vượt quá, quay lại kiểm tra từ mã 1 đến khi không còn trùng lặp
+                int newId = 1;
+                while (true) {
+                    Number countResult = (Number) session.createQuery("SELECT COUNT(*) FROM ThanhVien WHERE id = :newId")
+                            .setParameter("newId", newId)
+                            .uniqueResult();
+                    if (countResult != null && countResult.intValue() == 0) {
+                        break; // Không còn trùng lặp, thoát vòng lặp
+                    }
+                    newId++;
+                }
+                return newId;
+            } else {
+                // Nếu chưa vượt quá, tiếp tục tăng mã thành viên lên 1
+                int newId = maxId + 1;
+                // Kiểm tra xem mã mới đã tồn tại chưa, nếu có thì tăng giá trị lên 1 cho đến khi không còn trùng lặp
+                while (true) {
+                    Number countResult = (Number) session.createQuery("SELECT COUNT(*) FROM ThanhVien WHERE id = :newId")
+                            .setParameter("newId", newId)
+                            .uniqueResult();
+                    if (countResult != null && countResult.intValue() == 0) {
+                        break; // Không còn trùng lặp, thoát vòng lặp
+                    }
+                    newId++;
+                }
+                return newId;
+            }
+        }catch(Exception ex){
+            
+        }finally{
+            session.close();
+        }
+        return -1;
     }
 
     public ArrayList<String> getListKhoa(String query) {
