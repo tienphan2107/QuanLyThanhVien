@@ -79,7 +79,9 @@ public class ThanhVienBLL{
         ThanhVien c = thanhvienDAL.getThanhVien(thanhvienID);
         return c;
     }
-
+    public int getAutoIncrement() {
+        return thanhvienDAL.getAutoIncrement();
+    }
     public String createMaTV() {
         return thanhvienDAL.createMaTV();
     }

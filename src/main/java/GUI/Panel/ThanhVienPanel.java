@@ -52,6 +52,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import java.time.Year;
 
 /**
  *
@@ -273,7 +274,9 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                     tv.setHoTen(row.getCell(1).getStringCellValue());
                     tv.setKhoa(row.getCell(2).getStringCellValue());
                     tv.setNganh(row.getCell(3).getStringCellValue());
-                    tv.setSDT((int) row.getCell(4).getNumericCellValue());
+                    int sdt = (int) row.getCell(4).getNumericCellValue();
+                    
+                    tv.setSDT("0" + sdt);
                     list.add(tv);
                 }
             }
@@ -325,17 +328,16 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                     int n = 0;
                     for (ThanhVien tv : importedList) {
                         if (tvBLL.checkExist(tv.getMaTV()) == false) {
-                            n++;
                             if(InputValidation(tv) == true){
-                                System.out.println("1");
-                                int matv = tvBLL.getAutoIncrement();
-                                tv.setMaTV(matv);
+                                n++;
                                 tvBLL.newThanhVien(tv);
                             }
                         }
                     }
                     if(n == 0){
-                        JOptionPane.showMessageDialog(functionBar, "Các thành viên trong file nhập vào đã tồn tại");
+                        JOptionPane.showMessageDialog(functionBar, "Các id thành viên trong file nhập vào đã tồn tại");
+                    }else{
+                        JOptionPane.showMessageDialog(functionBar, "Đã thêm mới " + n +" thành viên vào cơ sở dữ liệu !");
                     }
                     listTV = tvBLL.loadThanhVien();
                 }
@@ -348,8 +350,36 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 
         loadDataTable();
     }
-
+    public boolean idValidation(String idStr){
+        if(idStr.length() != 10) return false;
+        if(!idStr.substring(0,2).equals("11")) return false;
+        int regex34 = Year.now().getValue() %100;
+        try{
+            int year = Integer.parseInt(idStr.substring(2, 4));
+            if(year < 0 || year > regex34) return false;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        try{
+            int regex56 = Integer.parseInt(idStr.substring(4, 6));
+            if(regex56 < 0 || regex56 > 55) return false;
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        try{
+            int regex7_10 = Integer.parseInt(idStr.substring(6));
+            if(regex7_10 < 0) return false;
+        }catch(Exception exs){
+            exs.printStackTrace();
+        }
+        return true;
+    }
     public boolean InputValidation(ThanhVien tv){
+        String id = tv.getMaTV() + "";
+        if(!idValidation(id)) return false;
+        
         String regex = "^\\d{10}$";
         Pattern pattern = Pattern.compile(regex);
         if(tv.getHoTen() == "" || tv.getHoTen().length() <= 6) return false;
