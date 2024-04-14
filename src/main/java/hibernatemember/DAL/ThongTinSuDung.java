@@ -42,7 +42,7 @@ public class ThongTinSuDung {
 
     // getThietBi().getMaTB
     @ManyToOne
-    @JoinColumn(name = "MaTB")
+    @JoinColumn(name = "MaTB", nullable = true)
     private ThietBi thietBi;
 
     public ThongTinSuDung() {
@@ -64,10 +64,12 @@ public class ThongTinSuDung {
 //        calendar.set(Calendar.MILLISECOND, 0);
 //        return calendar.getTime();
 //    }
-    public ThongTinSuDung(int MaTT, int MaTV, int MaTB ,Date TGVao, Date TGMuon, Date TGTra) {
+    public ThongTinSuDung(int MaTT, int MaTV, Integer MaTB ,Date TGVao, Date TGMuon, Date TGTra) {
         this.MaTT = MaTT;
+        this.thanhVien = new ThanhVien();
         this.thanhVien.setMaTV(MaTV);
-        this.thietBi.setMaTB(MaTB);
+        if(MaTB != null)
+            this.thietBi.setMaTB(MaTB);
         this.TGVao = TGVao;
         this.TGMuon = TGMuon;
         this.TGTra = TGTra;

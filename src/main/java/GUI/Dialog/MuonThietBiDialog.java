@@ -5,6 +5,7 @@
 package GUI.Dialog;
 
 import BLL.ThanhVienBLL;
+import BLL.ThietBiBLL;
 import BLL.ThongTinSuDungBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
@@ -26,6 +27,7 @@ import java.awt.event.FocusListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,10 +44,11 @@ import javax.swing.text.PlainDocument;
  *
  * @author DELL
  */
-public class KhuTuHocDialog extends JDialog {
+public class MuonThietBiDialog extends JDialog {
 
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
+    private ThietBiBLL thietBiBLL = new ThietBiBLL();
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
@@ -54,11 +57,11 @@ public class KhuTuHocDialog extends JDialog {
     private InputForm sdt;
     private ThongTinSuDung khuTuHoc;
     private InputDate ipDate;
-    String[] arrMaTB = {"Micro", "Micro", "Bảng điện tử"};
+    ArrayList<String> ListLoaiThietBi = thietBiBLL.getDanhSachLoaiThietBi();
+    String[] arrMaTB = ListLoaiThietBi .toArray(new String[ListLoaiThietBi .size()]);
 
-    ;
 
-    public KhuTuHocDialog(JFrame owner, boolean modal, String title, String type) {
+    public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
         init(title, type);
         this.setLocationRelativeTo(null);
@@ -78,7 +81,7 @@ public class KhuTuHocDialog extends JDialog {
 
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
-//        maTB = new SelectForm("Mã thiết bị", arrMaTB);
+        maTB = new SelectForm("Mã thiết bị", arrMaTB);
 //        male = new JRadioButton("Nam");
 //        female = new JRadioButton("Nữ");
 //        gender = new ButtonGroup();
@@ -89,13 +92,13 @@ public class KhuTuHocDialog extends JDialog {
 //        jpanelG.setBorder(new EmptyBorder(10, 10, 10, 10));
         JPanel jpaneljd = new JPanel();
         jpaneljd.setBorder(new EmptyBorder(10, 10, 10, 10));
-        JLabel lbBd = new JLabel("Thời gian vào");
+        JLabel lbBd = new JLabel("Thời gian mượn");
         lbBd.setSize(new Dimension(100, 100));
         jpaneljd.setSize(new Dimension(500, 100));
         jpaneljd.setLayout(new FlowLayout(FlowLayout.LEFT));
         jpaneljd.setBackground(Color.white);
 
-        ipDate = new InputDate("Thời gian vào");
+        ipDate = new InputDate("Thời gian mượn");
         ipDate.setSize(new Dimension(100, 100));
         Date currentDate = new Date(System.currentTimeMillis());
         ipDate.setDate(currentDate);
@@ -103,7 +106,7 @@ public class KhuTuHocDialog extends JDialog {
         jpaneljd.add(ipDate);
         main.add(txtMaTV);
         main.add(name);
-//        main.add(maTB);
+        main.add(maTB);
 
 //        main.add(jpanelG);
         main.add(ipDate);
@@ -174,7 +177,7 @@ public class KhuTuHocDialog extends JDialog {
                     Date date = dateFormat.parse(dateString);
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                   
+
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
@@ -189,7 +192,7 @@ public class KhuTuHocDialog extends JDialog {
                     dispose();
 //                    }
                 } catch (ParseException ex) {
-                    Logger.getLogger(KhuTuHocDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MuonThietBiDialog.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
