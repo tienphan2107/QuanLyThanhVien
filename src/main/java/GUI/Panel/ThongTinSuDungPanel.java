@@ -154,8 +154,20 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadThongTinSuDung();
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
+            String maTB = "Không mượn";
+            String tgMuon = "Không mượn";
+            String tgTra = "Không mượn";
+            try{
+                maTB = ttsd.getThietBi().getMaTB() + "";
+                tgMuon = ttsd.getTGMuon().toString();
+                tgTra = ttsd.getTGTra().toString();
+            }catch(Exception e){
+                if(maTB != "Không mượn"){
+                    tgTra = "Chưa trả";
+                }
+            }
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), ttsd.getThietBi().getMaTB(), ttsd.getTGVao(), ttsd.getTGMuon(), ttsd.getTGTra()
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
             });
         }
     }
@@ -168,13 +180,10 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
 //                System.out.print("Hello word");
             }
-//            case "SỬA" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
-//                }
-//            }
-//            case "XÓA" -> {
+            case "MƯỢN" -> {
+                
+            }
+            case "TRẢ" -> {
 //                int index = getRow();
 //                if (index != -1) {
 //                    int input = JOptionPane.showConfirmDialog(null,
@@ -184,13 +193,13 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //                        tvBLL.deleteThanhVien(getThanhVien());
 //                    }
 //                }
-//            }
-//            case "CHI TIẾT" -> {
+            }
+            case "ĐẶT CHỔ" -> {
 //                int index = getRow();
 //                if (index != -1) {
 //                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
 //                }
-//            }
+            }
 //            case "NHẬP EXCEL" -> {
 //                //importExcel();
 //            }
