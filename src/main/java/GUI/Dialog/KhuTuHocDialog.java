@@ -75,6 +75,8 @@ public class KhuTuHocDialog extends JDialog {
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBackground(Color.white);
         txtMaTV = new InputForm("Mã số sinh viên");
+        PlainDocument phonex = (PlainDocument) txtMaTV.getTxtForm().getDocument();
+        phonex.setDocumentFilter((new NumericDocumentFilter()));
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
 //        maTB = new SelectForm("Mã thiết bị", arrMaTB);
@@ -146,9 +148,9 @@ public class KhuTuHocDialog extends JDialog {
                 try {
                     int maTT = thongtinBLL.getMaTTAutoIncreasement();
                     Date ngay = ipDate.getDate();
-                    String dateString = "0000-00-00 00:00:00";
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = dateFormat.parse(dateString);
+//                    Date date = dateFormat.parse(ngay.toString());
+                    System.out.print(ngay + "Yeahhhhh");
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
                    
@@ -157,7 +159,7 @@ public class KhuTuHocDialog extends JDialog {
                         return;
                     }
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, null, ngay, null, null);
+                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, null, new Date(), null, null);
                     if (thongtinBLL.newThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {

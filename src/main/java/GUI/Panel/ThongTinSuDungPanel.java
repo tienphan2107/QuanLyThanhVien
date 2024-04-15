@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -100,13 +102,38 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
         }
+        
         functionBar.add(mainFunction);
-//        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
-//        functionBar.add(search);
+        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
+        functionBar.add(search);
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
+        search.getTxtSearchForm().addActionListener(new ActionListener() {
+            @Override
+            public void Ke(KeyEvent e) {
+                try {
+                    loadDataSearchTable();
+                } catch (ParseException ex) {
+                }
+            }
 
+            @Override
+            public void keyPressed(KeyEvent e) {
+                try {
+                    loadDataSearchTable();
+                } catch (ParseException ex) {
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                try {
+                    loadDataSearchTable();
+                } catch (ParseException ex) {
+                }
+            }
+        });
         // main là phần ở dưới để thống kê bảng biểu
         main = new PanelBorderRadius();
         BoxLayout boxly = new BoxLayout(main, BoxLayout.Y_AXIS);
@@ -170,6 +197,36 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //    }
     public void loadDataTable() throws ParseException {
         ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadThongTinSuDung();
+        tblModel.setRowCount(0);
+        for (ThongTinSuDung ttsd : list) {
+            String maTB = "Không mượn";
+            String tgMuon = "Không mượn";
+            String tgTra = "Không mượn";
+            try {
+                maTB = ttsd.getThietBi().getMaTB() + "";
+                tgMuon = ttsd.getTGMuon().toString();
+                tgTra = ttsd.getTGTra().toString();
+            } catch (Exception e) {
+                if (maTB != "Không mượn") {
+                    tgTra = "Chưa trả";
+                }
+            }
+            tblModel.addRow(new Object[]{
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+            });
+        }
+    }
+
+    public void loadDataSearchTable() throws ParseException {
+        int maTVTimKiem = -1;
+        try {
+            maTVTimKiem = Integer.parseInt(search.getTxtSearchForm().getText());
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ma thanh vien khong dung");
+            return;
+        }
+        ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadDataSearch(maTVTimKiem);
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
             String maTB = "Không mượn";
