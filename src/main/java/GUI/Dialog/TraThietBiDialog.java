@@ -161,6 +161,12 @@ public class TraThietBiDialog extends JDialog {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
                     }
+                    
+                    if (thongTin.getTGMuon() == null) {
+                        JOptionPane.showMessageDialog(rootPane, "Chưa mượn nên không thể trả");
+                        return;
+                    }
+                    
 //                    String formattedDate = dateFormat.format(new Date());
                     ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), thongTin.getThietBi().getMaTB(), thongTin.getTGVao(), thongTin.getTGMuon(), ngay);
                     if (thongtinBLL.updateThongTinSuDung(thongtin)) {
