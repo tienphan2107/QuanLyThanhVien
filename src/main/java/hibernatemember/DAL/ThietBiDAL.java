@@ -4,6 +4,7 @@
  */
 package hibernatemember.DAL;
 
+import BLL.ThongTinSuDungBLL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.hibernate.query.Query;
  */
 public class ThietBiDAL {
 
+    private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
     Session session;
 
     public ThietBiDAL() {
@@ -92,12 +94,23 @@ public class ThietBiDAL {
 
     public int getMaThietBi(String tenThietBi) {
         int maThietBi = -1; // Mã thiết bị mặc định nếu không tìm thấy
+        List<Integer> maThietBiList = new ArrayList<>();
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             session.beginTransaction();
             Query<Integer> query = session.createQuery("SELECT tb.MaTB FROM ThietBi tb WHERE tb.TenTB = :tenThietBi", Integer.class);
             query.setParameter("tenThietBi", tenThietBi);
-            Integer result = query.uniqueResult();
-            maThietBi = result != null ? result : -1;
+            List<Integer> results = query.list();
+            if (results != null) {
+                maThietBiList.addAll(results);
+            }
+            for(int ma : maThietBiList) {
+                if (thongtinBLL.checkMaTBExists(ma) == false) {
+                    maThietBi = ma;
+                    break;
+                }
+            }
+//            Integer result = query.uniqueResult();
+//            maThietBi = result != null ? result : -1;
             session.getTransaction().commit();
         } catch (HibernateException e) {
             System.out.print("Lỗi khi lấy mã thiết bị: ");

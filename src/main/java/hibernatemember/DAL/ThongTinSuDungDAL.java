@@ -64,8 +64,6 @@ public class ThongTinSuDungDAL {
 //        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
 //        return c;
 //    }
-    
-
     public boolean addThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;
         try {
@@ -87,7 +85,7 @@ public class ThongTinSuDungDAL {
         }
 
     }
-    
+
     public ThongTinSuDung getThongTinSuDung(int MaTT) {
         session = HibernateUtils.getSessionFactory().openSession();
         ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
@@ -136,7 +134,6 @@ public class ThongTinSuDungDAL {
 //            session.close();
 //        }
 //    }
-
     public void deleteThongTinSuDung(ThongTinSuDung c) {
         session.delete(c);
     }
@@ -165,6 +162,55 @@ public class ThongTinSuDungDAL {
             session.close();
         }
         return maTBArray;
+    }
+
+    public Date getTGTraByMaTB(int maTB) {
+        session = HibernateUtils.getSessionFactory().openSession();
+        Date tgTra = null;
+        try {
+            Query query = session.createQuery("SELECT t.TGTra FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
+                    .setParameter("maTB", maTB);
+            tgTra = (Date) query.uniqueResult();
+        } catch (HibernateException e) {
+            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return tgTra;
+    }
+
+    public Date getTGMuonByMaTB(int maTB) {
+        session = HibernateUtils.getSessionFactory().openSession();
+        Date tgMuon = null;
+        try {
+            Query query = session.createQuery("SELECT t.TGMuon FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
+                    .setParameter("maTB", maTB);
+            tgMuon = (Date) query.uniqueResult();
+        } catch (HibernateException e) {
+            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return tgMuon;
+    }
+
+    public boolean checkMaTBExists(int maTB) {
+        session = HibernateUtils.getSessionFactory().openSession();
+        boolean exists = false;
+        try {
+            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB", Long.class)
+                    .setParameter("maTB", maTB);
+            Long count = query.uniqueResult();
+            exists = count > 0;
+        } catch (HibernateException e) {
+            System.out.print("Lỗi khi kiểm tra mã thiết bị trong cơ sở dữ liệu: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return exists;
     }
 
     public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {

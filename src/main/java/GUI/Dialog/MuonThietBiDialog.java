@@ -65,11 +65,9 @@ public class MuonThietBiDialog extends JDialog {
     String[] arrTenTB = thietBiBLL.getListTenTB();
 
 
-    public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type, ThongTinSuDung thongTin) {
+    public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
         init(title, type);
-        this.thongTin = thongTin;
-        txtMaTV.setText(String.valueOf(thongTin.getThanhVien().getMaTV()));
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -154,21 +152,24 @@ public class MuonThietBiDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-//                    int maTT = thongtinBLL.getMaTTAutoIncreasement();
+                    int maTT = thongtinBLL.getMaTTAutoIncreasement();
                     Date ngay = ipDate.getDate();
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
                     String TenTB = (String) tenTB.getSelectedItem();
                     int maTB = thietBiBLL.getMaThietBi(TenTB);
+                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
+                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
+                        return;
+                    }
                     Integer MaTB = (Integer) maTB;
-                    System.out.print(maTB);
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
                     }
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), MaTB, thongTin.getTGVao(), new Date(), null);
-                    if (thongtinBLL.updateThongTinSuDung(thongtin)) {
+                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, MaTB, null, new Date(), null);
+                    if (thongtinBLL.newThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại !");

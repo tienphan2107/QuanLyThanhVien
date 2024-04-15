@@ -68,6 +68,18 @@ public class ThongTinSuDungBLL {
         return thongtinsudungDAL.getListMaTB();
     }
     
+    public Date getTGTraByMaTB(int maTB) {
+        return thongtinsudungDAL.getTGTraByMaTB(maTB);
+    }
+    
+    public Date getTGMuonByMaTB(int maTB) {
+        return thongtinsudungDAL.getTGMuonByMaTB(maTB);
+    }
+    
+    public boolean checkMaTBExists(int maTB) {
+        return thongtinsudungDAL.checkMaTBExists(maTB);
+    }
+    
     public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {
         return thongtinsudungDAL.thongKeKhuHocTap(dateRange, groupBy, khoa, nganh);
     }
