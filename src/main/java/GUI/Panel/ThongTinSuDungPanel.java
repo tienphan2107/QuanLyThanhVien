@@ -256,10 +256,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
             }
             case "MƯỢN" -> {
-                int index = getRow();
-                if (index != -1) {
-                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create", getThongTin());
-                }
+                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
             }
             case "TRẢ" -> {
                 int index = getRow1();
