@@ -177,7 +177,7 @@ public class MuonThietBiDialog extends JDialog {
                     Date date = dateFormat.parse(dateString);
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-
+                    
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;

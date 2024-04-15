@@ -40,6 +40,7 @@ public class DatChoDialog extends javax.swing.JDialog {
     private ThietBiDAL thietbiDAL;
     private List<String> thietBiCbb;
     private ThanhVienBLL tvBLL;
+    private Date currentDate = new Date();
 
     /**
      * Creates new form DatChoDialog
@@ -78,18 +79,17 @@ public class DatChoDialog extends javax.swing.JDialog {
         String temp = thietbiCbb.getSelectedItem().toString();
         ThietBi thietBi = thietbiDAL.getThietBi(Integer.parseInt(temp));
         tentbTxtField.setText(thietBi.getTenTB());
-        dateChooser.setDate(new Date());
+        dateChooser.setDate(currentDate);
         System.out.println(dateChooser.getDate());
         //
         //
         SpinnerDateModel model = new SpinnerDateModel();
-        model.setValue(new Date());
-        System.out.println(model.getDate());
+        model.setValue(currentDate);
         timeSpinner.setModel(model);
-        //timeSpinner.setValue(new Date());
+        timeSpinner.setValue(currentDate);
         JSpinner.DateEditor editor = new JSpinner.DateEditor(timeSpinner, "HH:mm:ss");
         timeSpinner.setEditor(editor);
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -167,6 +167,11 @@ public class DatChoDialog extends javax.swing.JDialog {
         timeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 timeSpinnerStateChanged(evt);
+            }
+        });
+        timeSpinner.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                timeSpinnerFocusLost(evt);
             }
         });
         timeSpinner.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -259,6 +264,19 @@ public class DatChoDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_thietbiCbbActionPerformed
 
     private void datchoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datchoBtnActionPerformed
+        Date selectedDate = (Date) dateChooser.getDate();
+        Date selectedTime = (Date) timeSpinner.getValue();
+
+        // Kiểm tra nếu ngày được chọn là ngày hiện tại
+        if (selectedDate.compareTo(currentDate) == 0) {
+            // Kiểm tra giờ được chọn
+            if (selectedTime.before(currentDate)) {
+                JOptionPane.showMessageDialog(this, "Selected time is in the past.", "Error", JOptionPane.ERROR_MESSAGE);
+                timeSpinner.setValue(currentDate);
+                return;
+            } 
+        }
+        //-------------------------------------------------------------------code them lịch đặt chổ-------------------------------------------
 
     }//GEN-LAST:event_datchoBtnActionPerformed
 
@@ -321,22 +339,58 @@ public class DatChoDialog extends javax.swing.JDialog {
 
     private void timeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_timeSpinnerStateChanged
         if (timeSpinner.getValue() != null && timeSpinner.getValue() instanceof Date) {
-            Date selectedDate = (Date) timeSpinner.getValue();
-            System.out.println("Spinner: " + (Date) timeSpinner.getValue());
+//            System.out.println("Spinner1: " + (Date) timeSpinner.getValue());
+//            Date selectedDate = (Date) timeSpinner.getValue();
+//            System.out.println("Spinner2: " + (Date) timeSpinner.getValue());
 
-            Calendar calendarSelected = Calendar.getInstance();
-            calendarSelected.set(Calendar.YEAR,124+1900);
-            System.out.println(dateChooser.getDate());
-            Calendar calendarCur = Calendar.getInstance();
-            calendarSelected.setTime(selectedDate);
-            System.out.println("Selected : " + calendarSelected.getTime());
-            System.out.println("CUR : " + calendarCur.getTime());
-            if (calendarSelected.before(calendarCur)) {
-                System.out.println("before");
-            }
-
+//            Calendar calendarSelected = Calendar.getInstance();
+//            System.out.println(dateChooser.getDate());
+//            Calendar calendarCur = Calendar.getInstance();
+//            calendarSelected.setTime(selectedDate);
+//            System.out.println("Selected : " + calendarSelected.getTime());
+//            System.out.println("CUR : " + calendarCur.getTime());
+//            if (calendarSelected.before(calendarCur)) {
+//                System.out.println("before");
+//            }
         }
     }//GEN-LAST:event_timeSpinnerStateChanged
+
+    private void timeSpinnerFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_timeSpinnerFocusLost
+        System.out.println("abcd");
+        if (timeSpinner.getValue() != null && timeSpinner.getValue() instanceof Date) {
+//            System.out.println("Spinner1: " + (Date) timeSpinner.getValue());
+//            Date selectedDate = (Date) timeSpinner.getValue();
+//            System.out.println("Spinner2: " + (Date) timeSpinner.getValue());
+
+//            Calendar calendarSelected = Calendar.getInstance();
+//            System.out.println(dateChooser.getDate());
+//            Calendar calendarCur = Calendar.getInstance();
+//            calendarSelected.setTime(selectedDate);
+//            System.out.println("Selected : " + calendarSelected.getTime());
+//            System.out.println("CUR : " + calendarCur.getTime());
+//            if (calendarSelected.before(calendarCur)) {
+//                System.out.println("before");
+//            }
+            Date selectedDate = (Date) dateChooser.getDate();
+            Date selectedTime = (Date) timeSpinner.getValue();
+
+            // Lấy ngày và giờ hiện tại
+            Date currentDate = new Date();
+
+            // Kiểm tra nếu ngày được chọn là ngày hiện tại
+            if (selectedDate.compareTo(currentDate) == 0) {
+                // Kiểm tra giờ được chọn
+                if (selectedTime.before(currentDate)) {
+                    JOptionPane.showMessageDialog(this, "Selected time is in the past.", "Error", JOptionPane.ERROR_MESSAGE);
+                    timeSpinner.setValue(currentDate);
+                } else {
+                    System.out.println("sia roi");
+                }
+            }
+        } else {
+            System.out.println("sai tiep");
+        }
+    }//GEN-LAST:event_timeSpinnerFocusLost
 
     /**
      * @param args the command line arguments
