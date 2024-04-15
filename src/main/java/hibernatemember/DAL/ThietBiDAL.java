@@ -7,7 +7,10 @@ package hibernatemember.DAL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -59,5 +62,73 @@ public class ThietBiDAL {
                 "Quạt đứng"
         ));
         return arrLoaiThietBi;
+    }
+
+    public String[] getListTenTB() {
+        String[] tenTBArray = new String[0];
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            String queryString = "SELECT tb.TenTB FROM ThietBi tb";
+            Query<String> query = session.createQuery(queryString, String.class);
+            List<String> tenTBList = query.list();
+            tenTBArray = new String[tenTBList.size()];
+            for (int i = 0; i < tenTBList.size(); i++) {
+                tenTBArray[i] = tenTBList.get(i);
+            }
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi lấy danh sách tên thiết bị: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return tenTBArray;
+    }
+
+    public int getMaThietBi(String tenThietBi) {
+        int maThietBi = -1; // Mã thiết bị mặc định nếu không tìm thấy
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            Query<Integer> query = session.createQuery("SELECT tb.MaTB FROM ThietBi tb WHERE tb.TenTB = :tenThietBi", Integer.class);
+            query.setParameter("tenThietBi", tenThietBi);
+            Integer result = query.uniqueResult();
+            maThietBi = result != null ? result : -1;
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            System.out.print("Lỗi khi lấy mã thiết bị: ");
+            e.printStackTrace();
+        }
+        return maThietBi;
+    }
+
+    public String getTenThietBi(int maThietBi) {
+        String tenThietBi = null;
+        try {
+            Session session = HibernateUtils.getSessionFactory().openSession();
+            Transaction transaction = session.beginTransaction();
+
+            // Thực hiện truy vấn để lấy tên thiết bị dựa trên mã thiết bị
+            String query = "SELECT tb.TenTB FROM ThietBi tb WHERE tb.MaTB = :maThietBi";
+            Query<String> nameQuery = session.createQuery(query, String.class);
+            nameQuery.setParameter("maThietBi", maThietBi);
+            tenThietBi = nameQuery.getSingleResult();
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return tenThietBi;
     }
 }

@@ -11,7 +11,6 @@ import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
 import GUI.Component.InputForm;
-import GUI.Component.NumericDocumentFilter;
 import GUI.Component.SelectForm;
 import hibernatemember.DAL.ThanhVien;
 import hibernatemember.DAL.ThietBi;
@@ -20,15 +19,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,14 +33,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.PlainDocument;
 
 /**
  *
  * @author DELL
  */
-public class MuonThietBiDialog extends JDialog {
-
+public class TraThietBiDialog extends JDialog {
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
     private ThietBi thietBi = new ThietBi();
@@ -62,14 +54,17 @@ public class MuonThietBiDialog extends JDialog {
     private InputDate ipDate;
 //    ArrayList<String> ListLoaiThietBi = thietBiBLL.getDanhSachLoaiThietBi();
 //    String[] arrMaTB = ListLoaiThietBi .toArray(new String[ListLoaiThietBi .size()]);
-    String[] arrTenTB = thietBiBLL.getListTenTB();
+    String[] arrTenTB = thietBiBLL.getListTenTB(); 
 
 
-    public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type, ThongTinSuDung thongTin) {
+    public TraThietBiDialog(JFrame owner, boolean modal, String title, String type, ThongTinSuDung thongTin) {
         super(owner, title, modal);
         init(title, type);
         this.thongTin = thongTin;
         txtMaTV.setText(String.valueOf(thongTin.getThanhVien().getMaTV()));
+        int maTB = thongTin.getThietBi().getMaTB();
+        String TenTB = thietBiBLL.getTenThietBi(maTB);
+        tenTB.setValue(TenTB);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -121,7 +116,7 @@ public class MuonThietBiDialog extends JDialog {
         bottom = new JPanel(new FlowLayout());
         bottom.setBorder(new EmptyBorder(10, 0, 10, 0));
         bottom.setBackground(Color.white);
-        btnAdd = new ButtonCustom("Mượn", "success", 14);
+        btnAdd = new ButtonCustom("Trả", "success", 14);
         btnEdit = new ButtonCustom("Lưu thông tin", "success", 14);
         btnExit = new ButtonCustom("Hủy bỏ", "danger", 14);
         btnExit.addActionListener(new ActionListener() {
@@ -167,9 +162,9 @@ public class MuonThietBiDialog extends JDialog {
                         return;
                     }
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), MaTB, thongTin.getTGVao(), ngay, null);
+                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), thongTin.getThietBi().getMaTB(), thongTin.getTGVao(), thongTin.getTGMuon(), ngay);
                     if (thongtinBLL.updateThongTinSuDung(thongtin)) {
-                        JOptionPane.showMessageDialog(rootPane, "Thành công !");
+                        JOptionPane.showMessageDialog(rootPane, "Trả Thiết Bị Thành công !");
                     } else {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại !");
                     }
@@ -201,6 +196,7 @@ public class MuonThietBiDialog extends JDialog {
         switch (type) {
             case "create" -> {
                 name.setDisable();
+                tenTB.setDisable();
                 ipDate.setDisable();
                 bottom.add(btnAdd);
             }

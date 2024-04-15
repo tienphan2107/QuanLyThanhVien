@@ -32,6 +32,11 @@ public class ThongTinSuDungBLL {
         return thongtinsudungDAL.addThongTinSuDung(c);
     }
     
+    public boolean updateThongTinSuDung(ThongTinSuDung c)
+    {
+        return thongtinsudungDAL.updateThongTinSuDung(c);
+    }
+    
     public ThongTinSuDung getThongTinSuDung(int MaTT)
     {
         ThongTinSuDung c = thongtinsudungDAL.getThongTinSuDung(MaTT);

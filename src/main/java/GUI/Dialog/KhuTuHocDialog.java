@@ -75,7 +75,6 @@ public class KhuTuHocDialog extends JDialog {
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBackground(Color.white);
         txtMaTV = new InputForm("Mã số sinh viên");
-
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
 //        maTB = new SelectForm("Mã thiết bị", arrMaTB);
@@ -122,27 +121,6 @@ public class KhuTuHocDialog extends JDialog {
             }
         });
 
-        txtMaTV.getTxtForm().addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                return;
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                try {
-                    int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
-                    ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                    if (thanhVien != null) {
-                        name.setText(thanhVien.getHoTen());
-                    } else {
-                        name.setText("Không tìm thấy thành viên có mã này !");
-                    }
-                } catch (Exception ex) {
-                    name.setText("Không tìm thấy thành viên có mã này !");
-                }
-            }
-        });
         txtMaTV.getTxtForm().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -167,7 +145,6 @@ public class KhuTuHocDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int maTT = thongtinBLL.getMaTTAutoIncreasement();
-                    String strMaThanhVien = txtMaTV.getText().trim();
                     Date ngay = ipDate.getDate();
                     String dateString = "0000-00-00 00:00:00";
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
