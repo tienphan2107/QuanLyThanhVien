@@ -27,6 +27,7 @@ import javax.swing.plaf.ComponentUI;
  * @author DELL
  */
 public class IntegratedSearch extends JPanel {
+
     private GUI.Panel.ThanhVienPanel tvPanel;
     public JComboBox<String> cbxChoose;
     public JButton btnReset;
@@ -38,8 +39,8 @@ public class IntegratedSearch extends JPanel {
         BoxLayout bx = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(bx);
 
-        JPanel jpSearch = new JPanel(new BorderLayout(5,10));
-        jpSearch.setBorder(new EmptyBorder(18,15,18,15));
+        JPanel jpSearch = new JPanel(new BorderLayout(5, 10));
+        jpSearch.setBorder(new EmptyBorder(18, 15, 18, 15));
         jpSearch.setBackground(Color.white);
 //        cbxChoose = new JComboBox();
 //        cbxChoose.setModel(new DefaultComboBoxModel<>(str));
@@ -59,22 +60,24 @@ public class IntegratedSearch extends JPanel {
         btnReset.setIcon(new FlatSVGIcon("./icon/refresh.svg"));
         btnReset.setPreferredSize(new Dimension(125, 0));
         btnReset.addActionListener(this::btnResetActionPerformed);
-        jpSearch.add(btnReset,BorderLayout.EAST);
+        jpSearch.add(btnReset, BorderLayout.EAST);
         this.add(jpSearch);
     }
 
     public IntegratedSearch(String str[]) {
         initComponent(str);
     }
-    
+
     public JButton getBtnReset() {
         return btnReset;
     }
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent e) {
         txtSearchForm.setText("");
-        cbxChoose.setSelectedIndex(0);
-        
+        if (cbxChoose != null) {
+            cbxChoose.setSelectedIndex(0);
+        }
+
     }
 
     public ThanhVienPanel getTvPanel() {
@@ -124,5 +127,5 @@ public class IntegratedSearch extends JPanel {
     public void setAccessibleContext(AccessibleContext accessibleContext) {
         this.accessibleContext = accessibleContext;
     }
-    
+
 }

@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -102,36 +103,32 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
         }
-        
+
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
         functionBar.add(search);
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
-        search.getTxtSearchForm().addActionListener(new ActionListener() {
+        search.getTxtSearchForm().addKeyListener(new KeyListener() {
             @Override
-            public void Ke(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 try {
-                    loadDataSearchTable();
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        loadDataSearchTable();
+                    }
                 } catch (ParseException ex) {
                 }
             }
 
             @Override
-            public void keyPressed(KeyEvent e) {
-                try {
-                    loadDataSearchTable();
-                } catch (ParseException ex) {
-                }
+            public void keyTyped(KeyEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                try {
-                    loadDataSearchTable();
-                } catch (ParseException ex) {
-                }
+                //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
         });
         // main là phần ở dưới để thống kê bảng biểu
@@ -218,6 +215,10 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
     }
 
     public void loadDataSearchTable() throws ParseException {
+        if(search.getTxtSearchForm().getText().isEmpty()){
+            loadDataTable();
+            return;
+        }
         int maTVTimKiem = -1;
         try {
             maTVTimKiem = Integer.parseInt(search.getTxtSearchForm().getText());
