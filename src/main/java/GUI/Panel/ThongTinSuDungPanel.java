@@ -43,7 +43,6 @@ import javax.swing.table.DefaultTableModel;
 public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    NhanVienBUS nvBus = new NhanVienBUS(this);
     private ThongTinSuDungBLL thongtinsudungBLL = new ThongTinSuDungBLL();
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
@@ -206,6 +205,10 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             }
             case "TRẢ" -> {
                 int index = getRow1();
+                if (getThongTin().getTGMuon() == null) {
+                    JOptionPane.showMessageDialog(this, "Chưa mượn nên không thể trả");
+                    return;
+                }
                 if (index != -1) {
                     TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
 
