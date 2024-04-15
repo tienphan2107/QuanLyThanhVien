@@ -9,7 +9,9 @@ import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Dialog.KhuTuHocDialog;
+import GUI.Dialog.MuonThietBiDialog;
 import GUI.Dialog.ThanhVienDialog;
+import GUI.Dialog.TraThietBiDialog;
 import GUI.Main;
 import hibernatemember.DAL.ThongTinSuDung;
 import java.awt.BorderLayout;
@@ -42,7 +44,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
 //    NhanVienBUS nvBus = new NhanVienBUS(this);
-    private ThongTinSuDungBLL thongtinsudungBLL;
+    private ThongTinSuDungBLL thongtinsudungBLL = new ThongTinSuDungBLL();
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JTable tableThongTinSuDung;
@@ -144,7 +146,24 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
     }
 
     public int getRow() {
+        int index = tableThongTinSuDung.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thành viên muốn mượn thiết bị ");
+        }
         return tableThongTinSuDung.getSelectedRow();
+    }
+
+    public int getRow1() {
+        int index = tableThongTinSuDung.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thành viên muốn trả thiết bị ");
+        }
+        return tableThongTinSuDung.getSelectedRow();
+    }
+
+    public ThongTinSuDung getThongTin() {
+        int MaTT = Integer.parseInt(tableThongTinSuDung.getValueAt(tableThongTinSuDung.getSelectedRow(), 0).toString());
+        return thongtinsudungBLL.getThongTinSuDung(MaTT);
     }
 
 //    public DTO.NhanVienDTO getNhanVien() {
@@ -154,8 +173,20 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadThongTinSuDung();
         tblModel.setRowCount(0);
         for (ThongTinSuDung ttsd : list) {
+            String maTB = "Không mượn";
+            String tgMuon = "Không mượn";
+            String tgTra = "Không mượn";
+            try {
+                maTB = ttsd.getThietBi().getMaTB() + "";
+                tgMuon = ttsd.getTGMuon().toString();
+                tgTra = ttsd.getTGTra().toString();
+            } catch (Exception e) {
+                if (maTB != "Không mượn") {
+                    tgTra = "Chưa trả";
+                }
+            }
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), ttsd.getThietBi().getMaTB(), ttsd.getTGVao(), ttsd.getTGMuon(), ttsd.getTGTra()
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
             });
         }
     }
@@ -166,34 +197,27 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         switch (btn) {
             case "VÀO KHU HỌC TẬP" -> {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
-//                System.out.print("Hello word");
             }
-//            case "SỬA" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog tvsua = new ThanhVienDialog(owner, true, "Sửa thành viên", "update", getThanhVien());
-//                }
-//            }
-//            case "XÓA" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    int input = JOptionPane.showConfirmDialog(null,
-//                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
-//                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//                    if (input == 0) {
-//                        tvBLL.deleteThanhVien(getThanhVien());
-//                    }
-//                }
-//            }
-//            case "CHI TIẾT" -> {
+            case "MƯỢN" -> {
+                int index = getRow();
+                if (index != -1) {
+                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create", getThongTin());
+                }
+            }
+            case "TRẢ" -> {
+                int index = getRow1();
+                if (index != -1) {
+                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
+
+//                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
+                }
+            }
+            case "ĐẶT CHỔ" -> {
 //                int index = getRow();
 //                if (index != -1) {
 //                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
 //                }
-//            }
-//            case "NHẬP EXCEL" -> {
-//                //importExcel();
-//            }
+            }
         }
 
         try {

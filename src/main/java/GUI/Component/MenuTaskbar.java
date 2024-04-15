@@ -17,6 +17,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -136,7 +139,11 @@ public class MenuTaskbar extends JPanel {
         listitem[3].addMouseListener(new MouseAdapter() { // nut thong tin su dung
             @Override
             public void mousePressed(MouseEvent evt) {
-                thongtinsudung = new ThongTinSuDungPanel(main);
+                try {
+                    thongtinsudung = new ThongTinSuDungPanel(main);
+                } catch (ParseException ex) {
+                    Logger.getLogger(MenuTaskbar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 main.setPanel(thongtinsudung);
             }
         });

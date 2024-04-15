@@ -47,18 +47,6 @@ public class ThongTinSuDungDAL {
         try {
             tx = session.beginTransaction();
             listThongTin = (ArrayList<ThongTinSuDung>) session.createQuery("FROM ThongTinSuDung", ThongTinSuDung.class).list();
-            for (ThongTinSuDung thongTin : listThongTin) {
-//                if (thongTin.getThietBi() == null) {
-//                    thongTin.setThietBi(new ThietBi()); // Tạo một đối tượng ThietBi mới nếu giá trị trả về là null
-//                    thongTin.getThietBi().setMaTB(0);
-//                }
-                if (thongTin.getTGMuon() == null) {
-                    thongTin.setTGMuon(date);
-                }
-                if (thongTin.getTGTra() == null) {
-                    thongTin.setTGTra(date);
-                }
-            }
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) {
@@ -72,10 +60,10 @@ public class ThongTinSuDungDAL {
         return listThongTin;
     }
 
-    public ThongTinSuDung getThongTinSuDung(int MaTT) {
-        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
-        return c;
-    }
+//    public ThongTinSuDung getThongTinSuDung(int MaTT) {
+//        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
+//        return c;
+//    }
 
     public boolean addThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;
@@ -98,11 +86,55 @@ public class ThongTinSuDungDAL {
         }
 
     }
+    
+    public ThongTinSuDung getThongTinSuDung(int MaTT) {
+        session = HibernateUtils.getSessionFactory().openSession();
+        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
+        session.close();
+        return c;
+    }
 
-    public void updateThongTinSuDung(ThongTinSuDung c) {
-        session.update(c);
+    public boolean updateThongTinSuDung(ThongTinSuDung c) {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+
+            tx = session.beginTransaction();
+            session.merge(c);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.print("Lỗi khi cho mượn thiết bị: ");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
 
     }
+
+//    public boolean updateThongTinSuDung(ThongTinSuDung c) {
+//        Transaction tx = null;
+//        try {
+//            session = HibernateUtils.getSessionFactory().openSession();
+//            tx = session.beginTransaction();
+//            session.update(c);
+//            tx.commit();
+//            return true;
+//        } catch (HibernateException e) {
+//            if (tx != null) {
+//                tx.rollback();
+//            }
+//            System.out.print("Lỗi khi cập nhật thông tin sử dụng: ");
+//            e.printStackTrace();
+//            return false;
+//        } finally {
+//            session.close();
+//        }
+//    }
 
     public void deleteThongTinSuDung(ThongTinSuDung c) {
         session.delete(c);

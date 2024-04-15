@@ -15,6 +15,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -88,7 +89,7 @@ public class ThietBiPanel extends JPanel {
         String[] action = {"create", "update", "delete", "detail", "import"};
         mainFunction = new MainFunction(action);
         for (String ac : action) {
-            mainFunction.btn.get(ac).addActionListener(thietBiBLL);
+            mainFunction.btn.get(ac).addActionListener((ActionListener) this);
         }
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
