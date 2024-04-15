@@ -27,6 +27,17 @@ public class ThongTinSuDungBLL {
         thongtinsudungDAL = new ThongTinSuDungDAL();
     }
     
+    public ArrayList<ThongTinSuDung> LoadDataSearch(int maTVTimKiem) throws ParseException{
+        ArrayList<ThongTinSuDung> result = new ArrayList();
+        for(ThongTinSuDung ttsd : LoadThongTinSuDung()){
+            String maTV = ttsd.getThanhVien().getMaTV()+"";
+            if(maTV.contains(maTVTimKiem+"")){
+                result.add(ttsd);
+            }
+        }
+        return result;
+    }
+    
     public boolean newThongTinSuDung(ThongTinSuDung c)
     {
         return thongtinsudungDAL.addThongTinSuDung(c);

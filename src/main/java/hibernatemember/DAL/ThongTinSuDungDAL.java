@@ -64,6 +64,7 @@ public class ThongTinSuDungDAL {
 //        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
 //        return c;
 //    }
+    
 
     public boolean addThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;

@@ -167,7 +167,7 @@ public class MuonThietBiDialog extends JDialog {
                         return;
                     }
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), MaTB, thongTin.getTGVao(), ngay, null);
+                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), MaTB, thongTin.getTGVao(), new Date(), null);
                     if (thongtinBLL.updateThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {

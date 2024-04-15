@@ -168,7 +168,7 @@ public class TraThietBiDialog extends JDialog {
                     }
                     
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), thongTin.getThietBi().getMaTB(), thongTin.getTGVao(), thongTin.getTGMuon(), ngay);
+                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), thongTin.getThietBi().getMaTB(), thongTin.getTGVao(), thongTin.getTGMuon(), new Date());
                     if (thongtinBLL.updateThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Trả Thiết Bị Thành công !");
                     } else {
