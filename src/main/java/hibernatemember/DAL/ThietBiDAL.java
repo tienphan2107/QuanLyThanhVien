@@ -35,7 +35,9 @@ public class ThietBiDAL {
     }
 
     public ThietBi getThietBi(int thietbiID) {
+        session = HibernateUtils.getSessionFactory().openSession();
         ThietBi c = session.get(ThietBi.class, thietbiID);
+        session.close();
         return c;
     }
 

@@ -55,15 +55,14 @@ public class MuonThietBiDialog extends JDialog {
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
-    private InputForm txtMaTV, name;
+    private InputForm txtMaTV, name, txtMaTB, motaTB;
     SelectForm tenTB;
-    private InputForm sdt;
+//    private InputForm sdt;
     private ThongTinSuDung khuTuHoc;
     private InputDate ipDate;
 //    ArrayList<String> ListLoaiThietBi = thietBiBLL.getDanhSachLoaiThietBi();
 //    String[] arrMaTB = ListLoaiThietBi .toArray(new String[ListLoaiThietBi .size()]);
     String[] arrTenTB = thietBiBLL.getListTenTB();
-
 
     public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
@@ -85,7 +84,9 @@ public class MuonThietBiDialog extends JDialog {
 
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
-        tenTB = new SelectForm("Tên thiết bị", arrTenTB);
+//        tenTB = new SelectForm("Tên thiết bị", arrTenTB);
+        txtMaTB = new InputForm("Mã thiết bị");
+        motaTB = new InputForm("Mô tả thiết bị");
 //        male = new JRadioButton("Nam");
 //        female = new JRadioButton("Nữ");
 //        gender = new ButtonGroup();
@@ -110,7 +111,9 @@ public class MuonThietBiDialog extends JDialog {
         jpaneljd.add(ipDate);
         main.add(txtMaTV);
         main.add(name);
-        main.add(tenTB);
+        main.add(txtMaTB);
+        main.add(motaTB);
+//        main.add(tenTB);
 
 //        main.add(jpanelG);
         main.add(ipDate);
@@ -147,6 +150,26 @@ public class MuonThietBiDialog extends JDialog {
                 txtMaTV.getTxtForm().transferFocus();
             }
         });
+        
+        txtMaTB.getTxtForm().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
+                    ThietBi thietBi = thietBiBLL.getThietBi(maThietBi);
+                    if (thietBi != null) {
+                        motaTB.setText(thietBi.getMoTaTB());
+                    } else {
+                        motaTB.setText("Không tìm thấy thiết bị có mã này !");
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    motaTB.setText("Không tìm thấy thiết bị có mã này !");
+                }
+
+                txtMaTB.getTxtForm().transferFocus();
+            }
+        });
 
         btnAdd.addActionListener(new ActionListener() {
             @Override
@@ -156,13 +179,14 @@ public class MuonThietBiDialog extends JDialog {
                     Date ngay = ipDate.getDate();
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                    String TenTB = (String) tenTB.getSelectedItem();
-                    int maTB = thietBiBLL.getMaThietBi(TenTB);
-                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
-                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
-                        return;
-                    }
-                    Integer MaTB = (Integer) maTB;
+                    int maThietBi =  Integer.parseInt(txtMaTB.getText().trim());
+//                    String TenTB = (String) tenTB.getSelectedItem();
+//                    int maTB = thietBiBLL.getMaThietBi(TenTB);
+//                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
+//                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
+//                        return;
+//                    }
+                    Integer MaTB = (Integer) maThietBi;
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
@@ -202,6 +226,7 @@ public class MuonThietBiDialog extends JDialog {
         switch (type) {
             case "create" -> {
                 name.setDisable();
+                motaTB.setDisable();
                 ipDate.setDisable();
                 bottom.add(btnAdd);
             }
