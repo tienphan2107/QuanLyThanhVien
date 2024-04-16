@@ -8,6 +8,7 @@ import POJO.DateRange;
 import helper.DateHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -152,5 +153,23 @@ public class XuLyDAL {
         list = (ArrayList<XuLy>) query.list();
         session.getTransaction().commit();
         return list;
+    }
+
+    public boolean ThanhVienViPham(int maTV) {
+        session = HibernateUtils.getSessionFactory().openSession();
+        Date tgTra = null;
+        try {
+            Query query = session.createQuery("SELECT x.thanhVien.MaTV, x.TrangThaiXL FROM XuLy x WHERE x.thanhVien.MaTV = :maTV AND x.TrangThaiXL = 1")
+                    .setParameter("maTV", maTV);
+            if (query.uniqueResult() != null) {
+                return true;
+            }
+            return false;
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
     }
 }
