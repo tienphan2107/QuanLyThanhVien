@@ -7,6 +7,7 @@ package GUI.Dialog;
 import BLL.ThanhVienBLL;
 import BLL.ThietBiBLL;
 import BLL.ThongTinSuDungBLL;
+import BLL.XuLyBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
@@ -49,6 +50,7 @@ public class MuonThietBiDialog extends JDialog {
 
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
+    private XuLyBLL xuLyBLL = new XuLyBLL();
     private ThietBi thietBi = new ThietBi();
     private ThietBiBLL thietBiBLL = new ThietBiBLL();
     private ThongTinSuDung thongTin;
@@ -150,7 +152,7 @@ public class MuonThietBiDialog extends JDialog {
                 txtMaTV.getTxtForm().transferFocus();
             }
         });
-        
+
         txtMaTB.getTxtForm().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -179,13 +181,17 @@ public class MuonThietBiDialog extends JDialog {
                     Date ngay = ipDate.getDate();
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                    int maThietBi =  Integer.parseInt(txtMaTB.getText().trim());
+                    int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
 //                    String TenTB = (String) tenTB.getSelectedItem();
 //                    int maTB = thietBiBLL.getMaThietBi(TenTB);
 //                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
 //                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
 //                        return;
 //                    }
+                    if (xuLyBLL.ThanhVienViPham(maThanhVien)) {
+                        JOptionPane.showMessageDialog(null, "Thành viên đang bị xử lý vui lòng thử lại sau");
+                        return;
+                    }
                     Integer MaTB = (Integer) maThietBi;
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");

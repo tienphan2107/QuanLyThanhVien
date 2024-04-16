@@ -6,6 +6,7 @@ package GUI.Dialog;
 
 import BLL.ThanhVienBLL;
 import BLL.ThongTinSuDungBLL;
+import BLL.XuLyBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
@@ -46,6 +47,7 @@ public class KhuTuHocDialog extends JDialog {
 
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
+    private XuLyBLL xuLyBLL = new XuLyBLL();
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
@@ -146,6 +148,7 @@ public class KhuTuHocDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+
                     int maTT = thongtinBLL.getMaTTAutoIncreasement();
                     Date ngay = ipDate.getDate();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -153,7 +156,11 @@ public class KhuTuHocDialog extends JDialog {
                     System.out.print(ngay + "Yeahhhhh");
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                   
+                    if (xuLyBLL.ThanhVienViPham(maThanhVien)) 
+                    { 
+                        JOptionPane.showMessageDialog(rootPane, "Thành viên đang bị xử lý vui lòng thử lại sau");
+                        return;
+                    }
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
