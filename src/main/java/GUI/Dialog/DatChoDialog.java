@@ -5,6 +5,8 @@
 package GUI.Dialog;
 
 import BLL.ThanhVienBLL;
+import BLL.ThongTinSuDungBLL;
+import BLL.XuLyBLL;
 import GUI.Component.NumericDocumentFilter;
 import antlr.Tool;
 import hibernatemember.DAL.ThanhVien;
@@ -44,6 +46,8 @@ public class DatChoDialog extends javax.swing.JDialog {
     private ThanhVienBLL tvBLL;
     private Date currentDate = new Date();
     private ThongTinSuDungDAL infoDAL = new ThongTinSuDungDAL();
+    private XuLyBLL xuLyBLL = new XuLyBLL();
+    private ThongTinSuDungBLL thongTinSuDungBLL = new ThongTinSuDungBLL();
 
     /**
      * Creates new form DatChoDialog
@@ -115,7 +119,7 @@ public class DatChoDialog extends javax.swing.JDialog {
         setTitle("ĐẶT CHỖ ");
         setResizable(false);
 
-        jLabel1.setText("Mã sinh viên :");
+        jLabel1.setText("Mã thành viên :");
 
         jLabel2.setText("Tên sinh viên :");
 
@@ -269,7 +273,7 @@ public class DatChoDialog extends javax.swing.JDialog {
         System.out.println("Date : " + selectedDate);
         System.out.println("Compare : " + selectedDate.compareTo(currentDate));
         Date selectedTime = (Date) timeSpinner.getValue();
-        
+
         Calendar Cur = Calendar.getInstance();
         Cur.setTime(currentDate);
         Calendar Date = Calendar.getInstance();
@@ -283,7 +287,7 @@ public class DatChoDialog extends javax.swing.JDialog {
         if ((Date.get(Calendar.YEAR) == Cur.get(Calendar.YEAR)) && (Date.get(Calendar.MONTH) == Cur.get(Calendar.MONTH)) && (Date.get(Calendar.DAY_OF_MONTH) == Cur.get(Calendar.DAY_OF_MONTH))) {
             // Kiểm tra giờ được chọn
             System.out.println("equals");
-            
+
             if (TimeBefore) {
                 System.out.println("Before= " + Date.getTime());
                 JOptionPane.showMessageDialog(this, "Selected time is in the past.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -295,10 +299,18 @@ public class DatChoDialog extends javax.swing.JDialog {
                     String matb = thietbiCbb.getSelectedItem().toString();
                     ThanhVien tv = tvBLL.getThanhVien(Integer.parseInt(matv));
                     ThietBi tb = thietbiDAL.getThietBi(Integer.parseInt(matb));
+                    if (xuLyBLL.ThanhVienViPham(tv.getMaTV())) {
+                        JOptionPane.showMessageDialog(null, "Thành viên đang bị xử lý, vui lòng thử lại sau");
+                        return;
+                    }
+                    if(thongTinSuDungBLL.thietBiDangDuocMuon(tb.getMaTB())){
+                        JOptionPane.showMessageDialog(null, "Thiết bị này đang được mượn, vui lòng thử lại sau");
+                        return;
+                    }
                     ThongTinSuDung info = new ThongTinSuDung();
                     info.setThanhVien(tv);
                     info.setThietBi(tb);
-                    info.setTGDatCho(currentDate);
+                    info.setTGDatcho(currentDate);
                     int id = infoDAL.getMaxId();
                     info.setMaTT(id + 1);
                     if (infoDAL.addThongTinSuDung(info) == true) {
@@ -318,10 +330,30 @@ public class DatChoDialog extends javax.swing.JDialog {
                     String matb = thietbiCbb.getSelectedItem().toString();
                     ThanhVien tv = tvBLL.getThanhVien(Integer.parseInt(matv));
                     ThietBi tb = thietbiDAL.getThietBi(Integer.parseInt(matb));
+                    if (xuLyBLL.ThanhVienViPham(tv.getMaTV())) {
+                        JOptionPane.showMessageDialog(null, "Thành viên đang bị xử lý vui lòng thử lại sau");
+                        return;
+                    }
+                    if(thongTinSuDungBLL.thietBiDangDuocMuon(tb.getMaTB())){
+                        JOptionPane.showMessageDialog(null, "Thiết bị này đang được mượn, vui lòng thử lại sau");
+                        return;
+                    }
                     ThongTinSuDung info = new ThongTinSuDung();
+                    int year = Date.get(Calendar.YEAR);
+                    int month = Date.get(Calendar.MONTH);
+                    int day = Date.get(Calendar.DAY_OF_MONTH);
+
+                    int hour = Time.get(Calendar.HOUR_OF_DAY);
+                    int minute = Time.get(Calendar.MINUTE);
+                    int second = Time.get(Calendar.SECOND);
+
+                    Calendar resultCalendar = Calendar.getInstance();
+                    resultCalendar.set(year, month, day, hour, minute, second);
+                    Date result = resultCalendar.getTime();
                     info.setThanhVien(tv);
                     info.setThietBi(tb);
-                    info.setTGDatCho(selectedTime);
+                    info.setTGDatcho(result);
+                    System.out.println("result : "+ result);
                     int id = infoDAL.getMaxId();
                     info.setMaTT(id + 1);
                     if (infoDAL.addThongTinSuDung(info) == true) {
@@ -341,7 +373,7 @@ public class DatChoDialog extends javax.swing.JDialog {
             dateChooser.setDate(currentDate);
             return;
         } else {
-            if (matvTxtField.getText() != "") { 
+            if (matvTxtField.getText() != "") {
                 int year = Date.get(Calendar.YEAR);
                 int month = Date.get(Calendar.MONTH);
                 int day = Date.get(Calendar.DAY_OF_MONTH);
@@ -360,7 +392,7 @@ public class DatChoDialog extends javax.swing.JDialog {
                 ThongTinSuDung info = new ThongTinSuDung();
                 info.setThanhVien(tv);
                 info.setThietBi(tb);
-                info.setTGDatCho(result);
+                info.setTGDatcho(result);
                 int id = infoDAL.getMaxId();
                 info.setMaTT(id + 1);
                 if (infoDAL.addThongTinSuDung(info) == true) {
@@ -373,9 +405,8 @@ public class DatChoDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+                //-------------------------------------------------------------------code them lịch đặt chổ-------------------------------------------
         }
-        //-------------------------------------------------------------------code them lịch đặt chổ-------------------------------------------
-
     }//GEN-LAST:event_datchoBtnActionPerformed
 
     private void dateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateChooserPropertyChange

@@ -143,7 +143,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         scrollTableThongTinSuDung = new JScrollPane();
         tableThongTinSuDung = new JTable();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả","Đặt chỗ"};
+        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả", "Đặt chỗ"};
 
         tblModel.setColumnIdentifiers(header);
         tableThongTinSuDung.setModel(tblModel);
@@ -205,12 +205,15 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
                 tgTra = ttsd.getTGTra().toString();
-                tgDatCho = ttsd.getTGDatCho().toString();
             } catch (Exception e) {
                 if (maTB != "Không mượn") {
                     tgTra = "Chưa trả";
                 }
             }
+            if (ttsd.getTGDatcho() != null) {
+                tgDatCho = ttsd.getTGDatcho().toString();
+            }
+
             tblModel.addRow(new Object[]{
                 ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
             });
@@ -218,7 +221,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
     }
 
     public void loadDataSearchTable() throws ParseException {
-        if(search.getTxtSearchForm().getText().isEmpty()){
+        if (search.getTxtSearchForm().getText().isEmpty()) {
             loadDataTable();
             return;
         }
@@ -241,11 +244,13 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
                 tgTra = ttsd.getTGTra().toString();
-                tgDatCho = ttsd.getTGDatCho().toString();
             } catch (Exception e) {
                 if (maTB != "Không mượn") {
                     tgTra = "Chưa trả";
                 }
+            }
+            if (ttsd.getTGDatcho() != null) {
+                tgDatCho = ttsd.getTGDatcho().toString();
             }
             tblModel.addRow(new Object[]{
                 ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
@@ -261,7 +266,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
             }
             case "MƯỢN" -> {
-                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
+                MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
             }
             case "TRẢ" -> {
                 int index = getRow1();
@@ -276,7 +281,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 }
             }
             case "ĐẶT CHỖ" -> {
-                DatChoDialog datchoDialog = new DatChoDialog(owner, true);  
+                DatChoDialog datchoDialog = new DatChoDialog(owner, true);
                 datchoDialog.setVisible(true);
             }
         }
