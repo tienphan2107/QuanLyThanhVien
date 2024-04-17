@@ -41,16 +41,27 @@ public final class ThietBiDialog extends JDialog {
     private InputForm maTB, tenTB, moTaTB;
     private FlatRadioButton del, dels;
     private SelectForm fdel, fdels;
+    private ThietBi thietBi;
     
 
-    public ThietBiDialog(ThietBiPanel tbPanel, JFrame owner, boolean modal, String title, String type) {
+    public ThietBiDialog(JFrame owner, boolean modal, String title, String type, ThietBi thietBi ){
         super(owner, title, modal);
-        init(tbPanel, title, type);
+        this.thietBi=thietBi;
+        init( title, type);
+        maTB.setText(String.valueOf(thietBi.getMaTB()));
+        tenTB.setText(thietBi.getTenTB());
+        moTaTB.setText(thietBi.getMoTaTB());
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
-
-    public void init(ThietBiPanel tbPanel, String title, String type) {
+    
+    public ThietBiDialog(JFrame owner, boolean modal, String title, String type){
+        super(owner, title, modal);
+        init( title, type);
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+    public void init( String title, String type) {
         this.setSize(new Dimension(450, 590));
         this.setLayout(new BorderLayout(0, 0));
 
@@ -109,7 +120,7 @@ public final class ThietBiDialog extends JDialog {
             if (ValidationInput()) {
                 int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    Integer.valueOf(tb.generateDeviceCode(tenTB.getText()));
+                    //Integer.valueOf(tb.generateDeviceCode(tenTB.getText()));
                     tb.addThietBi(new ThietBi(Integer.parseInt(maTB.getText()), tenTB.getText(), moTaTB.getText()));
 
                     JOptionPane.showMessageDialog(this, "Thêm thành công", "Xác nhận !", JOptionPane.INFORMATION_MESSAGE);
@@ -181,9 +192,7 @@ public final class ThietBiDialog extends JDialog {
                 tenTB.setDisable();
                 main.add(jpanelG);
                 
-                maTB.setText("" + tbPanel.getTB().getMaTB());
-                tenTB.setText(tbPanel.getTB().getTenTB());
-                moTaTB.setText(tbPanel.getTB().getMoTaTB());
+
 
                 maTB.setDisable();
                 bottom.add(btnEdit);
@@ -194,9 +203,6 @@ public final class ThietBiDialog extends JDialog {
                 main.add(moTaTB);
                 main.add(jpanelG);
 
-                maTB.setText("" + tbPanel.getTB().getMaTB());
-                tenTB.setText(tbPanel.getTB().getTenTB());
-                moTaTB.setText(tbPanel.getTB().getMoTaTB());
 
                 maTB.setDisable();
                 tenTB.setDisable();

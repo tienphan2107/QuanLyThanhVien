@@ -189,12 +189,7 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         }
     }
     public ThietBi getTB(){
-        ThietBi getTB = new ThietBi(
-                (int)tableThietBi.getValueAt(getRow(), 0),
-                tableThietBi.getValueAt(getRow(), 1).toString(),
-                tableThietBi.getValueAt(getRow(), 2).toString()
-        );
-        return getTB;
+        return thietBiBLL.getThietBi((int)tableThietBi.getValueAt(getRow(), 0));
     }
     public void exportToExcel(File file) {
         try {
@@ -244,24 +239,24 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         String btn = e.getActionCommand();
         switch (btn) {
             case "THÊM" -> {
-            ThietBiDialog thietBiDialog = new ThietBiDialog(this,owner, true, "Thêm thiết bị", "create");
+            ThietBiDialog thietBiDialog = new ThietBiDialog(owner, true, "Thêm thiết bị", "create");
             }
             case "XÓA" -> {
-            ThietBiDialog thietBiDialog = new ThietBiDialog(this,owner, true, "Xóa thiết bị", "delete");
+            ThietBiDialog thietBiDialog = new ThietBiDialog(owner, true, "Xóa thiết bị", "delete");
             }
             case "SỬA" -> {
                 if (getRow() == -1) {
                     
                     JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 Thiết bị", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
                 } else {
-                    ThietBiDialog thietBiDialog = new ThietBiDialog(this, owner, true, "Sửa thiết bị", "update");
+                    ThietBiDialog thietBiDialog = new ThietBiDialog(owner, true, "Sửa thiết bị", "update",getTB());
                 }
             }
             case "CHI TIẾT" -> {
                 if (getRow() == -1) {
                     JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 Thiết bị", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
                 } else {
-                    ThietBiDialog thietBiDialog = new ThietBiDialog(this, owner, true, "Xem chi tiết", "view");
+                    ThietBiDialog thietBiDialog = new ThietBiDialog(owner, true, "Xem chi tiết", "view",getTB());
                 }
             }
             case "NHẬP EXCEL" -> {
@@ -285,4 +280,4 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         }
         loadDataTable();
 
-}
+    }}
