@@ -145,8 +145,8 @@ public class XuLyPanel extends JPanel implements ActionListener {
     public int getRow() {
         return tableXuLy.getSelectedRow();
     }
-    
-    public XuLy getXuLy(){
+
+    public XuLy getXuLy() {
         int maXuLy = Integer.parseInt(tableXuLy.getValueAt(tableXuLy.getSelectedRow(), 0).toString());
         return xuLyBLL.GetXuLy(maXuLy);
     }
@@ -183,7 +183,11 @@ public class XuLyPanel extends JPanel implements ActionListener {
                             "Bạn có chắc chắn muốn xóa xử lý!", "Xóa xử lý",
                             JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                     if (input == 0) {
-                        xuLyBLL.DeleteXuLy(getXuLy());
+                        if (xuLyBLL.DeleteXuLy(getXuLy())) {
+                            JOptionPane.showMessageDialog(null, "Thành công");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Thất bại");
+                        }
                     }
                 }
             }

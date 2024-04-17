@@ -15,6 +15,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
@@ -32,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author DELL
  */
-public class ThietBiPanel extends JPanel {
+public class ThietBiPanel extends JPanel implements ActionListener{
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     private ThietBiBLL thietBiBLL = new ThietBiBLL();
     PanelBorderRadius main, functionBar;
@@ -89,7 +90,7 @@ public class ThietBiPanel extends JPanel {
         String[] action = {"create", "update", "delete", "detail", "import"};
         mainFunction = new MainFunction(action);
         for (String ac : action) {
-            mainFunction.btn.get(ac).addActionListener((ActionListener) this);
+            mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
@@ -146,5 +147,10 @@ public class ThietBiPanel extends JPanel {
                 thietbi.getMaTB(), thietbi.getTenTB(), thietbi.getMoTaTB()
             });
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

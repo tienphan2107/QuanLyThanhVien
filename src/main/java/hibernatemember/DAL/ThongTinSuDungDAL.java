@@ -60,11 +60,6 @@ public class ThongTinSuDungDAL {
         return listThongTin;
     }
 
-    public ThongTinSuDung getThongTinSuDung(int MaTT) {
-        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
-        return c;
-    }
-
     public int getMaxId() {
         Transaction tx = null;
         try {

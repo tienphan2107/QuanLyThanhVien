@@ -225,7 +225,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             maTVTimKiem = Integer.parseInt(search.getTxtSearchForm().getText());
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ma thanh vien khong dung");
+            JOptionPane.showMessageDialog(null, "Mã thành viên không đúng");
             return;
         }
         ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadDataSearch(maTVTimKiem);
