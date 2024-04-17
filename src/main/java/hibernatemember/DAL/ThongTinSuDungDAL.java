@@ -77,6 +77,23 @@ public class ThongTinSuDungDAL {
         return c;
     }
 
+    public int getMaxId() {
+        Transaction tx = null;
+        try {
+            session = HibernateUtils.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            Query query = session.createQuery("select max(MaTT) from ThongTinSuDung");
+            Integer maxId = (Integer) query.uniqueResult();
+            tx.commit();
+            session.close();
+            return maxId != null ? maxId : 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public boolean addThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;
         try {

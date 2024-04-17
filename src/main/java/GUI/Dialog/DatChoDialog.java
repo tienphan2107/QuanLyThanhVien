@@ -10,6 +10,8 @@ import antlr.Tool;
 import hibernatemember.DAL.ThanhVien;
 import hibernatemember.DAL.ThietBi;
 import hibernatemember.DAL.ThietBiDAL;
+import hibernatemember.DAL.ThongTinSuDung;
+import hibernatemember.DAL.ThongTinSuDungDAL;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -41,6 +43,7 @@ public class DatChoDialog extends javax.swing.JDialog {
     private List<String> thietBiCbb;
     private ThanhVienBLL tvBLL;
     private Date currentDate = new Date();
+    private ThongTinSuDungDAL infoDAL = new ThongTinSuDungDAL();
 
     /**
      * Creates new form DatChoDialog
@@ -80,9 +83,7 @@ public class DatChoDialog extends javax.swing.JDialog {
         ThietBi thietBi = thietbiDAL.getThietBi(Integer.parseInt(temp));
         tentbTxtField.setText(thietBi.getTenTB());
         dateChooser.setDate(currentDate);
-        System.out.println(dateChooser.getDate());
-        //
-        //
+        System.out.println("Init : " + dateChooser.getDate());
         SpinnerDateModel model = new SpinnerDateModel();
         model.setValue(currentDate);
         timeSpinner.setModel(model);
@@ -264,17 +265,114 @@ public class DatChoDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_thietbiCbbActionPerformed
 
     private void datchoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datchoBtnActionPerformed
-        Date selectedDate = (Date) dateChooser.getDate();
+        Date selectedDate = dateChooser.getDate();
+        System.out.println("Date : " + selectedDate);
+        System.out.println("Compare : " + selectedDate.compareTo(currentDate));
         Date selectedTime = (Date) timeSpinner.getValue();
-
+        
+        Calendar Cur = Calendar.getInstance();
+        Cur.setTime(currentDate);
+        Calendar Date = Calendar.getInstance();
+        Date.setTime(selectedDate);
+        Calendar Time = Calendar.getInstance();
+        Time.setTime(selectedTime);
+        boolean DateBefore = Date.get(Calendar.YEAR) < Cur.get(Calendar.YEAR) || (Date.get(Calendar.YEAR) == Cur.get(Calendar.YEAR) && (Date.get(Calendar.MONTH) < Cur.get(Calendar.MONTH) || (Date.get(Calendar.MONTH) == Cur.get(Calendar.MONTH) && Date.get(Calendar.DAY_OF_MONTH) < Cur.get(Calendar.DAY_OF_MONTH))));
+        boolean TimeBefore = Time.get(Calendar.HOUR_OF_DAY) < Cur.get(Calendar.HOUR_OF_DAY) || (Time.get(Calendar.HOUR_OF_DAY) == Cur.get(Calendar.HOUR_OF_DAY) && (Time.get(Calendar.MINUTE) < Cur.get(Calendar.MINUTE) || (Time.get(Calendar.MINUTE) == Cur.get(Calendar.MINUTE) && Time.get(Calendar.SECOND) < Cur.get(Calendar.SECOND))));
+        boolean TimeEqual = Time.get(Calendar.HOUR_OF_DAY) == Cur.get(Calendar.HOUR_OF_DAY) && Time.get(Calendar.MINUTE) == Cur.get(Calendar.MINUTE) && Time.get(Calendar.SECOND) == Cur.get(Calendar.SECOND);
         // Kiểm tra nếu ngày được chọn là ngày hiện tại
-        if (selectedDate.compareTo(currentDate) == 0) {
+        if ((Date.get(Calendar.YEAR) == Cur.get(Calendar.YEAR)) && (Date.get(Calendar.MONTH) == Cur.get(Calendar.MONTH)) && (Date.get(Calendar.DAY_OF_MONTH) == Cur.get(Calendar.DAY_OF_MONTH))) {
             // Kiểm tra giờ được chọn
-            if (selectedTime.before(currentDate)) {
+            System.out.println("equals");
+            
+            if (TimeBefore) {
+                System.out.println("Before= " + Date.getTime());
                 JOptionPane.showMessageDialog(this, "Selected time is in the past.", "Error", JOptionPane.ERROR_MESSAGE);
                 timeSpinner.setValue(currentDate);
                 return;
-            } 
+            } else if (TimeEqual) {
+                if (matvTxtField.getText() != "") {
+                    String matv = matvTxtField.getText();
+                    String matb = thietbiCbb.getSelectedItem().toString();
+                    ThanhVien tv = tvBLL.getThanhVien(Integer.parseInt(matv));
+                    ThietBi tb = thietbiDAL.getThietBi(Integer.parseInt(matb));
+                    ThongTinSuDung info = new ThongTinSuDung();
+                    info.setThanhVien(tv);
+                    info.setThietBi(tb);
+                    info.setTGDatcho(currentDate);
+                    int id = infoDAL.getMaxId();
+                    info.setMaTT(id + 1);
+                    if (infoDAL.addThongTinSuDung(info) == true) {
+                        JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thành công");
+                        this.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thất bại ");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } else {
+                if (matvTxtField.getText() != "") {
+
+                    String matv = matvTxtField.getText();
+                    String matb = thietbiCbb.getSelectedItem().toString();
+                    ThanhVien tv = tvBLL.getThanhVien(Integer.parseInt(matv));
+                    ThietBi tb = thietbiDAL.getThietBi(Integer.parseInt(matb));
+                    ThongTinSuDung info = new ThongTinSuDung();
+                    info.setThanhVien(tv);
+                    info.setThietBi(tb);
+                    info.setTGDatcho(selectedTime);
+                    int id = infoDAL.getMaxId();
+                    info.setMaTT(id + 1);
+                    if (infoDAL.addThongTinSuDung(info) == true) {
+                        JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thành công");
+                        this.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thất bại ");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+        } else if (DateBefore) {
+            System.out.println("Date choosen before : " + selectedDate);
+            JOptionPane.showMessageDialog(this, "Selected time is in the past.", "Error", JOptionPane.ERROR_MESSAGE);
+            dateChooser.setDate(currentDate);
+            return;
+        } else {
+            if (matvTxtField.getText() != "") { 
+                int year = Date.get(Calendar.YEAR);
+                int month = Date.get(Calendar.MONTH);
+                int day = Date.get(Calendar.DAY_OF_MONTH);
+
+                int hour = Time.get(Calendar.HOUR_OF_DAY);
+                int minute = Time.get(Calendar.MINUTE);
+                int second = Time.get(Calendar.SECOND);
+
+                Calendar resultCalendar = Calendar.getInstance();
+                resultCalendar.set(year, month, day, hour, minute, second);
+                Date result = resultCalendar.getTime();
+                String matv = matvTxtField.getText();
+                String matb = thietbiCbb.getSelectedItem().toString();
+                ThanhVien tv = tvBLL.getThanhVien(Integer.parseInt(matv));
+                ThietBi tb = thietbiDAL.getThietBi(Integer.parseInt(matb));
+                ThongTinSuDung info = new ThongTinSuDung();
+                info.setThanhVien(tv);
+                info.setThietBi(tb);
+                info.setTGDatcho(result);
+                int id = infoDAL.getMaxId();
+                info.setMaTT(id + 1);
+                if (infoDAL.addThongTinSuDung(info) == true) {
+                    JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thành công");
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "Đặt chỗ thất bại ");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         //-------------------------------------------------------------------code them lịch đặt chổ-------------------------------------------
 
@@ -358,19 +456,6 @@ public class DatChoDialog extends javax.swing.JDialog {
     private void timeSpinnerFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_timeSpinnerFocusLost
         System.out.println("abcd");
         if (timeSpinner.getValue() != null && timeSpinner.getValue() instanceof Date) {
-//            System.out.println("Spinner1: " + (Date) timeSpinner.getValue());
-//            Date selectedDate = (Date) timeSpinner.getValue();
-//            System.out.println("Spinner2: " + (Date) timeSpinner.getValue());
-
-//            Calendar calendarSelected = Calendar.getInstance();
-//            System.out.println(dateChooser.getDate());
-//            Calendar calendarCur = Calendar.getInstance();
-//            calendarSelected.setTime(selectedDate);
-//            System.out.println("Selected : " + calendarSelected.getTime());
-//            System.out.println("CUR : " + calendarCur.getTime());
-//            if (calendarSelected.before(calendarCur)) {
-//                System.out.println("before");
-//            }
             Date selectedDate = (Date) dateChooser.getDate();
             Date selectedTime = (Date) timeSpinner.getValue();
 
