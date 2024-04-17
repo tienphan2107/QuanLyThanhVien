@@ -131,7 +131,6 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
-
         // main là phần ở dưới để thống kê bảng biểu
         main = new PanelBorderRadius();
         BoxLayout boxly = new BoxLayout(main, BoxLayout.Y_AXIS);
@@ -275,7 +274,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                     tv.setKhoa(row.getCell(2).getStringCellValue());
                     tv.setNganh(row.getCell(3).getStringCellValue());
                     int sdt = (int) row.getCell(4).getNumericCellValue();
-                    
+
                     tv.setSDT("0" + sdt);
                     list.add(tv);
                 }
@@ -309,7 +308,11 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                                 "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
                                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                         if (input == 0) {
-                            tvBLL.deleteThanhVien(getThanhVien());
+                            if (tvBLL.deleteThanhVien(getThanhVien())) {
+                                JOptionPane.showMessageDialog(null, "Thành công");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Thất bại");
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -319,7 +322,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
             case "CHI TIẾT" -> {
                 int index = getRow();
                 if (index != -1) {
-                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
+                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem thành viên", "detail", getThanhVien());
                 }
             }
             case "NHẬP EXCEL" -> {
@@ -328,16 +331,16 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                     int n = 0;
                     for (ThanhVien tv : importedList) {
                         if (tvBLL.checkExist(tv.getMaTV()) == false) {
-                            if(InputValidation(tv) == true){
+                            if (InputValidation(tv) == true) {
                                 n++;
                                 tvBLL.newThanhVien(tv);
                             }
                         }
                     }
-                    if(n == 0){
+                    if (n == 0) {
                         JOptionPane.showMessageDialog(functionBar, "Các id thành viên trong file nhập vào đã tồn tại");
-                    }else{
-                        JOptionPane.showMessageDialog(functionBar, "Đã thêm mới " + n +" thành viên vào cơ sở dữ liệu !");
+                    } else {
+                        JOptionPane.showMessageDialog(functionBar, "Đã thêm mới " + n + " thành viên vào cơ sở dữ liệu !");
                     }
                     listTV = tvBLL.loadThanhVien();
                 }
@@ -350,42 +353,60 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 
         loadDataTable();
     }
-    public boolean idValidation(String idStr){
-        if(idStr.length() != 10) return false;
-        if(!idStr.substring(0,2).equals("11")) return false;
-        int regex34 = Year.now().getValue() %100;
-        try{
+
+    public boolean idValidation(String idStr) {
+        if (idStr.length() != 10) {
+            return false;
+        }
+        if (!idStr.substring(0, 2).equals("11")) {
+            return false;
+        }
+        int regex34 = Year.now().getValue() % 100;
+        try {
             int year = Integer.parseInt(idStr.substring(2, 4));
-            if(year < 0 || year > regex34) return false;
-        }catch(Exception e){
+            if (year < 0 || year > regex34) {
+                return false;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        try{
+        try {
             int regex56 = Integer.parseInt(idStr.substring(4, 6));
-            if(regex56 < 0 || regex56 > 55) return false;
-        }catch(Exception ex){
+            if (regex56 < 0 || regex56 > 55) {
+                return false;
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
-        try{
+        try {
             int regex7_10 = Integer.parseInt(idStr.substring(6));
-            if(regex7_10 < 0) return false;
-        }catch(Exception exs){
+            if (regex7_10 < 0) {
+                return false;
+            }
+        } catch (Exception exs) {
             exs.printStackTrace();
         }
         return true;
     }
-    public boolean InputValidation(ThanhVien tv){
+
+    public boolean InputValidation(ThanhVien tv) {
         String id = tv.getMaTV() + "";
-        if(!idValidation(id)) return false;
-        
+        if (!idValidation(id)) {
+            return false;
+        }
+
         String regex = "^\\d{10}$";
         Pattern pattern = Pattern.compile(regex);
-        if(tv.getHoTen() == "" || tv.getHoTen().length() <= 6) return false;
+        if (tv.getHoTen() == "" || tv.getHoTen().length() <= 6) {
+            return false;
+        }
         String phone = tv.getSDT() + "";
         Matcher matcher = pattern.matcher(phone);
-        if(matcher.matches() == false) return false;
+        if (matcher.matches() == false) {
+            return false;
+        }
         return true;
     }
 

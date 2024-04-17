@@ -34,6 +34,9 @@ public class ThongTinSuDung {
     @Column
     @Temporal(TemporalType.TIMESTAMP)
     private Date TGTra;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date TGDatcho;
     // getThanhVien().getMaTV
 
     @ManyToOne
@@ -44,6 +47,7 @@ public class ThongTinSuDung {
     @ManyToOne
     @JoinColumn(name = "MaTB", nullable = true)
     private ThietBi thietBi;
+    
 
     public ThongTinSuDung() {
     }
@@ -60,5 +64,6 @@ public class ThongTinSuDung {
         this.TGMuon = TGMuon;
         this.TGTra = TGTra;
     }
+
 
 }

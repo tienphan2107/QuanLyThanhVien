@@ -47,7 +47,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author DELL
  */
-public class ThietBiPanel extends JPanel implements ActionListener {
+
+public class ThietBiPanel extends JPanel implements ActionListener{
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     private ThietBiBLL thietBiBLL = new ThietBiBLL();
     PanelBorderRadius main, functionBar;
@@ -104,7 +106,7 @@ public class ThietBiPanel extends JPanel implements ActionListener {
         String[] action = {"create", "update", "delete", "detail", "import", "export"};
         mainFunction = new MainFunction(action);
         for (String ac : action) {
-            mainFunction.btn.get(ac).addActionListener((ActionListener) this);
+            mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
@@ -282,5 +284,5 @@ public class ThietBiPanel extends JPanel implements ActionListener {
             }
         }
         loadDataTable();
-    }
+
 }

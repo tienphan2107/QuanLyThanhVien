@@ -55,7 +55,6 @@ public class XuLyDAL {
             if (tx != null) {
                 tx.rollback();
             }
-            System.out.print("Lỗi khi tải dữ liệu vi phạm: ");
             e.printStackTrace();
         } finally {
             session.close();
@@ -83,7 +82,6 @@ public class XuLyDAL {
             if (tx != null) {
                 tx.rollback();
             }
-            System.out.print("Lỗi khi thêm vi phạm: ");
             e.printStackTrace();
             return false;
         } finally {
@@ -95,7 +93,6 @@ public class XuLyDAL {
         Transaction tx = null;
         try {
             session = HibernateUtils.getSessionFactory().openSession();
-
             tx = session.beginTransaction();
             session.merge(xuLy);
             tx.commit();
@@ -104,7 +101,6 @@ public class XuLyDAL {
             if (tx != null) {
                 tx.rollback();
             }
-            System.out.print("Lỗi khi cập nhật vi phạm: ");
             e.printStackTrace();
             return false;
         } finally {

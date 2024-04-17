@@ -8,6 +8,7 @@ import BLL.ThongTinSuDungBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.DatChoDialog;
 import GUI.Dialog.KhuTuHocDialog;
 import GUI.Dialog.MuonThietBiDialog;
 import GUI.Dialog.ThanhVienDialog;
@@ -142,7 +143,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         scrollTableThongTinSuDung = new JScrollPane();
         tableThongTinSuDung = new JTable();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả"};
+        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả", "Đặt chỗ"};
 
         tblModel.setColumnIdentifiers(header);
         tableThongTinSuDung.setModel(tblModel);
@@ -199,6 +200,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             String maTB = "Không mượn";
             String tgMuon = "Không mượn";
             String tgTra = "Không mượn";
+            String tgDatCho = "Không";
             try {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
@@ -208,14 +210,18 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                     tgTra = "Chưa trả";
                 }
             }
+            if (ttsd.getTGDatcho() != null) {
+                tgDatCho = ttsd.getTGDatcho().toString();
+            }
+
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
             });
         }
     }
 
     public void loadDataSearchTable() throws ParseException {
-        if(search.getTxtSearchForm().getText().isEmpty()){
+        if (search.getTxtSearchForm().getText().isEmpty()) {
             loadDataTable();
             return;
         }
@@ -224,7 +230,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             maTVTimKiem = Integer.parseInt(search.getTxtSearchForm().getText());
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ma thanh vien khong dung");
+            JOptionPane.showMessageDialog(null, "Mã thành viên không đúng");
             return;
         }
         ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadDataSearch(maTVTimKiem);
@@ -233,6 +239,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             String maTB = "Không mượn";
             String tgMuon = "Không mượn";
             String tgTra = "Không mượn";
+            String tgDatCho = "Không";
             try {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
@@ -242,8 +249,11 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                     tgTra = "Chưa trả";
                 }
             }
+            if (ttsd.getTGDatcho() != null) {
+                tgDatCho = ttsd.getTGDatcho().toString();
+            }
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
             });
         }
     }
@@ -256,7 +266,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
             }
             case "MƯỢN" -> {
-                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
+                MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
             }
             case "TRẢ" -> {
                 int index = getRow1();
@@ -270,11 +280,9 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
                 }
             }
-            case "ĐẶT CHỔ" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
-//                }
+            case "ĐẶT CHỖ" -> {
+                DatChoDialog datchoDialog = new DatChoDialog(owner, true);
+                datchoDialog.setVisible(true);
             }
         }
 
