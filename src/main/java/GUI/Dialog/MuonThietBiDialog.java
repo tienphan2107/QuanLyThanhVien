@@ -183,23 +183,24 @@ public class MuonThietBiDialog extends JDialog {
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
 
                     int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
-//                    String TenTB = (String) tenTB.getSelectedItem();
-//                    int maTB = thietBiBLL.getMaThietBi(TenTB);
-//                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
-//                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
-//                        return;
-//                    }
                     if (xuLyBLL.ThanhVienViPham(maThanhVien)) {
                         JOptionPane.showMessageDialog(null, "Thành viên đang bị xử lý vui lòng thử lại sau");
                         return;
                     }
+                    if(thongtinBLL.thietBiDaDuocDatCho(maThietBi, maThanhVien)){
+                        JOptionPane.showMessageDialog(null, "Thiết bị này đã được người khác đặt chổ trong hôm nay, vui lòng mượn lúc khác");
+                        return;
+                    }
+                    if(thongtinBLL.thietBiDangDuocMuon(maThietBi)){
+                        JOptionPane.showMessageDialog(null, "Thiết bị này đang được mượn, vui lòng mượn lúc khác");
+                        return;
+                    }
                     Integer MaTB = (Integer) maThietBi;
-
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
                     }
-//                    String formattedDate = dateFormat.format(new Date());
+                    
                     ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, MaTB, null, new Date(), null);
                     if (thongtinBLL.newThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Thành công !");

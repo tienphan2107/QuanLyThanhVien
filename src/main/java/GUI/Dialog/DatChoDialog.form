@@ -120,7 +120,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="M&#xe3; sinh vi&#xea;n :"/>
+        <Property name="text" type="java.lang.String" value="M&#xe3; th&#xe0;nh vi&#xea;n :"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">

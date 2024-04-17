@@ -77,7 +77,6 @@ public class ThongTinSuDungDAL {
         return -1;
     }
 
-
     public boolean addThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;
         try {
@@ -178,37 +177,39 @@ public class ThongTinSuDungDAL {
         return maTBArray;
     }
 
-    public Date getTGTraByMaTB(int maTB) {
-        session = HibernateUtils.getSessionFactory().openSession();
-        Date tgTra = null;
-        try {
-            Query query = session.createQuery("SELECT t.TGTra FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
-                    .setParameter("maTB", maTB);
-            tgTra = (Date) query.uniqueResult();
-        } catch (HibernateException e) {
-            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-        return tgTra;
-    }
-
-    public Date getTGMuonByMaTB(int maTB) {
-        session = HibernateUtils.getSessionFactory().openSession();
-        Date tgMuon = null;
-        try {
-            Query query = session.createQuery("SELECT t.TGMuon FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
-                    .setParameter("maTB", maTB);
-            tgMuon = (Date) query.uniqueResult();
-        } catch (HibernateException e) {
-            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-        return tgMuon;
-    }
+//    public Date getTGTraByMaTB(int maTB) {
+//        session = HibernateUtils.getSessionFactory().openSession();
+//        Date tgTra = null;
+//        try {
+//            Query query = session.createQuery("SELECT t.TGTra FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
+//                    .setParameter("maTB", maTB);
+//            tgTra = (Date) query.uniqueResult();
+//        } catch (HibernateException e) {
+//            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
+//            e.printStackTrace();
+//        } finally {
+//            session.close();
+//        }
+//        return tgTra;
+//    }
+//
+//    public Date getTGMuonByMaTB(int maTB) {
+//        session = HibernateUtils.getSessionFactory().openSession();
+//        Date tgMuon = null;
+//        try {
+//            Query query = session.createQuery("SELECT t.TGMuon FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB")
+//                    .setParameter("maTB", maTB);
+//            tgMuon = (Date) query.uniqueResult();
+//        } catch (HibernateException e) {
+//            System.out.print("Lỗi khi lấy thời gian trả theo mã thiết bị: ");
+//            e.printStackTrace();
+//        } finally {
+//            session.close();
+//        }
+//        return tgMuon;
+//    }
+    
+    
 
     public boolean checkMaTBExists(int maTB) {
         session = HibernateUtils.getSessionFactory().openSession();
@@ -219,7 +220,37 @@ public class ThongTinSuDungDAL {
             Long count = query.uniqueResult();
             exists = count > 0;
         } catch (HibernateException e) {
-            System.out.print("Lỗi khi kiểm tra mã thiết bị trong cơ sở dữ liệu: ");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return exists;
+    }
+
+    public ArrayList<ThongTinSuDung> getDanhSachDatCho(int maTB) {
+        ArrayList<ThongTinSuDung> danhSach = new ArrayList<>();
+        session = HibernateUtils.getSessionFactory().openSession();
+        try {
+            Query<ThongTinSuDung> query = session.createQuery("FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB AND t.TGDatcho IS NOT NULL", ThongTinSuDung.class)
+                    .setParameter("maTB", maTB);
+            danhSach.addAll(query.getResultList());
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return danhSach;
+    }
+    
+    public boolean thietBiDangDuocMuon(int maTB){
+        session = HibernateUtils.getSessionFactory().openSession();
+        boolean exists = false;
+        try {
+            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM ThongTinSuDung t WHERE t.thietBi.MaTB = :maTB AND t.TGTra IS NULL", Long.class)
+                    .setParameter("maTB", maTB);
+            Long count = query.uniqueResult();
+            exists = count > 0;
+        } catch (HibernateException e) {
             e.printStackTrace();
         } finally {
             session.close();
