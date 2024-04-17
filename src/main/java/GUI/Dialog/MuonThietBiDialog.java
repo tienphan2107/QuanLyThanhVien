@@ -181,6 +181,7 @@ public class MuonThietBiDialog extends JDialog {
                     Date ngay = ipDate.getDate();
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
+
                     int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
 //                    String TenTB = (String) tenTB.getSelectedItem();
 //                    int maTB = thietBiBLL.getMaThietBi(TenTB);
@@ -193,6 +194,7 @@ public class MuonThietBiDialog extends JDialog {
                         return;
                     }
                     Integer MaTB = (Integer) maThietBi;
+
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;

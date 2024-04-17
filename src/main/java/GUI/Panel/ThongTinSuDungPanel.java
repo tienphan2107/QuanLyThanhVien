@@ -8,6 +8,7 @@ import BLL.ThongTinSuDungBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.DatChoDialog;
 import GUI.Dialog.KhuTuHocDialog;
 import GUI.Dialog.MuonThietBiDialog;
 import GUI.Dialog.ThanhVienDialog;
@@ -270,11 +271,9 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 //                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
                 }
             }
-            case "ĐẶT CHỔ" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    ThanhVienDialog nvsua = new ThanhVienDialog(owner, true, "Xem nhân viên", "detail", getThanhVien());
-//                }
+            case "ĐẶT CHỖ" -> {
+                DatChoDialog datchoDialog = new DatChoDialog(owner, true);  
+                datchoDialog.setVisible(true);
             }
         }
 
