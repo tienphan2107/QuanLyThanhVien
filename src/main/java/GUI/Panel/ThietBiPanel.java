@@ -167,9 +167,6 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         return tableThietBi.getSelectedRow();
     }
 
-//    public DTO.NhanVienDTO getNhanVien() {
-//        return listnv.get(tableNhanVien.getSelectedRow());
-//    }
     public void loadDataTable() {
         ArrayList<ThietBi> list = new ArrayList<>(thietBiBLL.loadThietBi());
         tblModel.setRowCount(0);
@@ -204,11 +201,9 @@ public class ThietBiPanel extends JPanel implements ActionListener{
             CellStyle style = workbook.createCellStyle();
             XSSFFont font = workbook.createFont();
 
-            // Set font to Times New Roman
             font.setFontName("Times New Roman");
             style.setFont(font);
 
-            // Write column headers
             XSSFRow headerRow = sheet.createRow(0);
             for (int i = 0; i < model.getColumnCount(); i++) {
                 XSSFCell cell = headerRow.createCell(i);
@@ -216,7 +211,6 @@ public class ThietBiPanel extends JPanel implements ActionListener{
                 cell.setCellStyle(style);
             }
 
-            // Write data rows
             for (int i = 0; i < model.getRowCount(); i++) {
                 XSSFRow dataRow = sheet.createRow(i + 1);
                 for (int j = 0; j < model.getColumnCount(); j++) {
@@ -226,7 +220,6 @@ public class ThietBiPanel extends JPanel implements ActionListener{
                 }
             }
 
-            // Write to file
             FileOutputStream outputStream = new FileOutputStream(file);
             workbook.write(outputStream);
             workbook.close();
@@ -284,5 +277,5 @@ public class ThietBiPanel extends JPanel implements ActionListener{
             }
         }
         loadDataTable();
-
+    }
 }
