@@ -113,5 +113,9 @@ public class XuLyBLL {
             }
         }
     }
+    
+    public boolean ThanhVienViPham(int maTV){
+        return xuLyDAL.ThanhVienViPham(maTV);
+    }
 
 }

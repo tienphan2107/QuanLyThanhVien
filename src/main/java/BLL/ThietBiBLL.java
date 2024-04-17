@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author DELL
  */
-public class ThietBiBLL implements ActionListener {
+public class ThietBiBLL {
 
     private GUI.Panel.ThietBiPanel tb;
     private ThietBiDAL thietbiDAL;
@@ -48,8 +48,16 @@ public class ThietBiBLL implements ActionListener {
     public ArrayList<String> getDanhSachLoaiThietBi() {
         return thietbiDAL.getDanhSachLoaiThietBi();
     }
-
-    public void actionPerformed(ActionEvent e) {
-
+    
+    public String[] getListTenTB() {
+        return thietbiDAL.getListTenTB();
+    }
+    
+    public int getMaThietBi(String tenThietBi) {
+        return thietbiDAL.getMaThietBi(tenThietBi);
+    }
+    
+    public String getTenThietBi(int maThietBi) {
+        return thietbiDAL.getTenThietBi(maThietBi);
     }
 }

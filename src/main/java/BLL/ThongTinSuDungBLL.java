@@ -27,9 +27,25 @@ public class ThongTinSuDungBLL {
         thongtinsudungDAL = new ThongTinSuDungDAL();
     }
     
+    public ArrayList<ThongTinSuDung> LoadDataSearch(int maTVTimKiem) throws ParseException{
+        ArrayList<ThongTinSuDung> result = new ArrayList();
+        for(ThongTinSuDung ttsd : LoadThongTinSuDung()){
+            String maTV = ttsd.getThanhVien().getMaTV()+"";
+            if(maTV.contains(maTVTimKiem+"")){
+                result.add(ttsd);
+            }
+        }
+        return result;
+    }
+    
     public boolean newThongTinSuDung(ThongTinSuDung c)
     {
         return thongtinsudungDAL.addThongTinSuDung(c);
+    }
+    
+    public boolean updateThongTinSuDung(ThongTinSuDung c)
+    {
+        return thongtinsudungDAL.updateThongTinSuDung(c);
     }
     
     public ThongTinSuDung getThongTinSuDung(int MaTT)
@@ -50,6 +66,18 @@ public class ThongTinSuDungBLL {
     
     public String[] getListMaTB() {
         return thongtinsudungDAL.getListMaTB();
+    }
+    
+    public Date getTGTraByMaTB(int maTB) {
+        return thongtinsudungDAL.getTGTraByMaTB(maTB);
+    }
+    
+    public Date getTGMuonByMaTB(int maTB) {
+        return thongtinsudungDAL.getTGMuonByMaTB(maTB);
+    }
+    
+    public boolean checkMaTBExists(int maTB) {
+        return thongtinsudungDAL.checkMaTBExists(maTB);
     }
     
     public ArrayList<ThongKeKhuHocTap> thongKeKhuHocTap(DateRange dateRange, String groupBy, String khoa, String nganh) {

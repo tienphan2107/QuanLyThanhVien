@@ -120,7 +120,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         }
         functionBar.add(mainFunction);
         search = new IntegratedSearch(new String[]{"Tất cả", "Khoa", "Ngành"});
-        functionBar.add(search);
+//        functionBar.add(search);
         search.btnReset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

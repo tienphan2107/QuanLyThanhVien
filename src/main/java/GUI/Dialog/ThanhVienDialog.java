@@ -59,17 +59,9 @@ public class ThanhVienDialog extends JDialog {
         this.setVisible(true);
     }
 
-//    public ThanhVienDialog(ThanhVienBLL tv, JFrame owner, boolean modal, String title, String type) {
-//        super(owner, title, modal);
-//        this.tv = tv;
-//        init(title, type);
-//        this.setLocationRelativeTo(null);
-//        this.setVisible(true);
-//    }
     public ThanhVienDialog(JFrame owner, boolean modal, String title, String type, ThanhVien thanhVien) {
         super(owner, title, modal);
         this.thanhVien = thanhVien;
-//        this.tvPanel = this.tvPanel;
         init(title, type);
         name.setText(thanhVien.getHoTen());
         sdt.setText(String.valueOf(thanhVien.getSDT()));

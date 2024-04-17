@@ -7,12 +7,10 @@ package GUI.Dialog;
 import BLL.ThanhVienBLL;
 import BLL.ThietBiBLL;
 import BLL.ThongTinSuDungBLL;
-import BLL.XuLyBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
 import GUI.Component.InputForm;
-import GUI.Component.NumericDocumentFilter;
 import GUI.Component.SelectForm;
 import hibernatemember.DAL.ThanhVien;
 import hibernatemember.DAL.ThietBi;
@@ -21,15 +19,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,35 +33,38 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.PlainDocument;
 
 /**
  *
  * @author DELL
  */
-public class MuonThietBiDialog extends JDialog {
-
+public class TraThietBiDialog extends JDialog {
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
-    private XuLyBLL xuLyBLL = new XuLyBLL();
     private ThietBi thietBi = new ThietBi();
     private ThietBiBLL thietBiBLL = new ThietBiBLL();
     private ThongTinSuDung thongTin;
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
-    private InputForm txtMaTV, name, txtMaTB, motaTB;
+    private InputForm txtMaTV, name;
     SelectForm tenTB;
-//    private InputForm sdt;
+    private InputForm sdt;
     private ThongTinSuDung khuTuHoc;
     private InputDate ipDate;
 //    ArrayList<String> ListLoaiThietBi = thietBiBLL.getDanhSachLoaiThietBi();
 //    String[] arrMaTB = ListLoaiThietBi .toArray(new String[ListLoaiThietBi .size()]);
-    String[] arrTenTB = thietBiBLL.getListTenTB();
+    String[] arrTenTB = thietBiBLL.getListTenTB(); 
 
-    public MuonThietBiDialog(JFrame owner, boolean modal, String title, String type) {
+
+    public TraThietBiDialog(JFrame owner, boolean modal, String title, String type, ThongTinSuDung thongTin) {
         super(owner, title, modal);
         init(title, type);
+        this.thongTin = thongTin;
+        txtMaTV.setText(String.valueOf(thongTin.getThanhVien().getMaTV()));
+        int maTB = thongTin.getThietBi().getMaTB();
+        String TenTB = thietBiBLL.getTenThietBi(maTB);
+        tenTB.setValue(TenTB);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -86,9 +82,7 @@ public class MuonThietBiDialog extends JDialog {
 
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
-//        tenTB = new SelectForm("Tên thiết bị", arrTenTB);
-        txtMaTB = new InputForm("Mã thiết bị");
-        motaTB = new InputForm("Mô tả thiết bị");
+        tenTB = new SelectForm("Tên thiết bị", arrTenTB);
 //        male = new JRadioButton("Nam");
 //        female = new JRadioButton("Nữ");
 //        gender = new ButtonGroup();
@@ -113,9 +107,7 @@ public class MuonThietBiDialog extends JDialog {
         jpaneljd.add(ipDate);
         main.add(txtMaTV);
         main.add(name);
-        main.add(txtMaTB);
-        main.add(motaTB);
-//        main.add(tenTB);
+        main.add(tenTB);
 
 //        main.add(jpanelG);
         main.add(ipDate);
@@ -124,7 +116,7 @@ public class MuonThietBiDialog extends JDialog {
         bottom = new JPanel(new FlowLayout());
         bottom.setBorder(new EmptyBorder(10, 0, 10, 0));
         bottom.setBackground(Color.white);
-        btnAdd = new ButtonCustom("Mượn", "success", 14);
+        btnAdd = new ButtonCustom("Trả", "success", 14);
         btnEdit = new ButtonCustom("Lưu thông tin", "success", 14);
         btnExit = new ButtonCustom("Hủy bỏ", "danger", 14);
         btnExit.addActionListener(new ActionListener() {
@@ -153,56 +145,32 @@ public class MuonThietBiDialog extends JDialog {
             }
         });
 
-        txtMaTB.getTxtForm().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
-                    ThietBi thietBi = thietBiBLL.getThietBi(maThietBi);
-                    if (thietBi != null) {
-                        motaTB.setText(thietBi.getMoTaTB());
-                    } else {
-                        motaTB.setText("Không tìm thấy thiết bị có mã này !");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    motaTB.setText("Không tìm thấy thiết bị có mã này !");
-                }
-
-                txtMaTB.getTxtForm().transferFocus();
-            }
-        });
-
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int maTT = thongtinBLL.getMaTTAutoIncreasement();
+//                    int maTT = thongtinBLL.getMaTTAutoIncreasement();
                     Date ngay = ipDate.getDate();
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-
-                    int maThietBi = Integer.parseInt(txtMaTB.getText().trim());
-//                    String TenTB = (String) tenTB.getSelectedItem();
-//                    int maTB = thietBiBLL.getMaThietBi(TenTB);
-//                    if (thongtinBLL.checkMaTBExists(maTB) == true && thongtinBLL.getTGTraByMaTB(maTB) == null) {
-//                        JOptionPane.showMessageDialog(rootPane, "Thiết bị đang được mượn!");
-//                        return;
-//                    }
-                    if (xuLyBLL.ThanhVienViPham(maThanhVien)) {
-                        JOptionPane.showMessageDialog(null, "Thành viên đang bị xử lý vui lòng thử lại sau");
-                        return;
-                    }
-                    Integer MaTB = (Integer) maThietBi;
-
+                    String TenTB = (String) tenTB.getSelectedItem();
+                    int maTB = thietBiBLL.getMaThietBi(TenTB);
+                    Integer MaTB = (Integer) maTB;
+                    System.out.print(maTB);
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
                     }
+                    
+                    if (thongTin.getTGMuon() == null) {
+                        JOptionPane.showMessageDialog(rootPane, "Chưa mượn nên không thể trả");
+                        return;
+                    }
+                    
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, MaTB, null, new Date(), null);
-                    if (thongtinBLL.newThongTinSuDung(thongtin)) {
-                        JOptionPane.showMessageDialog(rootPane, "Thành công !");
+                    ThongTinSuDung thongtin = new ThongTinSuDung(thongTin.getMaTT(), thongTin.getThanhVien().getMaTV(), thongTin.getThietBi().getMaTB(), thongTin.getTGVao(), thongTin.getTGMuon(), new Date());
+                    if (thongtinBLL.updateThongTinSuDung(thongtin)) {
+                        JOptionPane.showMessageDialog(rootPane, "Trả Thiết Bị Thành công !");
                     } else {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại !");
                     }
@@ -234,7 +202,7 @@ public class MuonThietBiDialog extends JDialog {
         switch (type) {
             case "create" -> {
                 name.setDisable();
-                motaTB.setDisable();
+                tenTB.setDisable();
                 ipDate.setDisable();
                 bottom.add(btnAdd);
             }

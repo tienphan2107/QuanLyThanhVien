@@ -239,12 +239,16 @@ public class XuLyDialog extends JDialog {
                     Date ngay = ipDate.getDate();
                     String hinhThucXuLy = cbbHinhThucXL.getValue();
                     int trangThaiXuLy = cbbTrangthaiXL.getSelectedIndex(); // dang xu ly
-                    String checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    String checkMessage = "";
+                    if (hinhThucXuLy.contains("ồi thường")) {
+                        checkMessage = xuLyBLL.CheckValue(strMaThanhVien, strSoTien);
+                    } else {
+                        checkMessage = xuLyBLL.CheckValue(strMaThanhVien, "1000");
+                    }
                     if (!checkMessage.isEmpty()) {
                         JOptionPane.showMessageDialog(rootPane, checkMessage);
                         return;
                     }
-
                     int maThanhVien = Integer.parseInt(strMaThanhVien);
                     int soTien = Integer.parseInt(strSoTien);
 

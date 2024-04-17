@@ -6,6 +6,7 @@ package GUI.Dialog;
 
 import BLL.ThanhVienBLL;
 import BLL.ThongTinSuDungBLL;
+import BLL.XuLyBLL;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputDate;
@@ -46,6 +47,7 @@ public class KhuTuHocDialog extends JDialog {
 
     private ThanhVienBLL thanhVienBLL = new ThanhVienBLL();
     private ThongTinSuDungBLL thongtinBLL = new ThongTinSuDungBLL();
+    private XuLyBLL xuLyBLL = new XuLyBLL();
     private HeaderTitle titlePage;
     private JPanel main, bottom;
     private ButtonCustom btnAdd, btnEdit, btnExit;
@@ -75,7 +77,8 @@ public class KhuTuHocDialog extends JDialog {
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBackground(Color.white);
         txtMaTV = new InputForm("Mã số sinh viên");
-
+        PlainDocument phonex = (PlainDocument) txtMaTV.getTxtForm().getDocument();
+        phonex.setDocumentFilter((new NumericDocumentFilter()));
         name = new InputForm("Tên sinh viên");
 //        arrMaTB = thongtinBLL.getListMaTB();
 //        maTB = new SelectForm("Mã thiết bị", arrMaTB);
@@ -122,27 +125,6 @@ public class KhuTuHocDialog extends JDialog {
             }
         });
 
-        txtMaTV.getTxtForm().addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                return;
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                try {
-                    int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
-                    ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                    if (thanhVien != null) {
-                        name.setText(thanhVien.getHoTen());
-                    } else {
-                        name.setText("Không tìm thấy thành viên có mã này !");
-                    }
-                } catch (Exception ex) {
-                    name.setText("Không tìm thấy thành viên có mã này !");
-                }
-            }
-        });
         txtMaTV.getTxtForm().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,21 +148,25 @@ public class KhuTuHocDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+
                     int maTT = thongtinBLL.getMaTTAutoIncreasement();
-                    String strMaThanhVien = txtMaTV.getText().trim();
                     Date ngay = ipDate.getDate();
-                    String dateString = "0000-00-00 00:00:00";
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = dateFormat.parse(dateString);
+//                    Date date = dateFormat.parse(ngay.toString());
+                    System.out.print(ngay + "Yeahhhhh");
                     int maThanhVien = Integer.parseInt(txtMaTV.getText().trim());
                     ThanhVien thanhVien = thanhVienBLL.getThanhVien(maThanhVien);
-                   
+                    if (xuLyBLL.ThanhVienViPham(maThanhVien)) 
+                    { 
+                        JOptionPane.showMessageDialog(rootPane, "Thành viên đang bị xử lý vui lòng thử lại sau");
+                        return;
+                    }
                     if (thanhVien == null) {
                         JOptionPane.showMessageDialog(rootPane, "Thất bại ! Mã thành viên không hợp lệ");
                         return;
                     }
 //                    String formattedDate = dateFormat.format(new Date());
-                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, null, ngay, null, null);
+                    ThongTinSuDung thongtin = new ThongTinSuDung(maTT, maThanhVien, null, new Date(), null, null);
                     if (thongtinBLL.newThongTinSuDung(thongtin)) {
                         JOptionPane.showMessageDialog(rootPane, "Thành công !");
                     } else {

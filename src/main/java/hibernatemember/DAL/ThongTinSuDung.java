@@ -52,41 +52,18 @@ public class ThongTinSuDung {
     public ThongTinSuDung() {
     }
 
-//    public ThongTinSuDung(int MaTT, int MaTV, int MaTB, Date TGVao, Date TGMuon, Date TGTra) {
-//        this.MaTT = MaTT;
-//        this.MaTV = MaTV;
-//        this.MaTB = MaTB;
-//        this.TGVao = TGVao;
-//        this.TGMuon = (TGMuon != null) ? TGMuon : getZeroTime();
-//        this.TGTra = (TGTra != null) ? TGTra : getZeroTime();
-//    }
-//    private Date getZeroTime() {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 0);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-//        return calendar.getTime();
-//    }
-    public ThongTinSuDung(int MaTT, int MaTV, Integer MaTB ,Date TGVao, Date TGMuon, Date TGTra) {
+    public ThongTinSuDung(int MaTT, int MaTV, Integer MaTB, Date TGVao, Date TGMuon, Date TGTra) {
         this.MaTT = MaTT;
         this.thanhVien = new ThanhVien();
         this.thanhVien.setMaTV(MaTV);
-        if(MaTB != null)
+        if (MaTB != null) {
+            this.thietBi = new ThietBi();
             this.thietBi.setMaTB(MaTB);
+        }
         this.TGVao = TGVao;
         this.TGMuon = TGMuon;
         this.TGTra = TGTra;
     }
-    
-    
-//    public ThongTinSuDung(int MaTT, int MaTV ,Date TGVao, Date TGMuon, Date TGTra) {
-//        this.MaTT = MaTT;
-//        this.thanhVien.setMaTV(MaTV);
-////        this.thietBi.setMaTB(MaTB);
-//        this.TGVao = TGVao;
-//        this.TGMuon = TGMuon;
-//        this.TGTra = TGTra;
-//    }
+
 
 }

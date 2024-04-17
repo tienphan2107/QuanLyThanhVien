@@ -10,7 +10,9 @@ import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Dialog.DatChoDialog;
 import GUI.Dialog.KhuTuHocDialog;
+import GUI.Dialog.MuonThietBiDialog;
 import GUI.Dialog.ThanhVienDialog;
+import GUI.Dialog.TraThietBiDialog;
 import GUI.Main;
 import hibernatemember.DAL.ThongTinSuDung;
 import java.awt.BorderLayout;
@@ -19,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -32,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -42,8 +47,7 @@ import javax.swing.table.DefaultTableModel;
 public class ThongTinSuDungPanel extends JPanel implements ActionListener {
 
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    NhanVienBUS nvBus = new NhanVienBUS(this);
-    private ThongTinSuDungBLL thongtinsudungBLL;
+    private ThongTinSuDungBLL thongtinsudungBLL = new ThongTinSuDungBLL();
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JTable tableThongTinSuDung;
@@ -100,13 +104,34 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
         }
+
         functionBar.add(mainFunction);
-//        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
-//        functionBar.add(search);
+        search = new IntegratedSearch(new String[]{"Tất cả", "Họ tên", "Email"});
+        functionBar.add(search);
 //        search.btnReset.addActionListener(nvBus);
 //        search.cbxChoose.addActionListener(nvBus);
 //        search.txtSearchForm.getDocument().addDocumentListener(new NhanVienBUS(search.txtSearchForm, this));
+        search.getTxtSearchForm().addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                try {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        loadDataSearchTable();
+                    }
+                } catch (ParseException ex) {
+                }
+            }
 
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        });
         // main là phần ở dưới để thống kê bảng biểu
         main = new PanelBorderRadius();
         BoxLayout boxly = new BoxLayout(main, BoxLayout.Y_AXIS);
@@ -145,7 +170,24 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
     }
 
     public int getRow() {
+        int index = tableThongTinSuDung.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thành viên muốn mượn thiết bị ");
+        }
         return tableThongTinSuDung.getSelectedRow();
+    }
+
+    public int getRow1() {
+        int index = tableThongTinSuDung.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn thành viên muốn trả thiết bị ");
+        }
+        return tableThongTinSuDung.getSelectedRow();
+    }
+
+    public ThongTinSuDung getThongTin() {
+        int MaTT = Integer.parseInt(tableThongTinSuDung.getValueAt(tableThongTinSuDung.getSelectedRow(), 0).toString());
+        return thongtinsudungBLL.getThongTinSuDung(MaTT);
     }
 
 //    public DTO.NhanVienDTO getNhanVien() {
@@ -158,12 +200,46 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             String maTB = "Không mượn";
             String tgMuon = "Không mượn";
             String tgTra = "Không mượn";
-            try{
+            try {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
                 tgTra = ttsd.getTGTra().toString();
-            }catch(Exception e){
-                if(maTB != "Không mượn"){
+            } catch (Exception e) {
+                if (maTB != "Không mượn") {
+                    tgTra = "Chưa trả";
+                }
+            }
+            tblModel.addRow(new Object[]{
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+            });
+        }
+    }
+
+    public void loadDataSearchTable() throws ParseException {
+        if(search.getTxtSearchForm().getText().isEmpty()){
+            loadDataTable();
+            return;
+        }
+        int maTVTimKiem = -1;
+        try {
+            maTVTimKiem = Integer.parseInt(search.getTxtSearchForm().getText());
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ma thanh vien khong dung");
+            return;
+        }
+        ArrayList<ThongTinSuDung> list = thongtinsudungBLL.LoadDataSearch(maTVTimKiem);
+        tblModel.setRowCount(0);
+        for (ThongTinSuDung ttsd : list) {
+            String maTB = "Không mượn";
+            String tgMuon = "Không mượn";
+            String tgTra = "Không mượn";
+            try {
+                maTB = ttsd.getThietBi().getMaTB() + "";
+                tgMuon = ttsd.getTGMuon().toString();
+                tgTra = ttsd.getTGTra().toString();
+            } catch (Exception e) {
+                if (maTB != "Không mượn") {
                     tgTra = "Chưa trả";
                 }
             }
@@ -179,29 +255,26 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         switch (btn) {
             case "VÀO KHU HỌC TẬP" -> {
                 KhuTuHocDialog tgKhuTuHoc = new KhuTuHocDialog(owner, true, "Vào khu tự học", "create");
-//                System.out.print("Hello word");
             }
             case "MƯỢN" -> {
-                
+                    MuonThietBiDialog muon = new MuonThietBiDialog(owner, true, "Mượn thiết bị", "create");
             }
             case "TRẢ" -> {
-//                int index = getRow();
-//                if (index != -1) {
-//                    int input = JOptionPane.showConfirmDialog(null,
-//                            "Bạn có chắc chắn muốn xóa thành viên!", "Xóa thành viên",
-//                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//                    if (input == 0) {
-//                        tvBLL.deleteThanhVien(getThanhVien());
-//                    }
-//                }
+                int index = getRow1();
+                if (getThongTin().getTGMuon() == null) {
+                    JOptionPane.showMessageDialog(this, "Chưa mượn nên không thể trả");
+                    return;
+                }
+                if (index != -1) {
+                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
+
+//                    TraThietBiDialog tra = new TraThietBiDialog(owner, true, "Trả thiết bị", "create", getThongTin());
+                }
             }
             case "ĐẶT CHỖ" -> {
                 DatChoDialog datchoDialog = new DatChoDialog(owner, true);  
                 datchoDialog.setVisible(true);
             }
-//            case "NHẬP EXCEL" -> {
-//                //importExcel();
-//            }
         }
 
         try {
