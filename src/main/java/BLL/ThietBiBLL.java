@@ -8,6 +8,7 @@ import hibernatemember.DAL.ThietBi;
 import hibernatemember.DAL.ThietBiDAL;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,5 +60,29 @@ public class ThietBiBLL {
     
     public String getTenThietBi(int maThietBi) {
         return thietbiDAL.getTenThietBi(maThietBi);
+    }
+    public void addThietBi(ThietBi c){
+        thietbiDAL.addThietBi(c);
+    }
+    public void updateThietBi(ThietBi c){
+        thietbiDAL.updateThietBi(c);
+    }
+    public void deleteThietBi(int maTB){
+        thietbiDAL.deleteThietBi(maTB);
+    }
+    public void deleteThietBiByStartingNumber(String startnumber){
+        thietbiDAL.deleteThietBiByStartingNumber(startnumber);
+    }
+    public String[] getThietBiStrings(){
+        return thietbiDAL.getThietBiStrings();
+    }
+    public String generateDeviceCode(String diviceName){
+        return thietbiDAL.generateDeviceCode(diviceName);
+    }
+    public void importFromExcel(File excelFile){
+        thietbiDAL.importFromExcel(excelFile);
+    }
+    public List<ThietBi> loadThietBiFilter(String keyword){
+        return thietbiDAL.loadThietBiFilter(keyword);
     }
 }

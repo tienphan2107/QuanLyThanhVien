@@ -9,6 +9,7 @@ import BLL.ThietBiBLL;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
+import GUI.Dialog.ThietBiDialog;
 import GUI.Main;
 import hibernatemember.DAL.ThietBi;
 import java.awt.BorderLayout;
@@ -17,10 +18,16 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,12 +35,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author DELL
  */
+
 public class ThietBiPanel extends JPanel implements ActionListener{
+
     public JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     private ThietBiBLL thietBiBLL = new ThietBiBLL();
     PanelBorderRadius main, functionBar;
@@ -87,7 +103,7 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
-        String[] action = {"create", "update", "delete", "detail", "import"};
+        String[] action = {"create", "update", "delete", "detail", "import", "export"};
         mainFunction = new MainFunction(action);
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
@@ -123,6 +139,21 @@ public class ThietBiPanel extends JPanel implements ActionListener{
         tableThietBi.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         scrollTableThietBi.setViewportView(tableThietBi);
         main.add(scrollTableThietBi);
+        
+        search.txtSearchForm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDataTable(search.txtSearchForm.getText());
+            }
+        });
+        search.btnReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDataTable();
+            }
+        });
+
+
     }
 
     public ThietBiPanel(Main m) {
@@ -148,9 +179,110 @@ public class ThietBiPanel extends JPanel implements ActionListener{
             });
         }
     }
+    public void loadDataTable(String keyword) {
+        ArrayList<ThietBi> list = new ArrayList<>(thietBiBLL.loadThietBiFilter(keyword));
+        tblModel.setRowCount(0);
+        for (ThietBi thietbi : list) {
+            tblModel.addRow(new Object[]{
+                thietbi.getMaTB(), thietbi.getTenTB(), thietbi.getMoTaTB()
+            });
+        }
+    }
+    public ThietBi getTB(){
+        ThietBi getTB = new ThietBi(
+                (int)tableThietBi.getValueAt(getRow(), 0),
+                tableThietBi.getValueAt(getRow(), 1).toString(),
+                tableThietBi.getValueAt(getRow(), 2).toString()
+        );
+        return getTB;
+    }
+    public void exportToExcel(File file) {
+        try {
+            TableModel model = tableThietBi.getModel();
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+            CellStyle style = workbook.createCellStyle();
+            XSSFFont font = workbook.createFont();
+
+            // Set font to Times New Roman
+            font.setFontName("Times New Roman");
+            style.setFont(font);
+
+            // Write column headers
+            XSSFRow headerRow = sheet.createRow(0);
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                XSSFCell cell = headerRow.createCell(i);
+                cell.setCellValue(model.getColumnName(i));
+                cell.setCellStyle(style);
+            }
+
+            // Write data rows
+            for (int i = 0; i < model.getRowCount(); i++) {
+                XSSFRow dataRow = sheet.createRow(i + 1);
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    XSSFCell cell = dataRow.createCell(j);
+                    cell.setCellValue(model.getValueAt(i, j).toString());
+                    cell.setCellStyle(style);
+                }
+            }
+
+            // Write to file
+            FileOutputStream outputStream = new FileOutputStream(file);
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+
+            JOptionPane.showMessageDialog(null, "Dữ liệu đã được xuất ra Excel thành công!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+
+        String btn = e.getActionCommand();
+        switch (btn) {
+            case "THÊM" -> {
+            ThietBiDialog thietBiDialog = new ThietBiDialog(this,owner, true, "Thêm thiết bị", "create");
+            }
+            case "XÓA" -> {
+            ThietBiDialog thietBiDialog = new ThietBiDialog(this,owner, true, "Xóa thiết bị", "delete");
+            }
+            case "SỬA" -> {
+                if (getRow() == -1) {
+                    
+                    JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 Thiết bị", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    ThietBiDialog thietBiDialog = new ThietBiDialog(this, owner, true, "Sửa thiết bị", "update");
+                }
+            }
+            case "CHI TIẾT" -> {
+                if (getRow() == -1) {
+                    JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 Thiết bị", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    ThietBiDialog thietBiDialog = new ThietBiDialog(this, owner, true, "Xem chi tiết", "view");
+                }
+            }
+            case "NHẬP EXCEL" -> {
+                JFileChooser fileChooser = new JFileChooser();
+                int option = fileChooser.showOpenDialog(null);
+
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File excelFile = fileChooser.getSelectedFile();
+                    thietBiBLL.importFromExcel(excelFile);
+                    JOptionPane.showMessageDialog(null, "Nhập dữ liệu thành công!");
+                }
+            }
+            case "XUẤT EXCEL" -> {
+                JFileChooser fileChooser = new JFileChooser();
+                int option = fileChooser.showSaveDialog(null);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    exportToExcel(new File(file.getPath() + ".xls"));
+                }
+            }
+        }
+        loadDataTable();
+
 }
