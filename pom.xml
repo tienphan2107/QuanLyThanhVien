@@ -58,11 +58,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>5.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
             <artifactId>poi-examples</artifactId>
             <version>5.2.3</version>
         </dependency>
@@ -102,15 +97,9 @@
             <version>RELEASE210</version>
         </dependency>
         <dependency>
-
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>5.2.4</version> <!-- Thay phiên bản tùy theo yêu cầu của bạn -->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>5.2.4</version> 
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
