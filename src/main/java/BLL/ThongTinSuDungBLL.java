@@ -39,7 +39,9 @@ public class ThongTinSuDungBLL {
         }
         return result;
     }
-
+    public int getMaxId(){
+        return thongtinsudungDAL.getMaxId();
+    }
     public boolean newThongTinSuDung(ThongTinSuDung c) {
         return thongtinsudungDAL.addThongTinSuDung(c);
     }
