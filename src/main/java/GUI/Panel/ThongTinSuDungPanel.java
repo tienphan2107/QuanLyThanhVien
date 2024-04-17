@@ -143,7 +143,7 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
         scrollTableThongTinSuDung = new JScrollPane();
         tableThongTinSuDung = new JTable();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả"};
+        String[] header = new String[]{"Mã TT", "Mã TV", "Mã TB", "Thời gian vào", "Thời gian mượn", "Thời gian trả","Đặt chỗ"};
 
         tblModel.setColumnIdentifiers(header);
         tableThongTinSuDung.setModel(tblModel);
@@ -200,17 +200,19 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             String maTB = "Không mượn";
             String tgMuon = "Không mượn";
             String tgTra = "Không mượn";
+            String tgDatCho = "Không";
             try {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
                 tgTra = ttsd.getTGTra().toString();
+                tgDatCho = ttsd.getTGDatCho().toString();
             } catch (Exception e) {
                 if (maTB != "Không mượn") {
                     tgTra = "Chưa trả";
                 }
             }
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
             });
         }
     }
@@ -234,17 +236,19 @@ public class ThongTinSuDungPanel extends JPanel implements ActionListener {
             String maTB = "Không mượn";
             String tgMuon = "Không mượn";
             String tgTra = "Không mượn";
+            String tgDatCho = "Không";
             try {
                 maTB = ttsd.getThietBi().getMaTB() + "";
                 tgMuon = ttsd.getTGMuon().toString();
                 tgTra = ttsd.getTGTra().toString();
+                tgDatCho = ttsd.getTGDatCho().toString();
             } catch (Exception e) {
                 if (maTB != "Không mượn") {
                     tgTra = "Chưa trả";
                 }
             }
             tblModel.addRow(new Object[]{
-                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra
+                ttsd.getMaTT(), ttsd.getThanhVien().getMaTV(), maTB, ttsd.getTGVao(), tgMuon, tgTra, tgDatCho
             });
         }
     }

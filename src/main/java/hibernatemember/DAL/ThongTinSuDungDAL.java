@@ -100,12 +100,12 @@ public class ThongTinSuDungDAL {
 
     }
 
-    public ThongTinSuDung getThongTinSuDung(int MaTT) {
-        session = HibernateUtils.getSessionFactory().openSession();
-        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
-        session.close();
-        return c;
-    }
+//    public ThongTinSuDung getThongTinSuDung(int MaTT) {
+//        session = HibernateUtils.getSessionFactory().openSession();
+//        ThongTinSuDung c = session.get(ThongTinSuDung.class, MaTT);
+//        session.close();
+//        return c;
+//    }
 
     public boolean updateThongTinSuDung(ThongTinSuDung c) {
         Transaction tx = null;
