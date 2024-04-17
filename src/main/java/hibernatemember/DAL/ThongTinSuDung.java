@@ -36,7 +36,7 @@ public class ThongTinSuDung {
     private Date TGTra;
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private Date TGDatcho;
+    private Date TGDatCho;
     // getThanhVien().getMaTV
 
     @ManyToOne

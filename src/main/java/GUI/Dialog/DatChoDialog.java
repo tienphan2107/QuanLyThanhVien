@@ -298,7 +298,7 @@ public class DatChoDialog extends javax.swing.JDialog {
                     ThongTinSuDung info = new ThongTinSuDung();
                     info.setThanhVien(tv);
                     info.setThietBi(tb);
-                    info.setTGDatcho(currentDate);
+                    info.setTGDatCho(currentDate);
                     int id = infoDAL.getMaxId();
                     info.setMaTT(id + 1);
                     if (infoDAL.addThongTinSuDung(info) == true) {
@@ -321,7 +321,7 @@ public class DatChoDialog extends javax.swing.JDialog {
                     ThongTinSuDung info = new ThongTinSuDung();
                     info.setThanhVien(tv);
                     info.setThietBi(tb);
-                    info.setTGDatcho(selectedTime);
+                    info.setTGDatCho(selectedTime);
                     int id = infoDAL.getMaxId();
                     info.setMaTT(id + 1);
                     if (infoDAL.addThongTinSuDung(info) == true) {
@@ -360,7 +360,7 @@ public class DatChoDialog extends javax.swing.JDialog {
                 ThongTinSuDung info = new ThongTinSuDung();
                 info.setThanhVien(tv);
                 info.setThietBi(tb);
-                info.setTGDatcho(result);
+                info.setTGDatCho(result);
                 int id = infoDAL.getMaxId();
                 info.setMaTT(id + 1);
                 if (infoDAL.addThongTinSuDung(info) == true) {
