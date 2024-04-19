@@ -9,7 +9,7 @@
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.url">jdbc:mysql://localhost:3306/qlthanhvien?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8</property>
         <property name="connection.username">root</property>
-        <property name="connection.password">299792458</property>
+        <property name="connection.password"></property>
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">4</property>    <!-- Số lượng kết nối: 1 đến 10 -->
         <!-- Enable Hibernate's automatic session context management -->
