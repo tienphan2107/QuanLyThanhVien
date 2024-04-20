@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTable;
 
 /**
  *
@@ -81,6 +82,9 @@ public class ThietBiBLL {
     }
     public void importFromExcel(File excelFile){
         thietbiDAL.importFromExcel(excelFile);
+    }
+    public void exportToExcel(File file, JTable tableThietBi ){
+        thietbiDAL.exportToExcel(file, tableThietBi);
     }
     public List<ThietBi> loadThietBiFilter(String keyword){
         return thietbiDAL.loadThietBiFilter(keyword);

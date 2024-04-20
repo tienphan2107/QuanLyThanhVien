@@ -7,12 +7,18 @@ package hibernatemember.DAL;
 import BLL.ThongTinSuDungBLL;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -21,6 +27,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -373,6 +384,45 @@ public class ThietBiDAL {
             e.printStackTrace();
         } finally {
             session.close();
+        }
+    }
+    public void exportToExcel(File file, JTable tableThietBi) {
+        try {
+            TableModel model = tableThietBi.getModel();
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+            CellStyle style = workbook.createCellStyle();
+            XSSFFont font = workbook.createFont();
+
+            // Set font to Times New Roman
+            font.setFontName("Times New Roman");
+            style.setFont(font);
+
+            // Write column headers
+            XSSFRow headerRow = sheet.createRow(0);
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                XSSFCell cell = headerRow.createCell(i);
+                cell.setCellValue(model.getColumnName(i));
+                cell.setCellStyle(style);
+            }
+
+            // Write data rows
+            for (int i = 0; i < model.getRowCount(); i++) {
+                XSSFRow dataRow = sheet.createRow(i + 1);
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    XSSFCell cell = dataRow.createCell(j);
+                    cell.setCellValue(model.getValueAt(i, j).toString());
+                    cell.setCellStyle(style);
+                }
+            }
+
+            // Write to file
+            FileOutputStream outputStream = new FileOutputStream(file);
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

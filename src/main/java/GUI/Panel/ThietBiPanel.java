@@ -191,47 +191,47 @@ public class ThietBiPanel extends JPanel implements ActionListener{
     public ThietBi getTB(){
         return thietBiBLL.getThietBi((int)tableThietBi.getValueAt(getRow(), 0));
     }
-    public void exportToExcel(File file) {
-        try {
-            TableModel model = tableThietBi.getModel();
-            XSSFWorkbook workbook = new XSSFWorkbook();
-            XSSFSheet sheet = workbook.createSheet("Sheet 1");
-            CellStyle style = workbook.createCellStyle();
-            XSSFFont font = workbook.createFont();
-
-            // Set font to Times New Roman
-            font.setFontName("Times New Roman");
-            style.setFont(font);
-
-            // Write column headers
-            XSSFRow headerRow = sheet.createRow(0);
-            for (int i = 0; i < model.getColumnCount(); i++) {
-                XSSFCell cell = headerRow.createCell(i);
-                cell.setCellValue(model.getColumnName(i));
-                cell.setCellStyle(style);
-            }
-
-            // Write data rows
-            for (int i = 0; i < model.getRowCount(); i++) {
-                XSSFRow dataRow = sheet.createRow(i + 1);
-                for (int j = 0; j < model.getColumnCount(); j++) {
-                    XSSFCell cell = dataRow.createCell(j);
-                    cell.setCellValue(model.getValueAt(i, j).toString());
-                    cell.setCellStyle(style);
-                }
-            }
-
-            // Write to file
-            FileOutputStream outputStream = new FileOutputStream(file);
-            workbook.write(outputStream);
-            workbook.close();
-            outputStream.close();
-
-            JOptionPane.showMessageDialog(null, "Dữ liệu đã được xuất ra Excel thành công!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void exportToExcel(File file) {
+//        try {
+//            TableModel model = tableThietBi.getModel();
+//            XSSFWorkbook workbook = new XSSFWorkbook();
+//            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+//            CellStyle style = workbook.createCellStyle();
+//            XSSFFont font = workbook.createFont();
+//
+//            // Set font to Times New Roman
+//            font.setFontName("Times New Roman");
+//            style.setFont(font);
+//
+//            // Write column headers
+//            XSSFRow headerRow = sheet.createRow(0);
+//            for (int i = 0; i < model.getColumnCount(); i++) {
+//                XSSFCell cell = headerRow.createCell(i);
+//                cell.setCellValue(model.getColumnName(i));
+//                cell.setCellStyle(style);
+//            }
+//
+//            // Write data rows
+//            for (int i = 0; i < model.getRowCount(); i++) {
+//                XSSFRow dataRow = sheet.createRow(i + 1);
+//                for (int j = 0; j < model.getColumnCount(); j++) {
+//                    XSSFCell cell = dataRow.createCell(j);
+//                    cell.setCellValue(model.getValueAt(i, j).toString());
+//                    cell.setCellStyle(style);
+//                }
+//            }
+//
+//            // Write to file
+//            FileOutputStream outputStream = new FileOutputStream(file);
+//            workbook.write(outputStream);
+//            workbook.close();
+//            outputStream.close();
+//
+//            JOptionPane.showMessageDialog(null, "Dữ liệu đã được xuất ra Excel thành công!");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -274,7 +274,8 @@ public class ThietBiPanel extends JPanel implements ActionListener{
                 int option = fileChooser.showSaveDialog(null);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    exportToExcel(new File(file.getPath() + ".xls"));
+                    thietBiBLL.exportToExcel(new File(file.getPath() + ".xls"), tableThietBi);
+                    JOptionPane.showMessageDialog(null, "Dữ liệu đã được xuất ra Excel thành công!");
                 }
             }
         }

@@ -120,9 +120,7 @@ public final class ThietBiDialog extends JDialog {
             if (ValidationInput()) {
                 int choice = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thêm không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    //Integer.valueOf(tb.generateDeviceCode(tenTB.getText()));
                     tb.addThietBi(new ThietBi(Integer.parseInt(maTB.getText()), tenTB.getText(), moTaTB.getText()));
-
                     JOptionPane.showMessageDialog(this, "Thêm thành công", "Xác nhận !", JOptionPane.INFORMATION_MESSAGE);
                     maTB.setText("");
                     tenTB.setText("");
