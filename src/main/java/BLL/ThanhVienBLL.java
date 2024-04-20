@@ -6,14 +6,21 @@ package BLL;
 
 import hibernatemember.DAL.ThanhVien;
 import hibernatemember.DAL.ThanhVienDAL;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author DELL
  */
-public class ThanhVienBLL{
+public class ThanhVienBLL {
 
     private ThanhVienDAL thanhvienDAL;
 
@@ -55,10 +62,57 @@ public class ThanhVienBLL{
         }
         return newList;
     }
-    public boolean checkExist(int id){
+
+    public ArrayList<ThanhVien> importFormExcel(File file) {
+        ArrayList<ThanhVien> list = new ArrayList<ThanhVien>();
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            Workbook workbook = new XSSFWorkbook(fis);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (Row currentRow : sheet) {
+                // Assuming your data starts from the second row, change the condition accordingly if it's different
+                if (currentRow.getRowNum() > 0) {
+                    ThanhVien tv = new ThanhVien(); // Assuming ThanhVien class exists
+
+                    int columnIndex = 0;
+                    for (Cell currentCell : currentRow) {
+                        switch (columnIndex) {
+                            case 0:
+                                tv.setMaTV((int) currentCell.getNumericCellValue());
+                                break;
+                            case 1:
+                                tv.setHoTen(currentCell.getStringCellValue());
+                                break;
+                            case 2:
+                                tv.setKhoa(currentCell.getStringCellValue());
+                                break;
+                            case 3:
+                                tv.setNganh(currentCell.getStringCellValue());
+                                break;
+                            case 4:
+                                tv.setSDT(currentCell.getStringCellValue());
+                                break;
+                        }
+                        columnIndex++;
+                    }
+                    list.add(tv);
+                }
+            }
+            workbook.close();
+            fis.close();
+        } catch (Exception e) {
+            System.out.println("Import Excel");
+        }
+        return list;
+    }
+
+    public boolean checkExist(int id) {
         ArrayList<ThanhVien> list = thanhvienDAL.loadThanhVien();
-        for(ThanhVien tv : list){
-            if(tv.getMaTV() == id) return true;
+        for (ThanhVien tv : list) {
+            if (tv.getMaTV() == id) {
+                return true;
+            }
         }
         return false;
     }
@@ -79,20 +133,21 @@ public class ThanhVienBLL{
         ThanhVien c = thanhvienDAL.getThanhVien(thanhvienID);
         return c;
     }
+
     public int getAutoIncrement() {
         return thanhvienDAL.getAutoIncrement();
     }
+
     public String createMaTV() {
         return thanhvienDAL.createMaTV();
     }
-    
+
     public ArrayList<String> getListKhoa(String query) {
         return thanhvienDAL.getListKhoa(query);
     }
-    
+
     public ArrayList<String> getListNganh(String query) {
         return thanhvienDAL.getListNganh(query);
     }
-
 
 }

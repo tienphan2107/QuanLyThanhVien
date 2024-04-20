@@ -207,7 +207,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void exportToExcel(ArrayList<ThanhVien> list) {
+    public void exportToExcel(ArrayList<ThanhVien> list, File file) {
         try {
             Workbook workbook = new XSSFWorkbook();
 
@@ -231,16 +231,11 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                 row.createCell(3).setCellValue(tv.getNganh());
                 row.createCell(4).setCellValue(tv.getSDT());
             }
-
-            String filePath = "list.xlsx";
-
-            try (FileOutputStream os = new FileOutputStream(filePath)) {
+            try (FileOutputStream os = new FileOutputStream(file)) {
                 workbook.write(os);
             }
             workbook.close();
-
             try {
-                File file = new File(filePath);
                 Desktop desktop = Desktop.getDesktop();
                 desktop.open(file);
             } catch (Exception e) {
@@ -254,38 +249,7 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
 
     }
 
-    public ArrayList<ThanhVien> importFormExcel(String fileName) {
-        ArrayList<ThanhVien> list = new ArrayList<ThanhVien>();
-        try {
-            FileInputStream fis = new FileInputStream(fileName);
-
-            Workbook workbook = new XSSFWorkbook(fis);
-
-            Sheet sheet = workbook.getSheetAt(0);
-
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    continue;
-                }
-                if (row != null) {
-                    ThanhVien tv = new ThanhVien();
-                    tv.setMaTV((int) row.getCell(0).getNumericCellValue());
-                    tv.setHoTen(row.getCell(1).getStringCellValue());
-                    tv.setKhoa(row.getCell(2).getStringCellValue());
-                    tv.setNganh(row.getCell(3).getStringCellValue());
-                    int sdt = (int) row.getCell(4).getNumericCellValue();
-
-                    tv.setSDT("0" + sdt);
-                    list.add(tv);
-                }
-            }
-            workbook.close();
-            fis.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return list;
-    }
+    
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -326,27 +290,37 @@ public class ThanhVienPanel extends JPanel implements ActionListener {
                 }
             }
             case "NHẬP EXCEL" -> {
-                ArrayList<ThanhVien> importedList = importFormExcel("list.xlsx");
-                if (importedList != null) {
-                    int n = 0;
-                    for (ThanhVien tv : importedList) {
-                        if (tvBLL.checkExist(tv.getMaTV()) == false) {
-                            if (InputValidation(tv) == true) {
-                                n++;
-                                tvBLL.newThanhVien(tv);
+                JFileChooser fileChooser = new JFileChooser();
+                int option = fileChooser.showSaveDialog(null);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    ArrayList<ThanhVien> importedList = tvBLL.importFormExcel(file);
+                    if (importedList != null) {
+                        int n = 0;
+                        for (ThanhVien tv : importedList) {
+                            if (tvBLL.checkExist(tv.getMaTV()) == false) {
+                                if (InputValidation(tv) == true) {
+                                    n++;
+                                    tvBLL.newThanhVien(tv);
+                                }
                             }
                         }
+                        if (n == 0) {
+                            JOptionPane.showMessageDialog(functionBar, "Các id thành viên trong file nhập vào đã tồn tại");
+                        } else {
+                            JOptionPane.showMessageDialog(functionBar, "Đã thêm mới " + n + " thành viên vào cơ sở dữ liệu !");
+                        }
+                        listTV = tvBLL.loadThanhVien();
                     }
-                    if (n == 0) {
-                        JOptionPane.showMessageDialog(functionBar, "Các id thành viên trong file nhập vào đã tồn tại");
-                    } else {
-                        JOptionPane.showMessageDialog(functionBar, "Đã thêm mới " + n + " thành viên vào cơ sở dữ liệu !");
-                    }
-                    listTV = tvBLL.loadThanhVien();
                 }
             }
             case "XUẤT EXCEL" -> {
-                exportToExcel(listTV);
+                JFileChooser fileChooser = new JFileChooser();
+                int option = fileChooser.showSaveDialog(null);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    exportToExcel(listTV, new File(file.getPath() + ".xlsx"));
+                }
 
             }
         }
